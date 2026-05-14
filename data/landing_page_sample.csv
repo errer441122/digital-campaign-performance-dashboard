@@ -1,0 +1,9 @@
+landing_page,device,sessions,bounce_rate,avg_session_duration_sec,conversions,revenue_eur,conversion_rate,primary_issue,recommendation
+/promo,Mobile,5793,0.3800,112,498,43891.06,0.0860,"Good traffic, slightly weaker checkout completion","Keep budget stable and test shorter mobile form"
+/promo,Desktop,6277,0.3200,138,468,43021.94,0.0746,High CTR with steady CPA,Use as benchmark for paid search landing pages
+/collection,Mobile,4886,0.4700,84,262,20561.58,0.0536,Awareness traffic converts below search and email,Tighten audience and add product proof above the fold
+/collection,Desktop,5293,0.4100,105,246,20154.42,0.0465,Moderate conversion rate and low intent mix,Retarget engaged visitors with stronger offer
+/service-booking,Mobile,3458,0.2900,158,390,32489.94,0.1128,"Strong conversion, low CPC",Protect email list quality and test SMS reminder
+/service-booking,Desktop,3745,0.2500,176,366,31846.56,0.0977,Best ROAS and strongest intent,Use as retention reporting benchmark
+/store-locator,Mobile,2913,0.5200,62,148,10149.00,0.0508,High bounce and low CTR,Improve local relevance and page speed on mobile
+/store-locator,Desktop,3155,0.4500,78,139,9948.00,0.0441,Low conversion volume,Move budget to higher-intent segments until page improves

@@ -20,9 +20,14 @@
 | Attribution logic | First-touch and last-touch revenue credit examples | Shows how channel value changes when credit rules change. |
 | Funnel conversion | `stage_users / previous_stage_users` | Identifies where users drop between impression, click, landing view, lead and conversion. |
 | Cohort conversion | `cohort conversions / cohort users` | Compares post-acquisition behavior by start week. |
+| GA4 key event | Marked conversion event such as `generate_lead` | Live-web analogue for the simulated conversion outcome. |
+| UTM validity | Required UTM fields present and aligned with taxonomy | Campaign-link quality check before launch and dashboard ingestion. |
+| Consent status | CMP and Consent Mode state for analytics/ad storage | Confirms whether tags behave correctly under GDPR-oriented consent choices. |
+| Tracking QA status | Count of passed or failed tracking cases | Release-readiness signal for campaign measurement implementation. |
 
 ## Notes
 
 - Percent fields are stored as decimal rates in the CSV files.
 - Euro fields are simulated and should be read as portfolio examples, not real commercial data.
 - KPI interpretation should combine efficiency and scale. A low CPA channel may still need budget limits if volume is small.
+- GA4, UTM and consent KPIs are documented as measurement blueprints in `tracking/GA4_EVENT_PLAN.md`, `tracking/UTM_TAXONOMY.md`, `tracking/CONSENT_MODE_GDPR_NOTES.md` and `tracking/TRACKING_QA_CHECKLIST.md`; they are not current source fields in the simulated CSV files.

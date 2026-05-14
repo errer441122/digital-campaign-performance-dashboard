@@ -9,6 +9,7 @@
 - The A/B test is simulated and intended to demonstrate statistical reasoning, not a real experiment run.
 - CRM lifecycle, cohort and funnel examples are SQL evidence patterns, not exported CRM records.
 - Device, audience and landing page labels are intentionally generic.
+- GA4, Consent Mode/GDPR, UTM taxonomy, Looker Studio and tracking QA artifacts in `tracking/` are implementation blueprints that show how the same analyst workflow would be applied to a live digital campaign.
 
 ## Limits
 
@@ -16,7 +17,8 @@
 - The workbook is a portfolio artifact, not a production dashboard.
 - The dataset does not include creative-level performance, keyword detail, real attribution windows, offline conversions, consent mode effects or production incrementality testing.
 - Recommendations are practical examples based on the simulated pattern, not advice for a real account.
+- Consent Mode/GDPR notes are analytics implementation controls, not legal advice.
 
 ## Responsible positioning
 
-This project is designed to show a junior analytics workflow: KPI definition, data organization, dashboarding, insight writing and documented limitations.
+This project is designed to show a junior analytics workflow: KPI definition, data organization, dashboarding, GA4-style measurement planning, UTM governance, tracking QA, insight writing and documented limitations.

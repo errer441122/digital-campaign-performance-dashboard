@@ -1,0 +1,31 @@
+{
+  "experiment_id": "lp_checkout_2026w16",
+  "primary_metric": "conversion_rate",
+  "variant_a": {
+    "label": "Control landing page",
+    "sessions": 8400,
+    "conversions": 462,
+    "revenue_eur": 40710.0,
+    "conversion_rate": 0.055,
+    "revenue_per_session": 4.8464
+  },
+  "variant_b": {
+    "label": "Short-form landing page",
+    "sessions": 8200,
+    "conversions": 533,
+    "revenue_eur": 48640.0,
+    "conversion_rate": 0.065,
+    "revenue_per_session": 5.9317
+  },
+  "absolute_uplift": 0.01,
+  "relative_uplift": 0.181818,
+  "z_score": 2.7137,
+  "p_value_two_tailed": 0.006654,
+  "confidence_interval_95": {
+    "lower": 0.002772,
+    "upper": 0.017228
+  },
+  "bayesian_probability_b_beats_a": 0.996636,
+  "recommendation": "Ship variant B with a guarded rollout",
+  "boundary": "Simulated portfolio data; no real advertising, client, CRM, GA4 or user data."
+}

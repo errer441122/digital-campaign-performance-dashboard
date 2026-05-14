@@ -1,0 +1,3 @@
+experiment_id,variant,variant_label,sessions,conversions,revenue_eur,primary_metric,traffic_split,notes
+lp_checkout_2026w16,A,Control landing page,8400,462,40710.00,conversion_rate,0.506,Current promo landing page with standard form
+lp_checkout_2026w16,B,Short-form landing page,8200,533,48640.00,conversion_rate,0.494,Simplified mobile-first form with stronger product proof

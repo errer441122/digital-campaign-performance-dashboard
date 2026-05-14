@@ -1,0 +1,115 @@
+{
+  "name": "CampaignMarketingAnalytics",
+  "compatibilityLevel": 1567,
+  "model": {
+    "culture": "en-US",
+    "tables": [
+      {
+        "name": "CampaignPerformance",
+        "columns": [
+          {"name": "date", "dataType": "dateTime", "sourceColumn": "date"},
+          {"name": "channel", "dataType": "string", "sourceColumn": "channel"},
+          {"name": "campaign", "dataType": "string", "sourceColumn": "campaign"},
+          {"name": "audience_segment", "dataType": "string", "sourceColumn": "audience_segment"},
+          {"name": "device", "dataType": "string", "sourceColumn": "device"},
+          {"name": "landing_page", "dataType": "string", "sourceColumn": "landing_page"},
+          {"name": "impressions", "dataType": "int64", "sourceColumn": "impressions"},
+          {"name": "clicks", "dataType": "int64", "sourceColumn": "clicks"},
+          {"name": "cost_eur", "dataType": "double", "sourceColumn": "cost_eur"},
+          {"name": "conversions", "dataType": "int64", "sourceColumn": "conversions"},
+          {"name": "revenue_eur", "dataType": "double", "sourceColumn": "revenue_eur"}
+        ],
+        "measures": [
+          {"name": "CTR", "expression": "DIVIDE(SUM(CampaignPerformance[clicks]), SUM(CampaignPerformance[impressions]))", "formatString": "0.00%"},
+          {"name": "CPC", "expression": "DIVIDE(SUM(CampaignPerformance[cost_eur]), SUM(CampaignPerformance[clicks]))", "formatString": "EUR #,0.00"},
+          {"name": "Conversion Rate", "expression": "DIVIDE(SUM(CampaignPerformance[conversions]), SUM(CampaignPerformance[clicks]))", "formatString": "0.00%"},
+          {"name": "CPA", "expression": "DIVIDE(SUM(CampaignPerformance[cost_eur]), SUM(CampaignPerformance[conversions]))", "formatString": "EUR #,0.00"},
+          {"name": "ROAS", "expression": "DIVIDE(SUM(CampaignPerformance[revenue_eur]), SUM(CampaignPerformance[cost_eur]))", "formatString": "0.00"}
+        ],
+        "partitions": [
+          {
+            "name": "CampaignPerformance",
+            "mode": "import",
+            "source": {
+              "type": "m",
+              "expression": [
+                "let",
+                "    Source = Csv.Document(File.Contents(\"digital-campaign-performance-dashboard/data/campaign_performance_sample.csv\"), [Delimiter=\",\", Encoding=65001, QuoteStyle=QuoteStyle.Csv]),",
+                "    PromotedHeaders = Table.PromoteHeaders(Source, [PromoteAllScalars=true])",
+                "in",
+                "    PromotedHeaders"
+              ]
+            }
+          }
+        ]
+      },
+      {
+        "name": "LandingPages",
+        "columns": [
+          {"name": "landing_page", "dataType": "string", "sourceColumn": "landing_page"},
+          {"name": "device", "dataType": "string", "sourceColumn": "device"},
+          {"name": "sessions", "dataType": "int64", "sourceColumn": "sessions"},
+          {"name": "bounce_rate", "dataType": "double", "sourceColumn": "bounce_rate"},
+          {"name": "avg_session_duration_sec", "dataType": "int64", "sourceColumn": "avg_session_duration_sec"},
+          {"name": "conversions", "dataType": "int64", "sourceColumn": "conversions"},
+          {"name": "revenue_eur", "dataType": "double", "sourceColumn": "revenue_eur"},
+          {"name": "primary_issue", "dataType": "string", "sourceColumn": "primary_issue"},
+          {"name": "recommendation", "dataType": "string", "sourceColumn": "recommendation"}
+        ],
+        "measures": [
+          {"name": "Landing Page Conversion Rate", "expression": "DIVIDE(SUM(LandingPages[conversions]), SUM(LandingPages[sessions]))", "formatString": "0.00%"},
+          {"name": "Average Bounce Rate", "expression": "AVERAGE(LandingPages[bounce_rate])", "formatString": "0.00%"}
+        ],
+        "partitions": [
+          {
+            "name": "LandingPages",
+            "mode": "import",
+            "source": {
+              "type": "m",
+              "expression": [
+                "let",
+                "    Source = Csv.Document(File.Contents(\"digital-campaign-performance-dashboard/data/landing_page_sample.csv\"), [Delimiter=\",\", Encoding=65001, QuoteStyle=QuoteStyle.Csv]),",
+                "    PromotedHeaders = Table.PromoteHeaders(Source, [PromoteAllScalars=true])",
+                "in",
+                "    PromotedHeaders"
+              ]
+            }
+          }
+        ]
+      },
+      {
+        "name": "AbTestResults",
+        "columns": [
+          {"name": "experiment_id", "dataType": "string", "sourceColumn": "experiment_id"},
+          {"name": "variant", "dataType": "string", "sourceColumn": "variant"},
+          {"name": "variant_label", "dataType": "string", "sourceColumn": "variant_label"},
+          {"name": "sessions", "dataType": "int64", "sourceColumn": "sessions"},
+          {"name": "conversions", "dataType": "int64", "sourceColumn": "conversions"},
+          {"name": "revenue_eur", "dataType": "double", "sourceColumn": "revenue_eur"}
+        ],
+        "measures": [
+          {"name": "A Conversion Rate", "expression": "DIVIDE(CALCULATE(SUM(AbTestResults[conversions]), AbTestResults[variant] = \"A\"), CALCULATE(SUM(AbTestResults[sessions]), AbTestResults[variant] = \"A\"))", "formatString": "0.00%"},
+          {"name": "B Conversion Rate", "expression": "DIVIDE(CALCULATE(SUM(AbTestResults[conversions]), AbTestResults[variant] = \"B\"), CALCULATE(SUM(AbTestResults[sessions]), AbTestResults[variant] = \"B\"))", "formatString": "0.00%"},
+          {"name": "A/B Uplift", "expression": "DIVIDE([B Conversion Rate] - [A Conversion Rate], [A Conversion Rate])", "formatString": "0.00%"},
+          {"name": "Revenue Per Session", "expression": "DIVIDE(SUM(AbTestResults[revenue_eur]), SUM(AbTestResults[sessions]))", "formatString": "EUR #,0.00"}
+        ],
+        "partitions": [
+          {
+            "name": "AbTestResults",
+            "mode": "import",
+            "source": {
+              "type": "m",
+              "expression": [
+                "let",
+                "    Source = Csv.Document(File.Contents(\"digital-campaign-performance-dashboard/data/ab_test_conversion_sample.csv\"), [Delimiter=\",\", Encoding=65001, QuoteStyle=QuoteStyle.Csv]),",
+                "    PromotedHeaders = Table.PromoteHeaders(Source, [PromoteAllScalars=true])",
+                "in",
+                "    PromotedHeaders"
+              ]
+            }
+          }
+        ]
+      }
+    ]
+  }
+}

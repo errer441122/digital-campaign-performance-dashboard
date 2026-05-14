@@ -13,6 +13,13 @@
 | ROAS | `revenue_eur / cost_eur` | Return on ad spend. Higher is better. |
 | Landing page performance | Sessions, bounce rate, duration, conversion rate | Helps explain whether traffic quality or page experience is limiting results. |
 | Weekly trend | KPI movement by campaign week | Shows whether performance is improving, stable or declining over time. |
+| A/B absolute uplift | `variant_b_conversion_rate - variant_a_conversion_rate` | Incremental conversion-rate movement from treatment versus control. |
+| A/B relative uplift | `absolute_uplift / variant_a_conversion_rate` | Percentage improvement versus the control baseline. |
+| p-value | Two-proportion z-test | Statistical evidence against a no-uplift baseline for the simulated test. |
+| 95% confidence interval | Difference in conversion rates +/- 1.96 standard errors | Range of plausible uplift values for the simulated experiment. |
+| Attribution logic | First-touch and last-touch revenue credit examples | Shows how channel value changes when credit rules change. |
+| Funnel conversion | `stage_users / previous_stage_users` | Identifies where users drop between impression, click, landing view, lead and conversion. |
+| Cohort conversion | `cohort conversions / cohort users` | Compares post-acquisition behavior by start week. |
 
 ## Notes
 

@@ -9,6 +9,7 @@ from pathlib import Path
 ROOT = Path(__file__).resolve().parents[1]
 CAMPAIGN_PATH = ROOT / "data" / "campaign_performance_sample.csv"
 LANDING_PATH = ROOT / "data" / "landing_page_sample.csv"
+AB_TEST_PATH = ROOT / "data" / "ab_test_conversion_sample.csv"
 
 CAMPAIGN_COLUMNS = {
     "date",
@@ -40,6 +41,18 @@ LANDING_COLUMNS = {
     "conversion_rate",
     "primary_issue",
     "recommendation",
+}
+
+AB_TEST_COLUMNS = {
+    "experiment_id",
+    "variant",
+    "variant_label",
+    "sessions",
+    "conversions",
+    "revenue_eur",
+    "primary_metric",
+    "traffic_split",
+    "notes",
 }
 
 
@@ -103,14 +116,39 @@ def validate_landing_rows(rows: list[dict[str, str]]) -> None:
             raise ValueError(f"Conversion rate mismatch in landing row {row_number}")
 
 
+def validate_ab_test_rows(rows: list[dict[str, str]]) -> None:
+    variants = {row["variant"] for row in rows}
+    if variants != {"A", "B"}:
+        raise ValueError(f"A/B test must contain variants A and B, got {sorted(variants)}")
+    for row_number, row in enumerate(rows, start=2):
+        sessions = int(row["sessions"])
+        conversions = int(row["conversions"])
+        revenue = float(row["revenue_eur"])
+        traffic_split = float(row["traffic_split"])
+        if sessions <= 0:
+            raise ValueError(f"Sessions must be positive in A/B row {row_number}")
+        if conversions < 0 or conversions > sessions:
+            raise ValueError(f"Invalid conversions in A/B row {row_number}")
+        if revenue < 0:
+            raise ValueError(f"Negative revenue in A/B row {row_number}")
+        if not 0 < traffic_split < 1:
+            raise ValueError(f"Traffic split out of range in A/B row {row_number}")
+
+
 def main() -> None:
     campaign_rows = read_rows(CAMPAIGN_PATH)
     landing_rows = read_rows(LANDING_PATH)
+    ab_test_rows = read_rows(AB_TEST_PATH)
     require_columns(campaign_rows, CAMPAIGN_COLUMNS, "campaign data")
     require_columns(landing_rows, LANDING_COLUMNS, "landing page data")
+    require_columns(ab_test_rows, AB_TEST_COLUMNS, "A/B test data")
     validate_campaign_rows(campaign_rows)
     validate_landing_rows(landing_rows)
-    print(f"Validated {len(campaign_rows)} campaign rows and {len(landing_rows)} landing page rows.")
+    validate_ab_test_rows(ab_test_rows)
+    print(
+        f"Validated {len(campaign_rows)} campaign rows, {len(landing_rows)} landing page rows "
+        f"and {len(ab_test_rows)} A/B test rows."
+    )
 
 
 if __name__ == "__main__":

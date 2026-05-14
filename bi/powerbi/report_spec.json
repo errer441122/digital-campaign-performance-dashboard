@@ -1,0 +1,49 @@
+{
+  "tool": "Power BI",
+  "report": "Digital Campaign Performance Dashboard",
+  "data_boundary": "simulated portfolio data only; no production, client, advertising-platform, CRM or GA4 account data",
+  "pages": [
+    {
+      "name": "Campaign Performance",
+      "purpose": "Executive marketing view of CTR, CPC, conversion rate, CPA, ROAS, revenue and channel mix.",
+      "visuals": [
+        {"type": "card", "measure": "CTR"},
+        {"type": "card", "measure": "CPC"},
+        {"type": "card", "measure": "Conversion Rate"},
+        {"type": "card", "measure": "CPA"},
+        {"type": "card", "measure": "ROAS"},
+        {"type": "bar", "axis": "channel", "value": "revenue_eur"},
+        {"type": "table", "fields": ["channel", "campaign", "device", "conversions", "revenue_eur"]}
+      ]
+    },
+    {
+      "name": "Landing Pages",
+      "purpose": "Landing page review that separates media performance from page experience issues.",
+      "visuals": [
+        {"type": "scatter", "x": "bounce_rate", "y": "Landing Page Conversion Rate", "legend": "device"},
+        {"type": "bar", "axis": "landing_page", "value": "conversions"},
+        {"type": "table", "fields": ["landing_page", "device", "primary_issue", "recommendation"]}
+      ]
+    },
+    {
+      "name": "A/B Testing",
+      "purpose": "Variant A vs B conversion uplift, revenue-per-session guardrail and rollout recommendation.",
+      "visuals": [
+        {"type": "card", "measure": "A Conversion Rate"},
+        {"type": "card", "measure": "B Conversion Rate"},
+        {"type": "card", "measure": "A/B Uplift"},
+        {"type": "bar", "axis": "variant_label", "value": "conversions"},
+        {"type": "table", "fields": ["experiment_id", "variant", "sessions", "conversions", "revenue_eur"]}
+      ]
+    },
+    {
+      "name": "Weekly Trend",
+      "purpose": "Weekly campaign trend for conversions, revenue and ROAS movement.",
+      "visuals": [
+        {"type": "line", "axis": "date", "value": "conversions"},
+        {"type": "line", "axis": "date", "value": "revenue_eur"},
+        {"type": "line", "axis": "date", "value": "ROAS"}
+      ]
+    }
+  ]
+}

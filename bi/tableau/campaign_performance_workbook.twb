@@ -1,0 +1,43 @@
+<?xml version='1.0' encoding='utf-8' ?>
+<workbook source-build='portfolio-text-artifact' version='18.1'>
+  <datasources>
+    <datasource name='CampaignPerformance' caption='Campaign Performance CSV'>
+      <connection class='textscan' filename='digital-campaign-performance-dashboard/data/campaign_performance_sample.csv' />
+    </datasource>
+    <datasource name='LandingPages' caption='Landing Page CSV'>
+      <connection class='textscan' filename='digital-campaign-performance-dashboard/data/landing_page_sample.csv' />
+    </datasource>
+    <datasource name='AbTestResults' caption='A/B Test CSV'>
+      <connection class='textscan' filename='digital-campaign-performance-dashboard/data/ab_test_conversion_sample.csv' />
+    </datasource>
+  </datasources>
+  <worksheets>
+    <worksheet name='Campaign Performance'>
+      <table>
+        <view>
+          <datasources>
+            <datasource-dependencies datasource='CampaignPerformance' />
+          </datasources>
+        </view>
+      </table>
+    </worksheet>
+    <worksheet name='Landing Pages'>
+      <table>
+        <view>
+          <datasources>
+            <datasource-dependencies datasource='LandingPages' />
+          </datasources>
+        </view>
+      </table>
+    </worksheet>
+    <worksheet name='A/B Testing'>
+      <table>
+        <view>
+          <datasources>
+            <datasource-dependencies datasource='AbTestResults' />
+          </datasources>
+        </view>
+      </table>
+    </worksheet>
+  </worksheets>
+</workbook>

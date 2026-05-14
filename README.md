@@ -2,6 +2,10 @@
 
 Simulated digital campaign analytics case study for junior Web/Digital/Campaign Analyst roles.
 
+## Dashboard preview
+
+![Campaign dashboard preview](assets/campaign_dashboard_preview.png)
+
 ## What this project shows
 
 - I can define and explain campaign KPIs.

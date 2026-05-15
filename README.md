@@ -49,14 +49,14 @@ Simulated digital campaign analytics case study for junior Web/Digital/Campaign 
 | A/B testing | `reports/ab_test_marketing_uplift.md`, `src/analyze_ab_test.py` | Conversion uplift, 95% confidence interval, p-value, Bayesian probability and recommendation |
 | GA4/tracking plan | `tracking/GA4_EVENT_PLAN.md`, `tracking/TRACKING_QA_CHECKLIST.md` | GA4 event model, key events, parameters, audiences, BigQuery-style export shape and QA cases |
 | UTM and consent governance | `tracking/UTM_TAXONOMY.md`, `tracking/CONSENT_MODE_GDPR_NOTES.md` | Campaign URL taxonomy, source/medium controls, Consent Mode signals and GDPR-aware measurement boundaries |
-| SQL evidence | `../sql/SQL_EVIDENCE.md`, `../sql/marketing_analytics_evidence.sql` | Joins, CTEs, window functions, funnel, cohort, CRM lifecycle, attribution and KPI aggregation |
+| SQL evidence | `sql/SQL_EVIDENCE.md`, `sql/marketing_analytics_evidence.sql` | Joins, CTEs, window functions, funnel, CRM lifecycle, attribution and KPI aggregation |
 | BI evidence | `bi/README.md`, `bi/powerbi/model.bim`, `bi/powerbi/report_spec.json`, `bi/tableau/campaign_performance_workbook.twb`, `bi/looker_studio/report_spec.md`, `tracking/looker_studio_dashboard_spec.md` | Power BI semantic model/report spec, Tableau workbook skeleton and Looker Studio dashboard specification for mainstream BI review |
 
 ## Recruiter 5-minute route
 
 1. Open `reports/executive_summary.md`
 2. Review `reports/ab_test_marketing_uplift.md`
-3. Open `../sql/SQL_EVIDENCE.md`
+3. Open `sql/SQL_EVIDENCE.md`
 4. Read `tracking/GA4_EVENT_PLAN.md`, `tracking/UTM_TAXONOMY.md`, `tracking/CONSENT_MODE_GDPR_NOTES.md` and `tracking/TRACKING_QA_CHECKLIST.md`
 5. Review `bi/README.md`, `bi/looker_studio/report_spec.md` and `tracking/looker_studio_dashboard_spec.md`
 6. Check `dashboard/campaign_dashboard.xlsx`
@@ -73,7 +73,10 @@ This is a portfolio case study using simulated data only. It does not claim acce
 | `data/campaign_performance_sample.csv` | Simulated campaign performance sample with KPI fields. |
 | `data/landing_page_sample.csv` | Simulated landing page performance sample. |
 | `data/ab_test_conversion_sample.csv` | Simulated landing-page A/B test sample. |
+| `requirements.txt` | Pinned Python dependencies for workbook generation and tests. |
 | `dashboard/campaign_dashboard.xlsx` | Excel dashboard workbook for quick review. |
+| `sql/SQL_EVIDENCE.md` | Ten reviewer-friendly SQL queries using the committed sample CSVs. |
+| `sql/marketing_analytics_evidence.sql` | Runnable DuckDB companion file for the SQL evidence. |
 | `tracking/GA4_EVENT_PLAN.md` | GA4 event model, key events, parameters, audiences, custom dimensions and BigQuery-style export shape for a live implementation. |
 | `tracking/UTM_TAXONOMY.md` | UTM naming convention, source/medium controls, valid/invalid examples and campaign registry fields. |
 | `tracking/CONSENT_MODE_GDPR_NOTES.md` | Consent Mode signals, cookie categories and consent-aware measurement interpretation. |
@@ -90,3 +93,20 @@ This is a portfolio case study using simulated data only. It does not claim acce
 | `src/build_summary.py` | Rebuilds the markdown reports from the CSV files. |
 | `src/validate_data.py` | Validates schema, required values and KPI calculations. |
 | `tests/test_tracking_docs.py` | Verifies that tracking evidence covers GA4, consent, UTM, QA and Looker Studio artifacts. |
+
+## How to run
+
+```bash
+python -m venv .venv
+python -m pip install -r requirements.txt
+python src/validate_data.py
+python src/analyze_ab_test.py
+python src/build_summary.py
+python src/build_dashboard.py
+```
+
+To run the SQL evidence after installing DuckDB:
+
+```bash
+duckdb < sql/marketing_analytics_evidence.sql
+```

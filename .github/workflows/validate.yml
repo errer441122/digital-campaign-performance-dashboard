@@ -40,6 +40,7 @@ jobs:
           python src/attribution.py
           python src/budget_reallocation.py
           python src/crm_retention.py
+          python src/crm_lifecycle.py
           python src/build_dashboard.py
 
       - name: Run test suite

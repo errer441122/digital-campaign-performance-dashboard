@@ -27,6 +27,9 @@
 | RFM score | Quintile rank of Recency, Frequency, Monetary (1–5 each) | Lifecycle position of a customer; high R+F+M = best customers. |
 | Cohort retention | `cohort customers active in month k / cohort size` | Repeat-purchase survival by signup month; M0 = 100% by construction. |
 | Historical CLV | `total customer revenue / customers` (per channel) | Realised lifetime value; compared against acquisition CPA to avoid CPA-only decisions. |
+| Lifecycle stage | Rule-based: Subscriber→Lead→MQL→SQL / Customer→Churn Risk→Reactivation | Where a contact sits in the marketing/sales funnel; drives the recommended automation. |
+| Lead score | Capped additive 0-100 (demo, key pages, forms, clicks, recency, channel) | Prioritisation signal with a per-contact reason; thresholds set MQL. |
+| Campaign-eligible rate | `opted_in contacts / all contacts` | Share legally reachable by email/automation; consent is a hard gate, never bought back by score. |
 | GA4 key event | Marked conversion event such as `generate_lead` | Live-web analogue for the simulated conversion outcome. |
 | UTM validity | Required UTM fields present and aligned with taxonomy | Campaign-link quality check before launch and dashboard ingestion. |
 | Consent status | CMP and Consent Mode state for analytics/ad storage | Confirms whether tags behave correctly under GDPR-oriented consent choices. |

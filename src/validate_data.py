@@ -12,6 +12,7 @@ LANDING_PATH = ROOT / "data" / "landing_page_sample.csv"
 AB_TEST_PATH = ROOT / "data" / "ab_test_conversion_sample.csv"
 PATHS_PATH = ROOT / "data" / "conversion_paths_sample.csv"
 CRM_PATH = ROOT / "data" / "crm_orders_sample.csv"
+CRM_CONTACTS_PATH = ROOT / "data" / "crm_contacts_sample.csv"
 
 CAMPAIGN_COLUMNS = {
     "date",
@@ -195,26 +196,73 @@ def validate_crm_rows(rows: list[dict[str, str]]) -> None:
             raise ValueError(f"cohort_month does not match signup_date in CRM row {row_number}")
 
 
+CRM_CONTACTS_COLUMNS = {
+    "contact_id",
+    "acquisition_channel",
+    "signup_date",
+    "has_purchase",
+    "days_since_last_activity",
+    "consent_status",
+    "consent_source",
+    "page_views",
+    "key_page_views",
+    "email_clicks",
+    "form_submits",
+    "demo_request",
+    "webinar_signup",
+}
+CONSENT_STATES = {"opted_in", "opted_out", "unknown"}
+
+
+def validate_crm_contacts_rows(rows: list[dict[str, str]]) -> None:
+    seen: set[str] = set()
+    for row_number, row in enumerate(rows, start=2):
+        cid = row["contact_id"]
+        if not cid:
+            raise ValueError(f"Missing contact_id in contacts row {row_number}")
+        if cid in seen:
+            raise ValueError(f"Duplicate contact_id in contacts row {row_number}")
+        seen.add(cid)
+        if row["consent_status"] not in CONSENT_STATES:
+            raise ValueError(f"Invalid consent_status in contacts row {row_number}")
+        for field in ("has_purchase", "demo_request", "webinar_signup"):
+            if row[field] not in ("0", "1"):
+                raise ValueError(f"{field} must be 0/1 in contacts row {row_number}")
+        for field in (
+            "days_since_last_activity", "page_views", "key_page_views",
+            "email_clicks", "form_submits",
+        ):
+            if int(row[field]) < 0:
+                raise ValueError(f"Negative {field} in contacts row {row_number}")
+        if int(row["key_page_views"]) > int(row["page_views"]):
+            raise ValueError(f"key_page_views exceeds page_views in contacts row {row_number}")
+        if row["consent_status"] == "unknown" and row["consent_source"] != "unknown":
+            raise ValueError(f"unknown consent must have unknown source in contacts row {row_number}")
+
+
 def main() -> None:
     campaign_rows = read_rows(CAMPAIGN_PATH)
     landing_rows = read_rows(LANDING_PATH)
     ab_test_rows = read_rows(AB_TEST_PATH)
     path_rows = read_rows(PATHS_PATH)
     crm_rows = read_rows(CRM_PATH)
+    crm_contact_rows = read_rows(CRM_CONTACTS_PATH)
     require_columns(campaign_rows, CAMPAIGN_COLUMNS, "campaign data")
     require_columns(landing_rows, LANDING_COLUMNS, "landing page data")
     require_columns(ab_test_rows, AB_TEST_COLUMNS, "A/B test data")
     require_columns(path_rows, PATHS_COLUMNS, "conversion-path data")
     require_columns(crm_rows, CRM_COLUMNS, "CRM order data")
+    require_columns(crm_contact_rows, CRM_CONTACTS_COLUMNS, "CRM contact data")
     validate_campaign_rows(campaign_rows)
     validate_landing_rows(landing_rows)
     validate_ab_test_rows(ab_test_rows)
     validate_path_rows(path_rows)
     validate_crm_rows(crm_rows)
+    validate_crm_contacts_rows(crm_contact_rows)
     print(
         f"Validated {len(campaign_rows)} campaign rows, {len(landing_rows)} landing page rows, "
-        f"{len(ab_test_rows)} A/B test rows, {len(path_rows)} conversion-path rows "
-        f"and {len(crm_rows)} CRM order rows."
+        f"{len(ab_test_rows)} A/B test rows, {len(path_rows)} conversion-path rows, "
+        f"{len(crm_rows)} CRM order rows and {len(crm_contact_rows)} CRM contact rows."
     )
 
 

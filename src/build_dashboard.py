@@ -40,10 +40,22 @@ GRID = "D8DEE8"
 SOFT = "F4F6F8"
 WHITE = "FFFFFF"
 
+# CSV cells that start with any of these are treated by Excel/LibreOffice as a
+# formula. Even though this is portfolio data, the workbook is generated from
+# untrusted free-text columns (recommendation, primary_issue, ...), so every
+# string written into a cell is neutralized (CSV-injection / DDE hardening).
+FORMULA_PREFIXES = ("=", "+", "-", "@", "\t", "\r")
+
 
 def read_csv(path: Path) -> list[dict[str, str]]:
     with path.open(newline="", encoding="utf-8") as handle:
         return list(csv.DictReader(handle))
+
+
+def neutralize_spreadsheet_formula(value: str) -> str:
+    if value.startswith(FORMULA_PREFIXES):
+        return "'" + value
+    return value
 
 
 def number(value: str) -> float:
@@ -225,7 +237,9 @@ def write_source_sheet(wb: Workbook, rows: list[dict[str, str]]) -> None:
         "roas",
     }
     for row in rows:
-        ws.append([number(row[h]) if h in numeric_cols else row[h] for h in headers])
+        ws.append(
+            [number(row[h]) if h in numeric_cols else neutralize_spreadsheet_formula(row[h]) for h in headers]
+        )
     style_table_header(ws, 1, 1, len(headers))
     style_body(ws, 2, len(rows) + 1, 1, len(headers))
     for col in range(1, len(headers) + 1):
@@ -419,16 +433,16 @@ def write_landing_sheet(wb: Workbook, rows: list[dict[str, str]]) -> None:
     sorted_rows = sorted(rows, key=lambda row: number(row["conversion_rate"]), reverse=True)
     for row_idx, row in enumerate(sorted_rows, start=5):
         values = [
-            row["landing_page"],
-            row["device"],
+            neutralize_spreadsheet_formula(row["landing_page"]),
+            neutralize_spreadsheet_formula(row["device"]),
             int(row["sessions"]),
             number(row["bounce_rate"]),
             int(row["avg_session_duration_sec"]),
             int(row["conversions"]),
             number(row["revenue_eur"]),
             number(row["conversion_rate"]),
-            row["primary_issue"],
-            row["recommendation"],
+            neutralize_spreadsheet_formula(row["primary_issue"]),
+            neutralize_spreadsheet_formula(row["recommendation"]),
             status_for_landing(row),
         ]
         for col_idx, value in enumerate(values, start=1):
@@ -600,10 +614,10 @@ def write_dashboard_sheet(wb: Workbook, rows: list[dict[str, str]], landing_rows
     for col_idx, header in enumerate(action_headers, start=1):
         ws.cell(24, col_idx, header)
     for row_idx, row in enumerate(sorted(landing_rows, key=lambda item: number(item["conversion_rate"]), reverse=True), start=25):
-        ws.cell(row_idx, 1, row["landing_page"])
-        ws.cell(row_idx, 2, row["device"])
-        ws.cell(row_idx, 3, row["primary_issue"])
-        ws.cell(row_idx, 4, row["recommendation"])
+        ws.cell(row_idx, 1, neutralize_spreadsheet_formula(row["landing_page"]))
+        ws.cell(row_idx, 2, neutralize_spreadsheet_formula(row["device"]))
+        ws.cell(row_idx, 3, neutralize_spreadsheet_formula(row["primary_issue"]))
+        ws.cell(row_idx, 4, neutralize_spreadsheet_formula(row["recommendation"]))
         ws.cell(row_idx, 5, status_for_landing(row))
     style_table_header(ws, 24, 1, 5)
     style_body(ws, 25, 24 + len(landing_rows), 1, 5)

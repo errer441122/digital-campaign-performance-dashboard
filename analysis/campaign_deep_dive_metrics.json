@@ -1,0 +1,267 @@
+{
+  "reconciliation": [
+    {
+      "check": "campaign landing pages exist in landing_page_sample",
+      "detail": "all 4 campaign pages covered",
+      "status": "pass"
+    },
+    {
+      "check": "campaign conversions reconcile across channel and segment cuts",
+      "detail": "grand=2517, by_channel=2517, by_segment=2517",
+      "status": "pass"
+    },
+    {
+      "check": "campaign vs landing-page conversion volume (independent samples)",
+      "detail": "campaign=2517, landing=2517 (separate simulated samples; reported, not asserted equal)",
+      "status": "info"
+    },
+    {
+      "check": "A/B file is one experiment with traffic split ~ 1.0",
+      "detail": "experiments=['lp_checkout_2026w16'], split_sum=1.0",
+      "status": "pass"
+    },
+    {
+      "check": "landing-page conversion_rate matches conversions/sessions",
+      "detail": "all rows consistent",
+      "status": "pass"
+    }
+  ],
+  "rows": {
+    "ab_test": 2,
+    "campaign": 48,
+    "landing": 8
+  },
+  "segmentation": {
+    "by_audience_segment": [
+      {
+        "action": "Protect / scale",
+        "audience_segment": "Existing customers",
+        "clicks": 7203,
+        "conv_share": 0.3004,
+        "conversion_rate": 0.105,
+        "conversions": 756,
+        "cost_share": 0.0623,
+        "cpa": 3.11,
+        "roas": 27.39
+      },
+      {
+        "action": "Optimize",
+        "audience_segment": "High-intent prospects",
+        "clicks": 12070,
+        "conv_share": 0.3838,
+        "conversion_rate": 0.08,
+        "conversions": 966,
+        "cost_share": 0.4083,
+        "cpa": 15.94,
+        "roas": 5.64
+      },
+      {
+        "action": "Diagnose / cap",
+        "audience_segment": "Lookalike audience",
+        "clicks": 10179,
+        "conv_share": 0.2018,
+        "conversion_rate": 0.0499,
+        "conversions": 508,
+        "cost_share": 0.3183,
+        "cpa": 23.63,
+        "roas": 3.39
+      },
+      {
+        "action": "Diagnose / cap",
+        "audience_segment": "Local prospects",
+        "clicks": 6068,
+        "conv_share": 0.114,
+        "conversion_rate": 0.0473,
+        "conversions": 287,
+        "cost_share": 0.2111,
+        "cpa": 27.74,
+        "roas": 2.52
+      }
+    ],
+    "by_device": [
+      {
+        "action": "Optimize",
+        "clicks": 18470,
+        "conv_share": 0.4843,
+        "conversion_rate": 0.066,
+        "conversions": 1219,
+        "cost_share": 0.485,
+        "cpa": 15.01,
+        "device": "Desktop",
+        "roas": 5.74
+      },
+      {
+        "action": "Optimize",
+        "clicks": 17050,
+        "conv_share": 0.5157,
+        "conversion_rate": 0.0761,
+        "conversions": 1298,
+        "cost_share": 0.515,
+        "cpa": 14.96,
+        "device": "Mobile",
+        "roas": 5.51
+      }
+    ],
+    "by_segment_channel": [
+      {
+        "action": "Protect / scale",
+        "audience_segment": "Existing customers",
+        "channel": "Email",
+        "conversion_rate": 0.105,
+        "conversions": 756,
+        "roas": 27.39
+      },
+      {
+        "action": "Optimize",
+        "audience_segment": "High-intent prospects",
+        "channel": "Paid Search",
+        "conversion_rate": 0.08,
+        "conversions": 966,
+        "roas": 5.64
+      },
+      {
+        "action": "Diagnose / cap",
+        "audience_segment": "Lookalike audience",
+        "channel": "Paid Social",
+        "conversion_rate": 0.0499,
+        "conversions": 508,
+        "roas": 3.39
+      },
+      {
+        "action": "Diagnose / cap",
+        "audience_segment": "Local prospects",
+        "channel": "Display",
+        "conversion_rate": 0.0473,
+        "conversions": 287,
+        "roas": 2.52
+      }
+    ]
+  },
+  "uplift_over_time": {
+    "baseline_conversion_rate": 0.0709,
+    "baseline_roas": 5.62,
+    "baseline_week": "2026-04-06",
+    "final_cr_uplift": -0.0013,
+    "final_roas_uplift": 0.0,
+    "weeks": [
+      {
+        "conversion_rate": 0.0709,
+        "cr_uplift_vs_baseline": 0.0,
+        "roas": 5.62,
+        "roas_uplift_vs_baseline": 0.0,
+        "week": "2026-04-06"
+      },
+      {
+        "conversion_rate": 0.0708,
+        "cr_uplift_vs_baseline": -0.0014,
+        "roas": 5.62,
+        "roas_uplift_vs_baseline": 0.0,
+        "week": "2026-04-13"
+      },
+      {
+        "conversion_rate": 0.0709,
+        "cr_uplift_vs_baseline": 0.0001,
+        "roas": 5.62,
+        "roas_uplift_vs_baseline": 0.0,
+        "week": "2026-04-20"
+      },
+      {
+        "conversion_rate": 0.0708,
+        "cr_uplift_vs_baseline": -0.001,
+        "roas": 5.62,
+        "roas_uplift_vs_baseline": 0.0,
+        "week": "2026-04-27"
+      },
+      {
+        "conversion_rate": 0.0709,
+        "cr_uplift_vs_baseline": -0.0001,
+        "roas": 5.62,
+        "roas_uplift_vs_baseline": 0.0,
+        "week": "2026-05-04"
+      },
+      {
+        "conversion_rate": 0.0708,
+        "cr_uplift_vs_baseline": -0.0013,
+        "roas": 5.62,
+        "roas_uplift_vs_baseline": 0.0,
+        "week": "2026-05-11"
+      }
+    ]
+  },
+  "weekly_trend": {
+    "conversions_cv": 0.0548,
+    "conversions_slope_per_week": 13.457,
+    "conversions_trend_r2": 0.9999,
+    "cpa_cv": 0.0006,
+    "roas_cv": 0.0,
+    "verdict": "trend-led growth",
+    "weeks": [
+      {
+        "clicks": 5444,
+        "conversion_rate": 0.0709,
+        "conversions": 386,
+        "cost_eur": 5780.0,
+        "cpa": 14.97,
+        "revenue_eur": 32500.0,
+        "roas": 5.62,
+        "week": "2026-04-06",
+        "wow_conversions": null
+      },
+      {
+        "clicks": 5635,
+        "conversion_rate": 0.0708,
+        "conversions": 399,
+        "cost_eur": 5982.3,
+        "cpa": 14.99,
+        "revenue_eur": 33637.5,
+        "roas": 5.62,
+        "week": "2026-04-13",
+        "wow_conversions": 0.0337
+      },
+      {
+        "clicks": 5824,
+        "conversion_rate": 0.0709,
+        "conversions": 413,
+        "cost_eur": 6184.6,
+        "cpa": 14.97,
+        "revenue_eur": 34775.0,
+        "roas": 5.62,
+        "week": "2026-04-20",
+        "wow_conversions": 0.0351
+      },
+      {
+        "clicks": 6014,
+        "conversion_rate": 0.0708,
+        "conversions": 426,
+        "cost_eur": 6386.9,
+        "cpa": 14.99,
+        "revenue_eur": 35912.5,
+        "roas": 5.62,
+        "week": "2026-04-27",
+        "wow_conversions": 0.0315
+      },
+      {
+        "clicks": 6206,
+        "conversion_rate": 0.0709,
+        "conversions": 440,
+        "cost_eur": 6589.2,
+        "cpa": 14.98,
+        "revenue_eur": 37050.0,
+        "roas": 5.62,
+        "week": "2026-05-04",
+        "wow_conversions": 0.0329
+      },
+      {
+        "clicks": 6397,
+        "conversion_rate": 0.0708,
+        "conversions": 453,
+        "cost_eur": 6791.5,
+        "cpa": 14.99,
+        "revenue_eur": 38187.5,
+        "roas": 5.62,
+        "week": "2026-05-11",
+        "wow_conversions": 0.0295
+      }
+    ]
+  }
+}

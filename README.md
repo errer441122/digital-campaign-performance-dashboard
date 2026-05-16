@@ -47,6 +47,7 @@ Simulated digital campaign analytics case study for junior Web/Digital/Campaign 
 | --- | --- | --- |
 | Campaign dashboard | `dashboard/campaign_dashboard.xlsx`, `assets/campaign_dashboard_preview.png` | CTR, CPC, conversion rate, CPA, ROAS, revenue, landing-page and weekly trend reporting |
 | A/B testing | `reports/ab_test_marketing_uplift.md`, `src/analyze_ab_test.py` | Conversion uplift, 95% confidence interval, p-value, Bayesian probability and recommendation |
+| Campaign deep dive | `analysis/campaign_deep_dive.md`, `src/campaign_deep_dive.py` | Variance-aware weekly trend (slope, R², coefficient of variation), uplift-over-time vs baseline, audience-segment and segment×channel economics with per-segment action, and a cross-source reconciliation of the three CSVs |
 | GA4/tracking plan | `tracking/GA4_EVENT_PLAN.md`, `tracking/TRACKING_QA_CHECKLIST.md` | GA4 event model, key events, parameters, audiences, BigQuery-style export shape and QA cases |
 | UTM and consent governance | `tracking/UTM_TAXONOMY.md`, `tracking/CONSENT_MODE_GDPR_NOTES.md` | Campaign URL taxonomy, source/medium controls, Consent Mode signals and GDPR-aware measurement boundaries |
 | SQL evidence | `sql/SQL_EVIDENCE.md`, `sql/marketing_analytics_evidence.sql` | Joins, CTEs, window functions, funnel, CRM lifecycle, attribution and KPI aggregation |
@@ -91,7 +92,11 @@ This is a portfolio case study using simulated data only. It does not claim acce
 | `docs/recruiter_5_min_route.md` | Fast route for recruiters and hiring managers. |
 | `src/analyze_ab_test.py` | Rebuilds the A/B test JSON and markdown reports. |
 | `src/build_summary.py` | Rebuilds the markdown reports from the CSV files. |
+| `src/campaign_deep_dive.py` | Variance-aware trend, uplift-over-time, segmentation and cross-source reconciliation. |
+| `src/build_dashboard.py` | Builds the Excel workbook/PNG; neutralizes CSV formula-injection on every text cell. |
 | `src/validate_data.py` | Validates schema, required values and KPI calculations. |
+| `analysis/campaign_deep_dive.md` | Deep-dive readout: weekly volatility, uplift-over-time, segment economics, reconciliation. |
+| `tests/test_campaign_deep_dive.py` | Checks the deep-dive metrics, reconciliation and formula-injection hardening. |
 | `tests/test_tracking_docs.py` | Verifies that tracking evidence covers GA4, consent, UTM, QA and Looker Studio artifacts. |
 
 ## How to run
@@ -102,6 +107,7 @@ python -m pip install -r requirements.txt
 python src/validate_data.py
 python src/analyze_ab_test.py
 python src/build_summary.py
+python src/campaign_deep_dive.py
 python src/build_dashboard.py
 ```
 

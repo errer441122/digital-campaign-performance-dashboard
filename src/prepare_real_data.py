@@ -203,8 +203,10 @@ def main() -> None:
     ensure_source()
     rows, raw, kept = build_orders()
     OUT_CSV.parent.mkdir(parents=True, exist_ok=True)
+    # Explicit LF so the file is byte-identical locally, in git (eol=lf) and
+    # in CI — the provenance SHA256 gate depends on it.
     with OUT_CSV.open("w", newline="", encoding="utf-8") as fh:
-        writer = csv.DictWriter(fh, fieldnames=list(rows[0].keys()))
+        writer = csv.DictWriter(fh, fieldnames=list(rows[0].keys()), lineterminator="\n")
         writer.writeheader()
         writer.writerows(rows)
     write_provenance(rows, raw, kept)

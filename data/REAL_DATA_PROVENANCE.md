@@ -29,7 +29,7 @@
 - **Distinct customers:** 5,878
 - **Distinct countries:** 41
 - **Order date range:** 2009-12-01 … 2011-12-09
-- **Prepared file SHA256:** `4bb1165b437b70fd50b96a8c9ca306604fd1567d216f57d0f09cb0672b55ae72`
+- **Prepared file SHA256:** `7cba38b532f7e1da69b9ed579f65afd3bcc23febc71dc7a8bce6644e43d03795`
 
 Re-running `python src/prepare_real_data.py` reproduces this file byte-for-byte
 from the SHA256-pinned source.

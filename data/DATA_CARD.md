@@ -1,88 +1,64 @@
-# Data Card — Simulated Campaign Sample
+# Data Card — Hybrid (real + clearly-labelled simulated)
 
-All CSVs in `data/` are **synthetic** and produced by
-`src/generate_campaign_data.py` with a single fixed seed
-(`SEED = 20260516`). There is no real advertising-platform, GA4, CRM or
-user-level data. Output is byte-stable: re-running the generator reproduces
-the committed files exactly.
+This repo deliberately mixes **real public data** and **disclosed
+simulated** data, and never blurs which is which.
 
-## Why a generator
+| Analysis | Data | Source |
+| --- | --- | --- |
+| RFM, cohort retention, CLV-by-country | **REAL** | Online Retail II (UCI, CC BY 4.0) — see `REAL_DATA_PROVENANCE.md` |
+| Customer lifecycle (New/Repeat/At risk/Dormant/Churned) | **REAL** | same — derived from real purchase recency/frequency |
+| Lead scoring & GDPR consent suppression | **SIMULATED** (disclosed) | `crm_engagement_overlay.csv`, keyed to the real customer IDs |
+| Campaign performance, landing, A/B | **SIMULATED** (disclosed) | `generate_campaign_data.py` |
+| Multi-touch / Markov attribution, budget reallocation | **SIMULATED** (disclosed) | `conversion_paths_sample.csv` |
 
-The earlier sample was hand-built and perfectly linear — flat conversion
-rate, flat ROAS, R² = 1.00, ±0.0% uplift every week. That left the deep
-dive with nothing to find. The generator injects disclosed, reproducible
-structure so the analysis is non-trivial while staying honest about being
-simulated.
+Why the hybrid: Online Retail II is transaction-only. No permissive public
+dataset carries advertising spend/channels, multi-touch journeys, or
+marketing-consent status — so those modules use simulated data, labelled as
+such everywhere they appear.
 
-## Generative model
+## Real data
+
+`online_retail_orders.csv` is prepared by `src/prepare_real_data.py` from
+the SHA256-pinned UCI source (real UK online retailer, Dec 2009 - Dec 2011).
+Provenance, license attribution, cleaning rules, row counts and the prepared
+file checksum are in **`REAL_DATA_PROVENANCE.md`**. Re-running the prep
+reproduces the file byte-for-byte. No values are invented.
+
+## Simulated data (generator, seed `20260516`, byte-stable)
 
 **`campaign_performance_sample.csv`** — 4 channels × 2 devices × 6 weeks.
-Each channel has fixed base economics (impressions, CTR, CPC, conversion
-rate, AOV) chosen so the ROAS ordering is **Email > Paid Search > Paid
-Social > Display** by construction. Weekly values are the base scaled by:
+Fixed base economics so ROAS ordering is **Email > Paid Search > Paid
+Social > Display** by construction, then scaled by: a gentle upward trend
+(~+2.8%/wk); multiplicative Gaussian noise (σ ≈ 4.5% demand, 3-4% rates); a
++12% week-4 promo push on Paid Search/Social; a −9% week-3 Display patch; a
++6.5% week-4 Paid Search conversion-rate lift (the A/B variant-B rollout).
+Derived columns are recomputed and re-checked within tolerance.
 
-- a gentle upward trend (~+2.8% per week);
-- multiplicative Gaussian noise (σ ≈ 4.5% on demand, 3–4% on rates);
-- a mid-flight promo push: +12% on Paid Search and Paid Social in week 4;
-- a Display soft patch: −9% in week 3;
-- a landing-page test win: Paid Search conversion rate +6.5% from week 4
-  (this is the same change the A/B sample reports as variant B).
+**`landing_page_sample.csv`** — independent landing sample from the
+campaign page/device aggregates, sessions > paid clicks, internally
+consistent conversion rates.
 
-Derived columns (`ctr`, `cpc`, `conversion_rate`, `cpa`, `roas`) are
-recomputed from the simulated counts and rounded; `src/validate_data.py`
-re-checks them within tolerance.
+**`ab_test_conversion_sample.csv`** — one experiment, two variants, split
+≈ 1.0; the narrative source of the week-4 Paid Search lift.
 
-**`landing_page_sample.csv`** — an independent landing sample derived from
-the campaign page/device aggregates, with sessions > paid clicks (organic
-and direct also land on the pages) and internally consistent conversion
-rates.
+**`conversion_paths_sample.csv`** — 20 multi-touch journeys over six
+channels; Display/Paid Social as upper-funnel assists, Paid Search/Email as
+closers — the exact last-click bias the Markov attribution quantifies.
 
-**`ab_test_conversion_sample.csv`** — one landing-page experiment
-(`lp_checkout_2026w16`), two variants, traffic split ≈ 1.0. Kept fixed
-across regenerations; it is the narrative source of the week-4 Paid Search
-conversion-rate lift.
-
-**`conversion_paths_sample.csv`** — 20 distinct multi-touch journeys over
-six channels (Paid Search, Paid Social, Display, Email, Organic Search,
-Direct). `journeys` is the total number of journeys on a path and
-`conversions` how many converted, so both rule-based and Markov
-removal-effect attribution can be computed from the same file. Display and
-Paid Social are modelled as upper-funnel assists; Paid Search and Email as
-closers — which is exactly the last-click bias the attribution analysis
-quantifies.
-
-**`crm_orders_sample.csv`** — customer-level orders generated by
-`src/generate_crm_data.py` (same seed). Each acquisition channel has a
-disclosed quality profile: number of customers, repeat propensity, average
-order value and a monthly retention hazard. Email and Organic Search
-acquire fewer but stickier, higher-value customers; Display and Paid Social
-acquire cheaper, thinner ones. Repeat orders are drawn with a propensity
-that decays per order and is truncated at the analysis date (2026-05-31).
-This is the deliberate structure behind the CLV-by-channel ranking and the
-"a channel can win on CPA and lose on LTV" point — it is injected and
-disclosed, not discovered.
-
-**`crm_contacts_sample.csv`** — contact-level CRM table generated by the
-same script with an **independent RNG** (`SEED + 5`), so it does not
-perturb the byte-stable order sample. The 930 buyers from the order sample
-are carried over as `has_purchase=1` contacts (referential consistency);
-non-buying contacts are added per channel. A disclosed per-channel profile
-sets each channel's baseline **intent** and **valid-consent rate**: Email
-and Organic acquire higher-intent, better-consented contacts; Display and
-Paid Social bring volume with weaker signal and weaker consent. Engagement
-fields (page/key-page views, email clicks, form submits, demo request,
-webinar signup) rise with latent intent; `consent_status` is drawn from
-the channel's consent rate. This is the deliberate structure the lifecycle
-funnel, lead score and consent-suppression analysis recover — injected and
-disclosed, not discovered. Email engagement requires a valid opt-in by
-construction, mirroring real consented-channel behaviour.
+**`crm_engagement_overlay.csv`** — a simulated engagement + consent overlay
+generated by `src/generate_crm_data.py`, keyed to the **real** customer IDs
+via a per-customer hashed RNG (order-independent, byte-stable). It exists
+only because the real dataset has no engagement or consent fields. The
+customer's *lifecycle* is computed from the **real** purchases; only these
+engagement/consent columns are simulated, and the report labels them so.
 
 ## Disclosed assumptions & limits
 
-- One observed point per channel; response curves in the budget model are
-  assumed, not estimated from a spend-variation test.
-- Lead-score weights and lifecycle thresholds are documented rules, not
-  fitted to an outcome; consent is a hard gate, never a score term.
-- Markov attribution assumes a first-order chain and treats observed path
-  frequencies as transition probabilities.
-- All relationships are observational and simulated — no causal claims.
+- Real data is one UK retailer, 2009-2011; it does not generalise to other
+  businesses. Relationships are observational, not causal.
+- Lead-score weights are documented rules, not fitted to an outcome;
+  consent is a hard gate, never a score term.
+- The engagement/consent overlay is independent of real purchase behaviour
+  by design (no fake correlation is injected between them).
+- Campaign-side: one observed point per channel; budget response curves are
+  assumed, not estimated; Markov attribution assumes a first-order chain.

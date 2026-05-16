@@ -1,46 +1,40 @@
-# CRM Lifecycle, Lead Scoring & Consent
+# Customer Lifecycle, Lead Scoring & Consent (hybrid)
 
-3,260 simulated contacts assigned to lifecycle stages by rule, scored 0-100, and gated by consent. Lead score and consent are independent: a high score never overrides a missing opt-in.
+**Lifecycle is REAL** — derived from purchase behaviour of 5,878 customers in *Online Retail II* (UCI, CC BY 4.0). **Lead score and consent are a disclosed SIMULATED overlay** keyed to the real customer IDs (no public dataset carries engagement or consent — see `data/DATA_CARD.md` / `data/REAL_DATA_PROVENANCE.md`).
 
-## Lifecycle funnel
+## A. Customer lifecycle — REAL (purchase recency/frequency)
 
-| Stage | Contacts | Share | Avg lead score | Campaign-eligible | Suppressed | Recommended action |
+| Stage | Customers | Share | Avg lead score* | Reachable* | Suppressed* | Recommended action |
 | --- | ---: | ---: | ---: | ---: | ---: | --- |
-| Subscriber | 236 | 7% | 7 | 124 | 112 | Welcome journey |
-| Lead | 1,145 | 35% | 16 | 678 | 467 | Educational nurture |
-| MQL | 462 | 14% | 38 | 390 | 72 | Nurturing campaign |
-| SQL | 487 | 15% | 56 | 354 | 133 | Sales handoff (create sales task) |
-| Customer | 504 | 15% | 52 | 401 | 103 | Loyalty / cross-sell flow |
-| Churn Risk | 384 | 12% | 41 | 288 | 96 | Win-back sequence |
-| Reactivation | 42 | 1% | 28 | 31 | 11 | Low-cost reactivation, then sunset |
+| New | 365 | 6% | 34 | 256 | 109 | Onboarding / second-purchase nudge |
+| Repeat | 2,524 | 43% | 34 | 1,738 | 786 | Loyalty / cross-sell flow |
+| At risk | 588 | 10% | 34 | 419 | 169 | Win-back sequence |
+| Dormant | 787 | 13% | 35 | 557 | 230 | Reactivation offer |
+| Churned | 1,614 | 27% | 33 | 1,132 | 482 | Low-cost reactivation, then sunset |
 
-## Consent / GDPR suppression
+_\* lead score / reachable / suppressed come from the simulated overlay (Section B)._
 
-**2,266 of 3,260 contacts (70%) are campaign-eligible** (`opted_in`). 994 are suppressed: 457 opted_out, 537 unknown. Suppressed contacts are excluded from every email/automation action regardless of lead score.
+## B. Lead scoring & GDPR consent — SIMULATED overlay (disclosed)
 
-## Sales-ready pipeline
+On the synthetic overlay, **4,102 of 5,878 customers (70%) are campaign-eligible** (`opted_in`). 1,776 are suppressed: 571 opted_out, 1,205 unknown. A high lead score never overrides missing consent.
 
-949 contacts are MQL or SQL; **744** of them are consent-eligible and can be actioned now (nurture or sales handoff). The rest are real demand that is legally unreachable until consent is captured — a data-collection problem, not a targeting one.
+## Priority: reachable high-value lapsing customers
 
-## Top consent-eligible contacts by lead score
+Real At-risk/Dormant customers ranked by **real** lifetime spend, filtered to consent-eligible (simulated) — the list a CRM team would action first.
 
-| Contact | Channel | Stage | Score | Why |
-| --- | --- | --- | ---: | --- |
-| C00053 | Email | Customer | 100 | demo request; 4 key-page views; 2 form submits |
-| C00113 | Email | Customer | 100 | demo request; 4 key-page views; 3 form submits |
-| L00231 | Email | SQL | 100 | demo request; 4 key-page views; 2 form submits |
-| L00976 | Paid Search | SQL | 100 | demo request; 4 key-page views; 2 form submits |
-| L00799 | Paid Search | SQL | 97 | demo request; 5 key-page views; 3 form submits |
-| C00055 | Email | Customer | 96 | demo request; 3 key-page views; 2 form submits |
-| C00364 | Paid Search | Customer | 96 | demo request; 3 key-page views; 2 form submits |
-| C00629 | Paid Social | Customer | 95 | demo request; 4 key-page views; 2 form submits |
-| C00160 | Organic Search | Customer | 94 | demo request; 3 key-page views; 3 form submits |
-| C00207 | Organic Search | Customer | 94 | demo request; 3 key-page views; 2 form submits |
-
-## Executive summary
-
-Of 3,260 contacts, 70% are legally reachable. The actionable priority is the 744 consent-eligible MQL/SQL contacts (sales handoff + nurture); Churn Risk and Reactivation buyers need retention flows; the largest lever on reachable volume is improving opt-in capture on the weak-consent acquisition channels, not buying more traffic.
+| Stage | Real spend | Lead score* | Why* |
+| --- | ---: | ---: | --- |
+| Dormant | EUR 77,556 | 40 | 2 key-page views; 10 page views; 1 form submits |
+| Dormant | EUR 44,534 | 59 | demo request; 12 page views; 1 form submits |
+| Dormant | EUR 39,916 | 37 | 2 key-page views; 11 page views; 1 form submits |
+| At risk | EUR 26,259 | 21 | 1 form submits; 2 email clicks; 6 page views |
+| Dormant | EUR 18,410 | 55 | 3 key-page views; 2 form submits; 4 email clicks |
+| At risk | EUR 17,335 | 22 | 13 page views; 1 form submits; 1 email clicks |
+| At risk | EUR 17,250 | 46 | 4 key-page views; 4 email clicks; 14 page views |
+| At risk | EUR 16,250 | 63 | 3 form submits; 5 email clicks; 2 key-page views |
+| At risk | EUR 16,246 | 23 | 2 key-page views; 2 email clicks; 5 page views |
+| At risk | EUR 15,601 | 20 | 5 email clicks; 5 page views |
 
 ## Boundary
 
-Simulated portfolio data only; no real CRM, marketing-automation or personal data. The channel→intent→consent structure is disclosed in `data/DATA_CARD.md`; relationships are observational, not causal.
+Hybrid by necessity: the lifecycle is real public transactional data (Online Retail II, UCI, CC BY 4.0); the engagement and consent columns are clearly-labelled simulated overlay because no permissive public dataset carries them. The simulated part is disclosed in `data/DATA_CARD.md`; relationships are observational, not causal.

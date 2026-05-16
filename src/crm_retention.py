@@ -1,19 +1,23 @@
-"""CRM & retention analysis on the simulated order sample.
+"""CRM & retention analysis on the **real** Online Retail II dataset.
+
+Runs on `data/online_retail_orders.csv`, prepared by `prepare_real_data.py`
+from the UCI *Online Retail II* dataset (CC BY 4.0) — real UK online-retail
+transactions, Dec 2009 - Dec 2011. See `data/REAL_DATA_PROVENANCE.md`.
 
 Four standard lifecycle artefacts a CRM / e-commerce / customer-insights
-team actually ships:
+team ships:
 
 1. **RFM segmentation** — quintile Recency/Frequency/Monetary scores mapped
    to named lifecycle segments.
-2. **Cohort retention** — monthly repeat-purchase retention by signup
-   cohort and by acquisition channel.
-3. **Historical CLV by acquisition channel** — revenue per acquired
-   customer, which reveals that the cheapest last-click channels are not
-   the most valuable over a lifetime (the bridge to the media analysis).
-4. **Lifecycle → automation map** — the trigger and flow each RFM segment
-   should enter (welcome, cross-sell, win-back, sunset).
+2. **Cohort retention** — monthly repeat-purchase retention by signup month.
+3. **Historical CLV by country** — revenue per acquired customer (Online
+   Retail II has no media/channel field, so the real breakdown is by
+   country; the channel/CPA-vs-LTV bridge lives on the clearly-labelled
+   simulated side).
+4. **Lifecycle → automation map** — the flow each RFM segment should enter.
 
-Pure standard library.
+The reference date for recency is the dataset's last order date + 1 day
+(standard RFM convention), not a hard-coded constant. Pure standard library.
 """
 
 from __future__ import annotations
@@ -21,16 +25,19 @@ from __future__ import annotations
 import csv
 import json
 from collections import defaultdict
-from datetime import date
+from datetime import date, timedelta
 from pathlib import Path
 
 ROOT = Path(__file__).resolve().parents[1]
-ORDERS_PATH = ROOT / "data" / "crm_orders_sample.csv"
+ORDERS_PATH = ROOT / "data" / "online_retail_orders.csv"
 ANALYSIS_DIR = ROOT / "analysis"
 REPORT_PATH = ANALYSIS_DIR / "crm_retention.md"
 METRICS_PATH = ANALYSIS_DIR / "crm_retention_metrics.json"
 
-ANALYSIS_DATE = date(2026, 5, 31)
+# Countries with fewer customers than this are not ranked on their own (the
+# CLV estimate would be too noisy); they are pooled and reported separately.
+MIN_CUSTOMERS_FOR_CLV = 30
+COHORT_MAX_OFFSET = 6
 
 
 def _d(s: str) -> date:
@@ -50,7 +57,7 @@ def read_orders() -> list[dict[str, object]]:
             rows.append(
                 {
                     "customer_id": r["customer_id"],
-                    "acquisition_channel": r["acquisition_channel"],
+                    "country": r["country"],
                     "cohort_month": r["cohort_month"],
                     "signup_date": _d(r["signup_date"]),
                     "order_date": _d(r["order_date"]),
@@ -90,21 +97,26 @@ def _segment(r: int, fm: int) -> str:
 AUTOMATION = {
     "Champions": ("VIP & referral flow", "RFM in top quintiles"),
     "Loyal customers": ("Cross-sell & loyalty tier", "≥2 orders, recent"),
-    "New / promising": ("Welcome / onboarding series", "First order < 30 days"),
+    "New / promising": ("Welcome / onboarding series", "Recent first order, low freq/value"),
     "Needs attention": ("Targeted reactivation offer", "Recency slipping"),
-    "At risk": ("Win-back sequence", "No order 45–90 days"),
+    "At risk": ("Win-back sequence", "Recency in 2nd quintile"),
     "Can't lose them": ("High-touch reactivation", "High value, lapsed"),
-    "Hibernating": ("Low-cost reactivation then sunset", "No order > 90 days"),
+    "Hibernating": ("Low-cost reactivation then sunset", "Low recency and value"),
 }
 
 
-def rfm(orders: list[dict[str, object]]) -> dict[str, object]:
+def reference_date(orders: list[dict[str, object]]) -> date:
+    """Standard RFM convention: last observed order date + 1 day."""
+    return max(o["order_date"] for o in orders) + timedelta(days=1)
+
+
+def rfm(orders: list[dict[str, object]], as_of: date) -> dict[str, object]:
     by_customer: dict[str, dict[str, object]] = {}
     for o in orders:
         c = by_customer.setdefault(
             o["customer_id"],
             {
-                "channel": o["acquisition_channel"],
+                "country": o["country"],
                 "orders": 0,
                 "monetary": 0.0,
                 "last": o["order_date"],
@@ -115,7 +127,7 @@ def rfm(orders: list[dict[str, object]]) -> dict[str, object]:
         if o["order_date"] > c["last"]:
             c["last"] = o["order_date"]
 
-    recency = {c: (ANALYSIS_DATE - v["last"]).days for c, v in by_customer.items()}
+    recency = {c: (as_of - v["last"]).days for c, v in by_customer.items()}
     frequency = {c: float(v["orders"]) for c, v in by_customer.items()}
     monetary = {c: v["monetary"] for c, v in by_customer.items()}
 
@@ -150,72 +162,82 @@ def rfm(orders: list[dict[str, object]]) -> dict[str, object]:
 def cohort_retention(orders: list[dict[str, object]]) -> dict[str, object]:
     cohort_customers: dict[str, set[str]] = defaultdict(set)
     active: dict[tuple[str, int], set[str]] = defaultdict(set)
-    max_offset = 5
     for o in orders:
         cohort = o["cohort_month"]
         cohort_customers[cohort].add(o["customer_id"])
         offset = _month_index(cohort, o["order_date"])
-        if 0 <= offset <= max_offset:
+        if 0 <= offset <= COHORT_MAX_OFFSET:
             active[(cohort, offset)].add(o["customer_id"])
 
     table = []
     for cohort in sorted(cohort_customers):
         base = len(cohort_customers[cohort])
         row = {"cohort_month": cohort, "customers": base, "retention": []}
-        for k in range(max_offset + 1):
+        for k in range(COHORT_MAX_OFFSET + 1):
             row["retention"].append(
                 round(len(active[(cohort, k)]) / base, 4) if base else 0.0
             )
         table.append(row)
-    return {"max_offset": max_offset, "cohorts": table}
+    return {"max_offset": COHORT_MAX_OFFSET, "cohorts": table}
 
 
-def clv_by_channel(rfm_result: dict[str, object]) -> list[dict[str, object]]:
+def clv_by_country(rfm_result: dict[str, object]) -> dict[str, object]:
     by_customer = rfm_result["_by_customer"]
     agg: dict[str, dict[str, float]] = defaultdict(
         lambda: {"customers": 0, "orders": 0.0, "revenue": 0.0}
     )
     for v in by_customer.values():
-        a = agg[v["channel"]]
+        a = agg[v["country"]]
         a["customers"] += 1
         a["orders"] += v["orders"]
         a["revenue"] += v["monetary"]
 
-    out = []
-    for ch, a in agg.items():
-        n = a["customers"]
-        out.append(
-            {
-                "acquisition_channel": ch,
-                "customers": int(n),
-                "orders_per_customer": round(a["orders"] / n, 2),
-                "avg_order_value_eur": round(a["revenue"] / a["orders"], 2),
-                "historical_clv_eur": round(a["revenue"] / n, 2),
-            }
-        )
-    return sorted(out, key=lambda r: r["historical_clv_eur"], reverse=True)
+    ranked, pooled = [], {"countries": 0, "customers": 0, "revenue": 0.0}
+    for country, a in agg.items():
+        n = int(a["customers"])
+        row = {
+            "country": country,
+            "customers": n,
+            "orders_per_customer": round(a["orders"] / n, 2),
+            "avg_order_value_eur": round(a["revenue"] / a["orders"], 2),
+            "historical_clv_eur": round(a["revenue"] / n, 2),
+        }
+        if n >= MIN_CUSTOMERS_FOR_CLV:
+            ranked.append(row)
+        else:
+            pooled["countries"] += 1
+            pooled["customers"] += n
+            pooled["revenue"] += a["revenue"]
+    ranked.sort(key=lambda r: r["historical_clv_eur"], reverse=True)
+    pooled["revenue"] = round(pooled["revenue"], 2)
+    return {"ranked": ranked, "small_n_pooled": pooled, "min_customers": MIN_CUSTOMERS_FOR_CLV}
 
 
 def run() -> dict[str, object]:
     orders = read_orders()
-    rfm_result = rfm(orders)
-    clv = clv_by_channel(rfm_result)
+    as_of = reference_date(orders)
+    rfm_result = rfm(orders, as_of)
+    clv = clv_by_country(rfm_result)
     cohorts = cohort_retention(orders)
     rfm_public = {k: v for k, v in rfm_result.items() if k != "_by_customer"}
     return {
+        "dataset": "Online Retail II (UCI, CC BY 4.0) — real",
         "orders": len(orders),
+        "reference_date": as_of.isoformat(),
         "rfm": rfm_public,
         "cohort_retention": cohorts,
-        "clv_by_channel": clv,
+        "clv_by_country": clv,
     }
 
 
 def _md(r: dict[str, object]) -> str:
     L: list[str] = []
-    L.append("# CRM & Retention\n")
+    L.append("# CRM & Retention (real data)\n")
     L.append(
-        f"{r['orders']:,} simulated orders, "
-        f"{r['rfm']['total_customers']:,} customers, six monthly cohorts.\n"
+        f"**{r['orders']:,} real orders** from "
+        f"{r['rfm']['total_customers']:,} customers — *Online Retail II* "
+        f"(UCI, CC BY 4.0), see `data/REAL_DATA_PROVENANCE.md`. Recency "
+        f"reference date: {r['reference_date']} (last order + 1 day).\n"
     )
 
     L.append("## RFM lifecycle segments → automation\n")
@@ -238,34 +260,50 @@ def _md(r: dict[str, object]) -> str:
     L.append("")
     L.append(
         "M0 is the acquisition month (100% by construction); later columns "
-        "are the share of the cohort that purchased again in that month.\n"
+        "are the share of the cohort that placed another order in that month "
+        "offset. Late cohorts are right-censored (fewer observable months).\n"
     )
 
-    L.append("## Historical CLV by acquisition channel\n")
-    L.append("| Channel | Customers | Orders/customer | AOV | Historical CLV |")
+    clv = r["clv_by_country"]
+    L.append("## Historical CLV by country\n")
+    L.append(
+        f"Online Retail II has no media/channel field, so lifetime value is "
+        f"broken down by **country**. Only countries with ≥ "
+        f"{clv['min_customers']} customers are ranked (smaller ones are too "
+        f"noisy to compare).\n"
+    )
+    L.append("| Country | Customers | Orders/customer | AOV | Historical CLV |")
     L.append("| --- | ---: | ---: | ---: | ---: |")
-    for c in r["clv_by_channel"]:
+    for c in clv["ranked"]:
         L.append(
-            f"| {c['acquisition_channel']} | {c['customers']:,} | "
+            f"| {c['country']} | {c['customers']:,} | "
             f"{c['orders_per_customer']:.2f} | EUR {c['avg_order_value_eur']:.2f} | "
             f"EUR {c['historical_clv_eur']:.2f} |"
         )
     L.append("")
-    best = r["clv_by_channel"][0]["acquisition_channel"]
-    worst = r["clv_by_channel"][-1]["acquisition_channel"]
+    p = clv["small_n_pooled"]
     L.append(
-        f"**{best}** acquires the highest-lifetime-value customers and "
-        f"**{worst}** the lowest. A channel can win on last-click CPA and "
-        f"still lose on lifetime value — acquisition budget and CRM "
-        f"treatment should be set on CLV, not first-order economics alone "
-        f"(see `analysis/budget_reallocation.md`).\n"
+        f"_{p['countries']} smaller countries ({p['customers']:,} customers, "
+        f"EUR {p['revenue']:,.0f} revenue) are pooled and not ranked._\n"
     )
+    if clv["ranked"]:
+        best, worst = clv["ranked"][0], clv["ranked"][-1]
+        L.append(
+            f"Among comparable markets, **{best['country']}** shows the "
+            f"highest historical CLV (EUR {best['historical_clv_eur']:,.0f}) "
+            f"and **{worst['country']}** the lowest "
+            f"(EUR {worst['historical_clv_eur']:,.0f}). Acquisition and CRM "
+            f"treatment should weigh realised lifetime value by market, not "
+            f"first-order value alone.\n"
+        )
 
     L.append("## Boundary\n")
     L.append(
-        "Simulated portfolio data only; no real CRM, e-commerce or "
-        "customer data. Channel→retention structure is disclosed in "
-        "`data/DATA_CARD.md`; relationships are observational, not causal.\n"
+        "Real public transactional data (Online Retail II, UCI, CC BY 4.0) — "
+        "no synthetic values in this analysis. Provenance and cleaning rules: "
+        "`data/REAL_DATA_PROVENANCE.md`. Relationships are observational, not "
+        "causal; the data is one UK retailer 2009-2011 and does not "
+        "generalise to other businesses.\n"
     )
     return "\n".join(L)
 

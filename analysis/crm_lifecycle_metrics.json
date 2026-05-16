@@ -1,171 +1,132 @@
 {
-  "consent": {
-    "eligible": 2266,
-    "eligible_rate": 0.6951,
-    "suppressed": 994,
+  "consent_overlay": {
+    "eligible": 4102,
+    "eligible_rate": 0.6979,
+    "suppressed": 1776,
     "suppressed_by_reason": {
-      "opted_out": 457,
-      "unknown": 537
+      "opted_out": 571,
+      "unknown": 1205
     }
   },
-  "contacts": 3260,
-  "lifecycle_funnel": [
+  "customers": 5878,
+  "lifecycle_funnel_real": [
     {
-      "avg_lead_score": 6.7,
-      "campaign_eligible": 124,
-      "contacts": 236,
-      "recommended_action": "Welcome journey",
-      "share": 0.0724,
-      "stage": "Subscriber",
-      "suppressed": 112
+      "avg_lead_score": 34.3,
+      "campaign_eligible": 256,
+      "customers": 365,
+      "recommended_action": "Onboarding / second-purchase nudge",
+      "share": 0.0621,
+      "stage": "New",
+      "suppressed": 109
     },
     {
-      "avg_lead_score": 16.3,
-      "campaign_eligible": 678,
-      "contacts": 1145,
-      "recommended_action": "Educational nurture",
-      "share": 0.3512,
-      "stage": "Lead",
-      "suppressed": 467
-    },
-    {
-      "avg_lead_score": 38.2,
-      "campaign_eligible": 390,
-      "contacts": 462,
-      "recommended_action": "Nurturing campaign",
-      "share": 0.1417,
-      "stage": "MQL",
-      "suppressed": 72
-    },
-    {
-      "avg_lead_score": 56.4,
-      "campaign_eligible": 354,
-      "contacts": 487,
-      "recommended_action": "Sales handoff (create sales task)",
-      "share": 0.1494,
-      "stage": "SQL",
-      "suppressed": 133
-    },
-    {
-      "avg_lead_score": 51.5,
-      "campaign_eligible": 401,
-      "contacts": 504,
+      "avg_lead_score": 34.0,
+      "campaign_eligible": 1738,
+      "customers": 2524,
       "recommended_action": "Loyalty / cross-sell flow",
-      "share": 0.1546,
-      "stage": "Customer",
-      "suppressed": 103
+      "share": 0.4294,
+      "stage": "Repeat",
+      "suppressed": 786
     },
     {
-      "avg_lead_score": 41.2,
-      "campaign_eligible": 288,
-      "contacts": 384,
+      "avg_lead_score": 34.2,
+      "campaign_eligible": 419,
+      "customers": 588,
       "recommended_action": "Win-back sequence",
-      "share": 0.1178,
-      "stage": "Churn Risk",
-      "suppressed": 96
+      "share": 0.1,
+      "stage": "At risk",
+      "suppressed": 169
     },
     {
-      "avg_lead_score": 27.8,
-      "campaign_eligible": 31,
-      "contacts": 42,
+      "avg_lead_score": 35.0,
+      "campaign_eligible": 557,
+      "customers": 787,
+      "recommended_action": "Reactivation offer",
+      "share": 0.1339,
+      "stage": "Dormant",
+      "suppressed": 230
+    },
+    {
+      "avg_lead_score": 33.3,
+      "campaign_eligible": 1132,
+      "customers": 1614,
       "recommended_action": "Low-cost reactivation, then sunset",
-      "share": 0.0129,
-      "stage": "Reactivation",
-      "suppressed": 11
+      "share": 0.2746,
+      "stage": "Churned",
+      "suppressed": 482
     }
   ],
-  "sales_ready": {
-    "eligible_to_action": 744,
-    "mql_plus_sql": 949
-  },
-  "scoring_model": {
-    "channel_quality": {
-      "Direct": 4,
-      "Display": 0,
-      "Email": 6,
-      "Organic Search": 6,
-      "Paid Search": 3,
-      "Paid Social": 1
+  "overlay": "SIMULATED engagement/consent (disclosed) keyed to real customer IDs",
+  "priority_reachable_value_accounts": [
+    {
+      "lead_score": 40,
+      "monetary_eur": 77556.46,
+      "stage": "Dormant",
+      "why": "2 key-page views; 10 page views; 1 form submits"
     },
+    {
+      "lead_score": 59,
+      "monetary_eur": 44534.3,
+      "stage": "Dormant",
+      "why": "demo request; 12 page views; 1 form submits"
+    },
+    {
+      "lead_score": 37,
+      "monetary_eur": 39916.5,
+      "stage": "Dormant",
+      "why": "2 key-page views; 11 page views; 1 form submits"
+    },
+    {
+      "lead_score": 21,
+      "monetary_eur": 26259.11,
+      "stage": "At risk",
+      "why": "1 form submits; 2 email clicks; 6 page views"
+    },
+    {
+      "lead_score": 55,
+      "monetary_eur": 18409.93,
+      "stage": "Dormant",
+      "why": "3 key-page views; 2 form submits; 4 email clicks"
+    },
+    {
+      "lead_score": 22,
+      "monetary_eur": 17335.2,
+      "stage": "At risk",
+      "why": "13 page views; 1 form submits; 1 email clicks"
+    },
+    {
+      "lead_score": 46,
+      "monetary_eur": 17249.55,
+      "stage": "At risk",
+      "why": "4 key-page views; 4 email clicks; 14 page views"
+    },
+    {
+      "lead_score": 63,
+      "monetary_eur": 16249.87,
+      "stage": "At risk",
+      "why": "3 form submits; 5 email clicks; 2 key-page views"
+    },
+    {
+      "lead_score": 23,
+      "monetary_eur": 16245.78,
+      "stage": "At risk",
+      "why": "2 key-page views; 2 email clicks; 5 page views"
+    },
+    {
+      "lead_score": 20,
+      "monetary_eur": 15601.09,
+      "stage": "At risk",
+      "why": "5 email clicks; 5 page views"
+    }
+  ],
+  "real_dataset": "Online Retail II (UCI, CC BY 4.0)",
+  "scoring_model": {
     "demo_request": 25,
     "email_click": "3 each (cap 15)",
     "form_submit": "9 each (cap 18)",
     "key_page_view": "6 each (cap 24)",
-    "mql_threshold": 30,
-    "note": "Consent is a separate hard gate, not a score term.",
-    "recency": "<=30d +12, <=90d +5, >180d -12",
+    "note": "Lifecycle is REAL (purchase-based); score/consent are a disclosed synthetic overlay. Consent is a hard gate, never a score term.",
+    "page_view": "1 each (cap 10)",
     "webinar_signup": 8
-  },
-  "top_eligible_contacts": [
-    {
-      "channel": "Email",
-      "contact_id": "C00053",
-      "lead_score": 100,
-      "reason": "demo request; 4 key-page views; 2 form submits",
-      "stage": "Customer"
-    },
-    {
-      "channel": "Email",
-      "contact_id": "C00113",
-      "lead_score": 100,
-      "reason": "demo request; 4 key-page views; 3 form submits",
-      "stage": "Customer"
-    },
-    {
-      "channel": "Email",
-      "contact_id": "L00231",
-      "lead_score": 100,
-      "reason": "demo request; 4 key-page views; 2 form submits",
-      "stage": "SQL"
-    },
-    {
-      "channel": "Paid Search",
-      "contact_id": "L00976",
-      "lead_score": 100,
-      "reason": "demo request; 4 key-page views; 2 form submits",
-      "stage": "SQL"
-    },
-    {
-      "channel": "Paid Search",
-      "contact_id": "L00799",
-      "lead_score": 97,
-      "reason": "demo request; 5 key-page views; 3 form submits",
-      "stage": "SQL"
-    },
-    {
-      "channel": "Email",
-      "contact_id": "C00055",
-      "lead_score": 96,
-      "reason": "demo request; 3 key-page views; 2 form submits",
-      "stage": "Customer"
-    },
-    {
-      "channel": "Paid Search",
-      "contact_id": "C00364",
-      "lead_score": 96,
-      "reason": "demo request; 3 key-page views; 2 form submits",
-      "stage": "Customer"
-    },
-    {
-      "channel": "Paid Social",
-      "contact_id": "C00629",
-      "lead_score": 95,
-      "reason": "demo request; 4 key-page views; 2 form submits",
-      "stage": "Customer"
-    },
-    {
-      "channel": "Organic Search",
-      "contact_id": "C00160",
-      "lead_score": 94,
-      "reason": "demo request; 3 key-page views; 3 form submits",
-      "stage": "Customer"
-    },
-    {
-      "channel": "Organic Search",
-      "contact_id": "C00207",
-      "lead_score": 94,
-      "reason": "demo request; 3 key-page views; 2 form submits",
-      "stage": "Customer"
-    }
-  ]
+  }
 }

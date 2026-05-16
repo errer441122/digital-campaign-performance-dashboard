@@ -4,7 +4,11 @@ Marketing & CRM analytics case study for Performance/Digital Marketing, CRM/Mark
 
 ## Dashboard preview
 
-![Campaign dashboard preview](assets/campaign_dashboard_preview.png)
+Built from the **real** UCI Online Retail II data (CC BY 4.0) — RFM
+segments, CLV by country and cohort retention. No synthetic values in this
+view.
+
+![CRM & retention dashboard on real Online Retail II data](assets/dashboard_preview.png)
 
 ## What this project shows
 
@@ -54,7 +58,7 @@ Marketing & CRM analytics case study for Performance/Digital Marketing, CRM/Mark
 
 | Evidence | Where to look | What it demonstrates |
 | --- | --- | --- |
-| Campaign dashboard | `dashboard/campaign_dashboard.xlsx`, `assets/campaign_dashboard_preview.png` | CTR, CPC, conversion rate, CPA, ROAS, revenue, landing-page and weekly trend reporting |
+| CRM dashboard (real) | `dashboard/crm_dashboard.xlsx`, `assets/dashboard_preview.png` | RFM segments, CLV by country and cohort retention on real Online Retail II data; workbook text cells hardened against formula injection |
 | A/B testing | `reports/ab_test_marketing_uplift.md`, `src/analyze_ab_test.py` | Conversion uplift, 95% confidence interval, p-value, Bayesian probability and recommendation |
 | Campaign deep dive | `analysis/campaign_deep_dive.md`, `src/campaign_deep_dive.py` | Variance-aware weekly trend (slope, R², coefficient of variation), uplift-over-time vs baseline, audience-segment and segment×channel economics with per-segment action, and a cross-source reconciliation of the CSVs |
 | Multi-touch attribution | `analysis/attribution.md`, `src/attribution.py` | First/last/linear/position-based credit plus a data-driven Markov removal-effect model (absorbing chain solved analytically); quantifies how last-click over-credits closers and starves assists |
@@ -73,7 +77,7 @@ Marketing & CRM analytics case study for Performance/Digital Marketing, CRM/Mark
 3. Open `sql/SQL_EVIDENCE.md`
 4. Read `tracking/GA4_EVENT_PLAN.md`, `tracking/UTM_TAXONOMY.md`, `tracking/CONSENT_MODE_GDPR_NOTES.md` and `tracking/TRACKING_QA_CHECKLIST.md`
 5. Review `bi/README.md`, `bi/looker_studio/report_spec.md` and `tracking/looker_studio_dashboard_spec.md`
-6. Check `dashboard/campaign_dashboard.xlsx`
+6. Check `dashboard/crm_dashboard.xlsx` (real RFM/CLV/cohort workbook)
 7. Read `docs/kpi_dictionary.md` and `docs/assumptions_and_limits.md`
 
 ## Boundaries
@@ -93,7 +97,8 @@ Marketing & CRM analytics case study for Performance/Digital Marketing, CRM/Mark
 | `data/crm_engagement_overlay.csv` | **Simulated** engagement/consent overlay keyed to the real customer IDs (disclosed). |
 | `data/DATA_CARD.md` | Generative model, seed and disclosed assumptions for the simulated data. |
 | `requirements.txt` | Pinned Python dependencies for workbook generation and tests. |
-| `dashboard/campaign_dashboard.xlsx` | Excel dashboard workbook for quick review. |
+| `dashboard/crm_dashboard.xlsx` | Real-data Excel workbook (RFM, CLV, cohort); text cells formula-injection-hardened. |
+| `assets/dashboard_preview.png` | Hero image rendered from the real Online Retail II CRM analysis. |
 | `sql/SQL_EVIDENCE.md` | Ten reviewer-friendly SQL queries using the committed sample CSVs. |
 | `sql/marketing_analytics_evidence.sql` | Runnable DuckDB companion file for the SQL evidence. |
 | `tracking/GA4_EVENT_PLAN.md` | GA4 event model, key events, parameters, audiences, custom dimensions and BigQuery-style export shape for a live implementation. |
@@ -118,7 +123,7 @@ Marketing & CRM analytics case study for Performance/Digital Marketing, CRM/Mark
 | `src/budget_reallocation.py` | Saturation-aware, attribution-driven budget reallocation recommendation. |
 | `src/crm_retention.py` | RFM, cohort retention and CLV-by-country on the **real** Online Retail II data. |
 | `src/crm_lifecycle.py` | **Real** purchase-based lifecycle + disclosed simulated lead-scoring/consent overlay. |
-| `src/build_dashboard.py` | Builds the Excel workbook/PNG; neutralizes CSV formula-injection on every text cell. |
+| `src/build_dashboard.py` | Renders the real-data preview PNG + Excel workbook from `crm_retention`; neutralizes formula-injection on every text cell. |
 | `src/validate_data.py` | Validates schema, required values and KPI calculations across all sample CSVs. |
 | `analysis/campaign_deep_dive.md` | Deep-dive readout: weekly volatility, uplift-over-time, segment economics, reconciliation. |
 | `analysis/attribution.md` | Multi-touch attribution readout and last-click vs data-driven credit shift. |

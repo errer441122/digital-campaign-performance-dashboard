@@ -1,0 +1,56 @@
+{
+  "assumption": "Square-root saturation fitted through one observed point per channel; it captures diminishing returns directionally but is not an estimated response curve from a spend-variation test.",
+  "channels": [
+    {
+      "attr_conv_per_1k_eur": 180.885,
+      "attr_conversions": 413.09,
+      "attr_revenue_eur": 37336.15,
+      "attr_roas": 16.349,
+      "channel": "Email",
+      "marginal_conv_per_1k_eur": 90.442,
+      "reallocatable": false,
+      "spend_eur": 2283.72
+    },
+    {
+      "attr_conv_per_1k_eur": 44.396,
+      "attr_conversions": 335.79,
+      "attr_revenue_eur": 30350.08,
+      "attr_roas": 4.013,
+      "channel": "Display",
+      "marginal_conv_per_1k_eur": 22.198,
+      "reallocatable": true,
+      "spend_eur": 7563.51
+    },
+    {
+      "attr_conv_per_1k_eur": 40.035,
+      "attr_conversions": 659.1,
+      "attr_revenue_eur": 59571.51,
+      "attr_roas": 3.618,
+      "channel": "Paid Search",
+      "marginal_conv_per_1k_eur": 20.017,
+      "reallocatable": true,
+      "spend_eur": 16463.25
+    },
+    {
+      "attr_conv_per_1k_eur": 28.755,
+      "attr_conversions": 345.65,
+      "attr_revenue_eur": 31241.21,
+      "attr_roas": 2.599,
+      "channel": "Paid Social",
+      "marginal_conv_per_1k_eur": 14.377,
+      "reallocatable": true,
+      "spend_eur": 12020.71
+    }
+  ],
+  "donor": "Paid Social",
+  "donor_drawdown_cap_pct": 0.5,
+  "email_excluded_reason": "Email attributed efficiency is structurally high because email volume scales with list quality and send strategy, not media spend; it is protected, not a reallocation recipient.",
+  "expected_incremental_conversions": 16.1,
+  "expected_incremental_revenue_eur": 1457.93,
+  "move_eur": 4197.27,
+  "reallocation_cap_pct": 0.15,
+  "recipient": "Display",
+  "recommendation": "Shift EUR 4,197 from Paid Social to Display (bounded at 15% of paid spend / 50% of the donor budget). Protect Paid Social's remaining budget and hold Email \u2014 its volume is list-driven, not spend-driven.",
+  "response_model": "conv = k * spend ** 0.5 (per-channel sqrt saturation)",
+  "total_paid_spend_eur": 38331.19
+}

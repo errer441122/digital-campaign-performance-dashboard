@@ -2,16 +2,16 @@
 
 ## Trend summary
 
-Conversions increased by 67 from the first to the last simulated week. Blended ROAS moved by 0.00 points over the same period.
+Conversions increased by 77 from the first to the last simulated week. Blended ROAS moved by -0.04 points over the same period.
 
 | Week | Clicks | Conversions | Cost | Revenue | ROAS |
 | --- | ---: | ---: | ---: | ---: | ---: |
-| 2026-04-06 | 5,444 | 386 | EUR 5,780 | EUR 32,500 | 5.62 |
-| 2026-04-13 | 5,635 | 399 | EUR 5,982 | EUR 33,638 | 5.62 |
-| 2026-04-20 | 5,824 | 413 | EUR 6,185 | EUR 34,775 | 5.62 |
-| 2026-04-27 | 6,014 | 426 | EUR 6,387 | EUR 35,912 | 5.62 |
-| 2026-05-04 | 6,206 | 440 | EUR 6,589 | EUR 37,050 | 5.62 |
-| 2026-05-11 | 6,397 | 453 | EUR 6,792 | EUR 38,188 | 5.62 |
+| 2026-04-06 | 5,417 | 408 | EUR 5,782 | EUR 33,652 | 5.82 |
+| 2026-04-13 | 5,821 | 437 | EUR 6,272 | EUR 36,129 | 5.76 |
+| 2026-04-20 | 5,733 | 443 | EUR 6,024 | EUR 36,697 | 6.09 |
+| 2026-04-27 | 6,451 | 487 | EUR 7,014 | EUR 40,470 | 5.77 |
+| 2026-05-04 | 6,008 | 455 | EUR 6,459 | EUR 37,435 | 5.80 |
+| 2026-05-11 | 6,259 | 485 | EUR 6,780 | EUR 39,179 | 5.78 |
 
 ## Interpretation
 

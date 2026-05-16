@@ -1,0 +1,270 @@
+{
+  "channels": [
+    "Direct",
+    "Display",
+    "Email",
+    "Organic Search",
+    "Paid Search",
+    "Paid Social"
+  ],
+  "comparison_table": [
+    {
+      "channel": "Direct",
+      "first_touch": 194.0,
+      "last_touch": 104.0,
+      "linear": 149.0,
+      "markov_data_driven": 104.64,
+      "position_based": 149.0
+    },
+    {
+      "channel": "Display",
+      "first_touch": 584.0,
+      "last_touch": 70.0,
+      "linear": 313.17,
+      "markov_data_driven": 335.79,
+      "position_based": 318.7
+    },
+    {
+      "channel": "Email",
+      "first_touch": 254.0,
+      "last_touch": 650.0,
+      "linear": 428.83,
+      "markov_data_driven": 413.09,
+      "position_based": 438.1
+    },
+    {
+      "channel": "Organic Search",
+      "first_touch": 251.0,
+      "last_touch": 115.0,
+      "linear": 222.67,
+      "markov_data_driven": 200.72,
+      "position_based": 206.8
+    },
+    {
+      "channel": "Paid Search",
+      "first_touch": 312.0,
+      "last_touch": 1022.0,
+      "linear": 622.17,
+      "markov_data_driven": 659.1,
+      "position_based": 640.1
+    },
+    {
+      "channel": "Paid Social",
+      "first_touch": 464.0,
+      "last_touch": 98.0,
+      "linear": 323.17,
+      "markov_data_driven": 345.65,
+      "position_based": 306.3
+    }
+  ],
+  "credit_shift_vs_last_touch": [
+    {
+      "channel": "Paid Search",
+      "delta_conversions": -362.9,
+      "delta_pct_vs_last_touch": -0.3551,
+      "last_touch": 1022.0,
+      "markov": 659.1
+    },
+    {
+      "channel": "Email",
+      "delta_conversions": -236.91,
+      "delta_pct_vs_last_touch": -0.3645,
+      "last_touch": 650.0,
+      "markov": 413.09
+    },
+    {
+      "channel": "Direct",
+      "delta_conversions": 0.64,
+      "delta_pct_vs_last_touch": 0.0062,
+      "last_touch": 104.0,
+      "markov": 104.64
+    },
+    {
+      "channel": "Organic Search",
+      "delta_conversions": 85.72,
+      "delta_pct_vs_last_touch": 0.7454,
+      "last_touch": 115.0,
+      "markov": 200.72
+    },
+    {
+      "channel": "Paid Social",
+      "delta_conversions": 247.65,
+      "delta_pct_vs_last_touch": 2.527,
+      "last_touch": 98.0,
+      "markov": 345.65
+    },
+    {
+      "channel": "Display",
+      "delta_conversions": 265.79,
+      "delta_pct_vs_last_touch": 3.797,
+      "last_touch": 70.0,
+      "markov": 335.79
+    }
+  ],
+  "last_touch_ranking": [
+    "Paid Search",
+    "Email",
+    "Organic Search",
+    "Direct",
+    "Paid Social",
+    "Display"
+  ],
+  "markov": {
+    "base_conversion_probability": 0.141337,
+    "credit": {
+      "Direct": {
+        "conversions": 104.64,
+        "removal_effect": 0.085236,
+        "revenue_eur": 9458.06,
+        "weight": 0.050823
+      },
+      "Display": {
+        "conversions": 335.79,
+        "removal_effect": 0.273515,
+        "revenue_eur": 30350.08,
+        "weight": 0.163086
+      },
+      "Email": {
+        "conversions": 413.09,
+        "removal_effect": 0.336474,
+        "revenue_eur": 37336.15,
+        "weight": 0.200625
+      },
+      "Organic Search": {
+        "conversions": 200.72,
+        "removal_effect": 0.163496,
+        "revenue_eur": 18141.99,
+        "weight": 0.097486
+      },
+      "Paid Search": {
+        "conversions": 659.1,
+        "removal_effect": 0.536859,
+        "revenue_eur": 59571.51,
+        "weight": 0.320107
+      },
+      "Paid Social": {
+        "conversions": 345.65,
+        "removal_effect": 0.281546,
+        "revenue_eur": 31241.21,
+        "weight": 0.167874
+      }
+    },
+    "total_conversions": 2059,
+    "total_revenue_eur": 186099.0
+  },
+  "markov_ranking": [
+    "Paid Search",
+    "Email",
+    "Paid Social",
+    "Display",
+    "Organic Search",
+    "Direct"
+  ],
+  "rows": 20,
+  "rule_based": {
+    "first_touch": {
+      "Direct": {
+        "conversions": 194.0,
+        "revenue_eur": 17721.08
+      },
+      "Display": {
+        "conversions": 584.0,
+        "revenue_eur": 51564.54
+      },
+      "Email": {
+        "conversions": 254.0,
+        "revenue_eur": 22681.45
+      },
+      "Organic Search": {
+        "conversions": 251.0,
+        "revenue_eur": 23111.7
+      },
+      "Paid Search": {
+        "conversions": 312.0,
+        "revenue_eur": 29679.69
+      },
+      "Paid Social": {
+        "conversions": 464.0,
+        "revenue_eur": 41340.54
+      }
+    },
+    "last_touch": {
+      "Direct": {
+        "conversions": 104.0,
+        "revenue_eur": 9438.41
+      },
+      "Display": {
+        "conversions": 70.0,
+        "revenue_eur": 4996.16
+      },
+      "Email": {
+        "conversions": 650.0,
+        "revenue_eur": 57304.71
+      },
+      "Organic Search": {
+        "conversions": 115.0,
+        "revenue_eur": 10240.95
+      },
+      "Paid Search": {
+        "conversions": 1022.0,
+        "revenue_eur": 96467.58
+      },
+      "Paid Social": {
+        "conversions": 98.0,
+        "revenue_eur": 7651.19
+      }
+    },
+    "linear": {
+      "Direct": {
+        "conversions": 149.0,
+        "revenue_eur": 13579.745
+      },
+      "Display": {
+        "conversions": 313.1667,
+        "revenue_eur": 27145.47
+      },
+      "Email": {
+        "conversions": 428.8333,
+        "revenue_eur": 38011.325
+      },
+      "Organic Search": {
+        "conversions": 222.6667,
+        "revenue_eur": 20185.2283
+      },
+      "Paid Search": {
+        "conversions": 622.1667,
+        "revenue_eur": 58852.53
+      },
+      "Paid Social": {
+        "conversions": 323.1667,
+        "revenue_eur": 28324.7017
+      }
+    },
+    "position_based": {
+      "Direct": {
+        "conversions": 149.0,
+        "revenue_eur": 13579.745
+      },
+      "Display": {
+        "conversions": 318.7,
+        "revenue_eur": 27599.422
+      },
+      "Email": {
+        "conversions": 438.1,
+        "revenue_eur": 38804.027
+      },
+      "Organic Search": {
+        "conversions": 206.8,
+        "revenue_eur": 18781.667
+      },
+      "Paid Search": {
+        "conversions": 640.1,
+        "revenue_eur": 60540.972
+      },
+      "Paid Social": {
+        "conversions": 306.3,
+        "revenue_eur": 26793.167
+      }
+    }
+  }
+}

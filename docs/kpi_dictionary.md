@@ -17,9 +17,16 @@
 | A/B relative uplift | `absolute_uplift / variant_a_conversion_rate` | Percentage improvement versus the control baseline. |
 | p-value | Two-proportion z-test | Statistical evidence against a no-uplift baseline for the simulated test. |
 | 95% confidence interval | Difference in conversion rates +/- 1.96 standard errors | Range of plausible uplift values for the simulated experiment. |
-| Attribution logic | First-touch and last-touch revenue credit examples | Shows how channel value changes when credit rules change. |
+| Attribution logic | First/last/linear/position-based credit on multi-touch paths | Shows how channel value changes when the credit rule changes. |
+| Markov removal effect | `1 - P(convert without channel) / P(convert)` | Data-driven channel contribution from an absorbing Markov chain; credit is the normalised removal effect. |
+| Attributed efficiency | `markov_attributed_conversions / spend` | Conversions per euro using data-driven credit, so upper-funnel assists are not starved by last-click. |
+| Marginal efficiency | `0.5 * attributed_conversions / spend` under `conv = k·spend^0.5` | Slope of the saturation curve at current spend; drives the reallocation donor/recipient choice. |
+| Net reallocation gain | `recipient_conv_gain - donor_conv_loss` under the curves | Bounded, conservative effect of moving a capped budget band between acquisition channels. |
 | Funnel conversion | `stage_users / previous_stage_users` | Identifies where users drop between impression, click, landing view, lead and conversion. |
 | Cohort conversion | `cohort conversions / cohort users` | Compares post-acquisition behavior by start week. |
+| RFM score | Quintile rank of Recency, Frequency, Monetary (1–5 each) | Lifecycle position of a customer; high R+F+M = best customers. |
+| Cohort retention | `cohort customers active in month k / cohort size` | Repeat-purchase survival by signup month; M0 = 100% by construction. |
+| Historical CLV | `total customer revenue / customers` (per channel) | Realised lifetime value; compared against acquisition CPA to avoid CPA-only decisions. |
 | GA4 key event | Marked conversion event such as `generate_lead` | Live-web analogue for the simulated conversion outcome. |
 | UTM validity | Required UTM fields present and aligned with taxonomy | Campaign-link quality check before launch and dashboard ingestion. |
 | Consent status | CMP and Consent Mode state for analytics/ad storage | Confirms whether tags behave correctly under GDPR-oriented consent choices. |

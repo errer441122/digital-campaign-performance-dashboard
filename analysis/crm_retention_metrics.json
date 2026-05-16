@@ -1,0 +1,185 @@
+{
+  "clv_by_channel": [
+    {
+      "acquisition_channel": "Email",
+      "avg_order_value_eur": 86.38,
+      "customers": 150,
+      "historical_clv_eur": 146.85,
+      "orders_per_customer": 1.7
+    },
+    {
+      "acquisition_channel": "Organic Search",
+      "avg_order_value_eur": 82.9,
+      "customers": 170,
+      "historical_clv_eur": 134.1,
+      "orders_per_customer": 1.62
+    },
+    {
+      "acquisition_channel": "Paid Search",
+      "avg_order_value_eur": 78.62,
+      "customers": 210,
+      "historical_clv_eur": 118.68,
+      "orders_per_customer": 1.51
+    },
+    {
+      "acquisition_channel": "Direct",
+      "avg_order_value_eur": 81.93,
+      "customers": 90,
+      "historical_clv_eur": 117.43,
+      "orders_per_customer": 1.43
+    },
+    {
+      "acquisition_channel": "Paid Social",
+      "avg_order_value_eur": 67.12,
+      "customers": 180,
+      "historical_clv_eur": 83.9,
+      "orders_per_customer": 1.25
+    },
+    {
+      "acquisition_channel": "Display",
+      "avg_order_value_eur": 58.79,
+      "customers": 130,
+      "historical_clv_eur": 70.55,
+      "orders_per_customer": 1.2
+    }
+  ],
+  "cohort_retention": {
+    "cohorts": [
+      {
+        "cohort_month": "2025-12",
+        "customers": 152,
+        "retention": [
+          1.0,
+          0.3158,
+          0.1316,
+          0.0658,
+          0.0066,
+          0.0066
+        ]
+      },
+      {
+        "cohort_month": "2026-01",
+        "customers": 167,
+        "retention": [
+          1.0,
+          0.2874,
+          0.1497,
+          0.0838,
+          0.0299,
+          0.0
+        ]
+      },
+      {
+        "cohort_month": "2026-02",
+        "customers": 169,
+        "retention": [
+          1.0,
+          0.3136,
+          0.1538,
+          0.0414,
+          0.0,
+          0.0
+        ]
+      },
+      {
+        "cohort_month": "2026-03",
+        "customers": 153,
+        "retention": [
+          1.0,
+          0.3595,
+          0.1307,
+          0.0,
+          0.0,
+          0.0
+        ]
+      },
+      {
+        "cohort_month": "2026-04",
+        "customers": 147,
+        "retention": [
+          1.0,
+          0.3061,
+          0.0,
+          0.0,
+          0.0,
+          0.0
+        ]
+      },
+      {
+        "cohort_month": "2026-05",
+        "customers": 142,
+        "retention": [
+          1.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0
+        ]
+      }
+    ],
+    "max_offset": 5
+  },
+  "orders": 1357,
+  "rfm": {
+    "segments": [
+      {
+        "automation_flow": "VIP & referral flow",
+        "customer_share": 0.1903,
+        "customers": 177,
+        "revenue_eur": 32799.81,
+        "segment": "Champions",
+        "trigger": "RFM in top quintiles"
+      },
+      {
+        "automation_flow": "Cross-sell & loyalty tier",
+        "customer_share": 0.1505,
+        "customers": 140,
+        "revenue_eur": 20154.54,
+        "segment": "Loyal customers",
+        "trigger": "\u22652 orders, recent"
+      },
+      {
+        "automation_flow": "Win-back sequence",
+        "customer_share": 0.2,
+        "customers": 186,
+        "revenue_eur": 19735.15,
+        "segment": "At risk",
+        "trigger": "No order 45\u201390 days"
+      },
+      {
+        "automation_flow": "Welcome / onboarding series",
+        "customer_share": 0.172,
+        "customers": 160,
+        "revenue_eur": 10273.59,
+        "segment": "New / promising",
+        "trigger": "First order < 30 days"
+      },
+      {
+        "automation_flow": "Low-cost reactivation then sunset",
+        "customer_share": 0.1505,
+        "customers": 140,
+        "revenue_eur": 9849.65,
+        "segment": "Hibernating",
+        "trigger": "No order > 90 days"
+      },
+      {
+        "automation_flow": "High-touch reactivation",
+        "customer_share": 0.0495,
+        "customers": 46,
+        "revenue_eur": 6370.36,
+        "segment": "Can't lose them",
+        "trigger": "High value, lapsed"
+      },
+      {
+        "automation_flow": "Targeted reactivation offer",
+        "customer_share": 0.0871,
+        "customers": 81,
+        "revenue_eur": 5405.83,
+        "segment": "Needs attention",
+        "trigger": "Recency slipping"
+      }
+    ],
+    "total_customers": 930
+  }
+}

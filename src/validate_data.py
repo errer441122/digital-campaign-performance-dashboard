@@ -10,6 +10,8 @@ ROOT = Path(__file__).resolve().parents[1]
 CAMPAIGN_PATH = ROOT / "data" / "campaign_performance_sample.csv"
 LANDING_PATH = ROOT / "data" / "landing_page_sample.csv"
 AB_TEST_PATH = ROOT / "data" / "ab_test_conversion_sample.csv"
+PATHS_PATH = ROOT / "data" / "conversion_paths_sample.csv"
+CRM_PATH = ROOT / "data" / "crm_orders_sample.csv"
 
 CAMPAIGN_COLUMNS = {
     "date",
@@ -53,6 +55,26 @@ AB_TEST_COLUMNS = {
     "primary_metric",
     "traffic_split",
     "notes",
+}
+
+
+PATHS_COLUMNS = {
+    "path_id",
+    "path",
+    "journeys",
+    "conversions",
+    "revenue_eur",
+}
+
+
+CRM_COLUMNS = {
+    "customer_id",
+    "acquisition_channel",
+    "cohort_month",
+    "signup_date",
+    "order_id",
+    "order_date",
+    "order_value_eur",
 }
 
 
@@ -135,19 +157,64 @@ def validate_ab_test_rows(rows: list[dict[str, str]]) -> None:
             raise ValueError(f"Traffic split out of range in A/B row {row_number}")
 
 
+def validate_path_rows(rows: list[dict[str, str]]) -> None:
+    seen_ids: set[str] = set()
+    for row_number, row in enumerate(rows, start=2):
+        path_id = row["path_id"]
+        if path_id in seen_ids:
+            raise ValueError(f"Duplicate path_id in conversion-path row {row_number}")
+        seen_ids.add(path_id)
+
+        touchpoints = [c.strip() for c in row["path"].split(">")]
+        if not all(touchpoints):
+            raise ValueError(f"Empty touchpoint in conversion-path row {row_number}")
+
+        journeys = int(row["journeys"])
+        conversions = int(row["conversions"])
+        revenue = float(row["revenue_eur"])
+        if journeys <= 0:
+            raise ValueError(f"Journeys must be positive in path row {row_number}")
+        if conversions < 0 or conversions > journeys:
+            raise ValueError(f"Invalid conversions in path row {row_number}")
+        if revenue < 0:
+            raise ValueError(f"Negative revenue in path row {row_number}")
+        if conversions == 0 and revenue > 0:
+            raise ValueError(f"Revenue without conversions in path row {row_number}")
+
+
+def validate_crm_rows(rows: list[dict[str, str]]) -> None:
+    for row_number, row in enumerate(rows, start=2):
+        if not row["customer_id"]:
+            raise ValueError(f"Missing customer_id in CRM row {row_number}")
+        value = float(row["order_value_eur"])
+        if value <= 0:
+            raise ValueError(f"Non-positive order value in CRM row {row_number}")
+        if row["order_date"] < row["signup_date"]:
+            raise ValueError(f"Order before signup in CRM row {row_number}")
+        if not row["signup_date"].startswith(row["cohort_month"]):
+            raise ValueError(f"cohort_month does not match signup_date in CRM row {row_number}")
+
+
 def main() -> None:
     campaign_rows = read_rows(CAMPAIGN_PATH)
     landing_rows = read_rows(LANDING_PATH)
     ab_test_rows = read_rows(AB_TEST_PATH)
+    path_rows = read_rows(PATHS_PATH)
+    crm_rows = read_rows(CRM_PATH)
     require_columns(campaign_rows, CAMPAIGN_COLUMNS, "campaign data")
     require_columns(landing_rows, LANDING_COLUMNS, "landing page data")
     require_columns(ab_test_rows, AB_TEST_COLUMNS, "A/B test data")
+    require_columns(path_rows, PATHS_COLUMNS, "conversion-path data")
+    require_columns(crm_rows, CRM_COLUMNS, "CRM order data")
     validate_campaign_rows(campaign_rows)
     validate_landing_rows(landing_rows)
     validate_ab_test_rows(ab_test_rows)
+    validate_path_rows(path_rows)
+    validate_crm_rows(crm_rows)
     print(
-        f"Validated {len(campaign_rows)} campaign rows, {len(landing_rows)} landing page rows "
-        f"and {len(ab_test_rows)} A/B test rows."
+        f"Validated {len(campaign_rows)} campaign rows, {len(landing_rows)} landing page rows, "
+        f"{len(ab_test_rows)} A/B test rows, {len(path_rows)} conversion-path rows "
+        f"and {len(crm_rows)} CRM order rows."
     )
 
 

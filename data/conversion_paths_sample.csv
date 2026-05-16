@@ -1,0 +1,21 @@
+path_id,path,journeys,conversions,revenue_eur
+p001,Paid Search,1467,192,17986.8
+p002,Email,1062,187,16184.11
+p003,Paid Social,1642,98,7651.19
+p004,Display,2101,70,4996.16
+p005,Organic Search,1267,115,10240.95
+p006,Direct,908,104,9438.41
+p007,Display>Paid Search,723,138,13316.99
+p008,Paid Social>Paid Search,689,130,12186.4
+p009,Display>Paid Social>Paid Search,564,109,10319.03
+p010,Paid Social>Email,535,113,9995.35
+p011,Display>Email,490,91,7541.83
+p012,Organic Search>Paid Search,606,136,12870.75
+p013,Paid Search>Email,438,120,11692.89
+p014,Display>Paid Social>Email,354,79,6921.28
+p015,Paid Social>Display>Paid Search,324,64,5950.14
+p016,Direct>Paid Search,381,90,8282.67
+p017,Display>Organic Search>Email,287,60,4969.25
+p018,Paid Social>Organic Search>Paid Search,263,59,5557.46
+p019,Email>Paid Search,248,67,6497.34
+p020,Display>Display>Paid Search,219,37,3500.0

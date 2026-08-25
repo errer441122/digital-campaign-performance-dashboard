@@ -1,6 +1,14 @@
 # Digital Campaign Performance Dashboard
 
-Marketing & CRM analytics case study for Performance/Digital Marketing, CRM/Marketing-Automation and E-commerce roles. **Hybrid data, fully disclosed:** CRM/retention/CLV/lifecycle run on the real UCI *Online Retail II* dataset (CC BY 4.0); campaign/attribution/consent use clearly-labelled deterministic simulation (no public source exists for those). See `data/DATA_CARD.md`.
+I built this case study to connect campaign reporting with the decisions that
+come after it: where to adjust budget, which customer groups need a different
+CRM action, and what should be measured next.
+
+It is aimed at Performance/Digital Marketing, CRM/Marketing-Automation and
+E-commerce roles. **Hybrid data, fully disclosed:** CRM/retention/CLV/lifecycle
+run on the real UCI *Online Retail II* dataset (CC BY 4.0);
+campaign/attribution/consent use clearly-labelled deterministic simulation
+(no equivalent permissive public source exists). See `data/DATA_CARD.md`.
 
 ## Dashboard preview
 

@@ -69,3 +69,9 @@ def test_clv_by_country_is_ranked_thresholded_and_consistent() -> None:
         implied = c["orders_per_customer"] * c["avg_order_value_gbp"]
         assert abs(implied - c["historical_clv_gbp"]) <= max(2.0, c["historical_clv_gbp"] * 0.02)
     assert clv["small_n_pooled"]["countries"] >= 0
+
+
+def test_real_data_report_is_labelled_in_gbp() -> None:
+    # Online Retail II is priced in sterling; a stray "EUR" is a factual error.
+    md = cr._md(RESULT)
+    assert "GBP" in md and "EUR" not in md

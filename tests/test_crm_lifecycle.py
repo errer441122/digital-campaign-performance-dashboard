@@ -57,3 +57,8 @@ def test_priority_list_is_reachable_lapsing_value() -> None:
         assert t["stage"] in ("At risk", "Dormant")
         assert t["monetary_gbp"] > 0
         assert 0 <= t["lead_score"] <= 100
+
+
+def test_real_spend_is_labelled_in_gbp() -> None:
+    md = cl._md(RESULT)
+    assert "GBP" in md and "EUR" not in md

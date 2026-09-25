@@ -36,3 +36,16 @@ def test_sql_evidence_and_requirements_are_reviewer_visible() -> None:
         "CRM Lifecycle",
     ]:
         assert required in evidence
+
+
+def test_every_sql_evidence_query_runs_and_returns_rows(monkeypatch) -> None:
+    """The SQL file is evidence only if it executes: run each query in DuckDB."""
+    import duckdb
+
+    monkeypatch.chdir(ROOT)  # queries use repo-relative paths like 'data/...'
+    queries = [q for q in read_text("sql/marketing_analytics_evidence.sql").split("-- Query ")[1:]]
+    assert len(queries) == 10
+    for q in queries:
+        title, _, body = q.partition("\n")
+        rows = duckdb.sql(body).fetchall()
+        assert rows, f"Query {title.strip()} returned no rows"

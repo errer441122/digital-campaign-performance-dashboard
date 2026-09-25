@@ -75,7 +75,7 @@ REAL_ORDERS_COLUMNS = {
     "cohort_month",
     "signup_date",
     "country",
-    "order_value_eur",
+    "order_value_gbp",
     "n_items",
 }
 
@@ -92,6 +92,11 @@ def require_columns(rows: list[dict[str, str]], expected: set[str], name: str) -
     missing = expected - actual
     if missing:
         raise ValueError(f"{name} is missing columns: {sorted(missing)}")
+
+
+def ratio(numerator: float, denominator: float) -> float:
+    """Zero-denominator KPIs are 0.0, same convention as campaign_deep_dive.enrich()."""
+    return numerator / denominator if denominator else 0.0
 
 
 def close_enough(actual: float, expected: float, tolerance: float) -> bool:
@@ -112,11 +117,11 @@ def validate_campaign_rows(rows: list[dict[str, str]]) -> None:
             raise ValueError(f"Clicks exceed impressions in row {row_number}")
 
         checks = {
-            "ctr": (clicks / impressions, 0.0002),
-            "cpc": (cost / clicks, 0.01),
-            "conversion_rate": (conversions / clicks, 0.0002),
-            "cpa": (cost / conversions, 0.02),
-            "roas": (revenue / cost, 0.02),
+            "ctr": (ratio(clicks, impressions), 0.0002),
+            "cpc": (ratio(cost, clicks), 0.01),
+            "conversion_rate": (ratio(conversions, clicks), 0.0002),
+            "cpa": (ratio(cost, conversions), 0.02),
+            "roas": (ratio(revenue, cost), 0.02),
         }
         for field, (expected, tolerance) in checks.items():
             actual = float(row[field])
@@ -136,7 +141,7 @@ def validate_landing_rows(rows: list[dict[str, str]]) -> None:
             raise ValueError(f"Bounce rate out of range in landing row {row_number}")
         if conversions > sessions:
             raise ValueError(f"Conversions exceed sessions in landing row {row_number}")
-        if not close_enough(conversion_rate, conversions / sessions, 0.0002):
+        if not close_enough(conversion_rate, ratio(conversions, sessions), 0.0002):
             raise ValueError(f"Conversion rate mismatch in landing row {row_number}")
 
 
@@ -189,7 +194,7 @@ def validate_real_orders_rows(rows: list[dict[str, str]]) -> None:
     for row_number, row in enumerate(rows, start=2):
         if not row["customer_id"]:
             raise ValueError(f"Missing customer_id in orders row {row_number}")
-        if float(row["order_value_eur"]) <= 0:
+        if float(row["order_value_gbp"]) <= 0:
             raise ValueError(f"Non-positive order value in orders row {row_number}")
         if int(row["n_items"]) <= 0:
             raise ValueError(f"Non-positive n_items in orders row {row_number}")

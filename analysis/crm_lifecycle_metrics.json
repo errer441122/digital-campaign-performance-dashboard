@@ -60,61 +60,61 @@
   "priority_reachable_value_accounts": [
     {
       "lead_score": 40,
-      "monetary_eur": 77556.46,
+      "monetary_gbp": 77556.46,
       "stage": "Dormant",
       "why": "2 key-page views; 10 page views; 1 form submits"
     },
     {
       "lead_score": 59,
-      "monetary_eur": 44534.3,
+      "monetary_gbp": 44534.3,
       "stage": "Dormant",
       "why": "demo request; 12 page views; 1 form submits"
     },
     {
       "lead_score": 37,
-      "monetary_eur": 39916.5,
+      "monetary_gbp": 39916.5,
       "stage": "Dormant",
       "why": "2 key-page views; 11 page views; 1 form submits"
     },
     {
       "lead_score": 21,
-      "monetary_eur": 26259.11,
+      "monetary_gbp": 26259.11,
       "stage": "At risk",
       "why": "1 form submits; 2 email clicks; 6 page views"
     },
     {
       "lead_score": 55,
-      "monetary_eur": 18409.93,
+      "monetary_gbp": 18409.93,
       "stage": "Dormant",
       "why": "3 key-page views; 2 form submits; 4 email clicks"
     },
     {
       "lead_score": 22,
-      "monetary_eur": 17335.2,
+      "monetary_gbp": 17335.2,
       "stage": "At risk",
       "why": "13 page views; 1 form submits; 1 email clicks"
     },
     {
       "lead_score": 46,
-      "monetary_eur": 17249.55,
+      "monetary_gbp": 17249.55,
       "stage": "At risk",
       "why": "4 key-page views; 4 email clicks; 14 page views"
     },
     {
       "lead_score": 63,
-      "monetary_eur": 16249.87,
+      "monetary_gbp": 16249.87,
       "stage": "At risk",
       "why": "3 form submits; 5 email clicks; 2 key-page views"
     },
     {
       "lead_score": 23,
-      "monetary_eur": 16245.78,
+      "monetary_gbp": 16245.78,
       "stage": "At risk",
       "why": "2 key-page views; 2 email clicks; 5 page views"
     },
     {
       "lead_score": 20,
-      "monetary_eur": 15601.09,
+      "monetary_gbp": 15601.09,
       "stage": "At risk",
       "why": "5 email clicks; 5 page views"
     }

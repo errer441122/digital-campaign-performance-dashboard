@@ -6,13 +6,13 @@
 
 | Segment | Customers | Share | Revenue | Automation flow | Trigger |
 | --- | ---: | ---: | ---: | --- | --- |
-| Champions | 1,565 | 27% | EUR 12,697,321 | VIP & referral flow | RFM in top quintiles |
-| Loyal customers | 966 | 16% | EUR 2,329,998 | Cross-sell & loyalty tier | ≥2 orders, recent |
-| At risk | 1,176 | 20% | EUR 1,450,319 | Win-back sequence | Recency in 2nd quintile |
-| Can't lose them | 140 | 2% | EUR 438,495 | High-touch reactivation | High value, lapsed |
-| Hibernating | 1,035 | 18% | EUR 414,128 | Low-cost reactivation then sunset | Low recency and value |
-| New / promising | 547 | 9% | EUR 227,005 | Welcome / onboarding series | Recent first order, low freq/value |
-| Needs attention | 449 | 8% | EUR 186,165 | Targeted reactivation offer | Recency slipping |
+| Champions | 1,532 | 26% | GBP 12,662,714 | VIP & referral flow | RFM in top quintiles |
+| Loyal customers | 938 | 16% | GBP 2,310,804 | Cross-sell & loyalty tier | ≥2 orders, recent |
+| At risk | 1,174 | 20% | GBP 1,449,813 | Win-back sequence | Recency in 2nd quintile |
+| Hibernating | 1,060 | 18% | GBP 462,963 | Low-cost reactivation then sunset | Low recency and value |
+| Can't lose them | 118 | 2% | GBP 390,847 | High-touch reactivation | High value, lapsed |
+| New / promising | 584 | 10% | GBP 258,364 | Welcome / onboarding series | Recent first order, low freq/value |
+| Needs attention | 472 | 8% | GBP 207,924 | Targeted reactivation offer | Recency slipping |
 
 ## Cohort retention (repeat-purchase, by signup month)
 
@@ -52,14 +52,14 @@ Online Retail II has no media/channel field, so lifetime value is broken down by
 
 | Country | Customers | Orders/customer | AOV | Historical CLV |
 | --- | ---: | ---: | ---: | ---: |
-| Germany | 107 | 7.38 | EUR 547.07 | EUR 4039.09 |
-| France | 93 | 6.56 | EUR 579.64 | EUR 3801.93 |
-| Spain | 39 | 3.87 | EUR 718.74 | EUR 2782.83 |
-| United Kingdom | 5,349 | 6.27 | EUR 438.96 | EUR 2752.37 |
+| Germany | 107 | 7.38 | GBP 547.07 | GBP 4039.09 |
+| France | 93 | 6.56 | GBP 579.64 | GBP 3801.93 |
+| Spain | 39 | 3.87 | GBP 718.74 | GBP 2782.83 |
+| United Kingdom | 5,349 | 6.27 | GBP 438.96 | GBP 2752.37 |
 
-_37 smaller countries (290 customers, EUR 2,126,713 revenue) are pooled and not ranked._
+_37 smaller countries (290 customers, GBP 2,126,713 revenue) are pooled and not ranked._
 
-Among comparable markets, **Germany** shows the highest historical CLV (EUR 4,039) and **United Kingdom** the lowest (EUR 2,752). Acquisition and CRM treatment should weigh realised lifetime value by market, not first-order value alone.
+Among comparable markets, **Germany** shows the highest historical CLV (GBP 4,039) and **United Kingdom** the lowest (GBP 2,752). Acquisition and CRM treatment should weigh realised lifetime value by market, not first-order value alone.
 
 ## Boundary
 

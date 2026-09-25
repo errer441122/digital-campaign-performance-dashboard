@@ -110,11 +110,11 @@ def build_orders() -> tuple[list[dict[str, object]], int, int]:
                     "order_id": inv,
                     "order_date": inv_date.date(),
                     "country": str(country).strip() if country else "Unspecified",
-                    "order_value_eur": line_value,
+                    "order_value_gbp": line_value,
                     "n_items": quantity,
                 }
             else:
-                rec["order_value_eur"] += line_value
+                rec["order_value_gbp"] += line_value
                 rec["n_items"] += quantity
                 if inv_date.date() < rec["order_date"]:
                     rec["order_date"] = inv_date.date()
@@ -138,7 +138,7 @@ def build_orders() -> tuple[list[dict[str, object]], int, int]:
                 "cohort_month": signup.isoformat()[:7],
                 "signup_date": signup.isoformat(),
                 "country": rec["country"],
-                "order_value_eur": round(float(rec["order_value_eur"]), 2),
+                "order_value_gbp": round(float(rec["order_value_gbp"]), 2),
                 "n_items": int(rec["n_items"]),
             }
         )
@@ -165,6 +165,8 @@ def write_provenance(rows: list[dict[str, object]], raw: int, kept: int) -> None
 - **Source archive SHA256:** `{SRC_ZIP_SHA256}`
 - **Status:** REAL public transactional data (UK online retailer,
   Dec 2009 - Dec 2011). Not simulated.
+- **Currency:** GBP (pounds sterling), as published in the source `Price`
+  column. Monetary fields are therefore suffixed `_gbp`; no FX conversion.
 
 ## Cleaning rules applied
 

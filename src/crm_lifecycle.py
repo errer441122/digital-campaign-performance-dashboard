@@ -53,7 +53,7 @@ def real_lifecycle() -> dict[str, dict[str, object]]:
     for o in orders:
         a = agg.setdefault(o["customer_id"], {"orders": 0, "last": o["order_date"], "monetary": 0.0})
         a["orders"] += 1
-        a["monetary"] += o["order_value_eur"]
+        a["monetary"] += o["order_value_gbp"]
         if o["order_date"] > a["last"]:
             a["last"] = o["order_date"]
 
@@ -71,7 +71,7 @@ def real_lifecycle() -> dict[str, dict[str, object]]:
         out[cid] = {
             "orders": a["orders"],
             "recency_days": recency,
-            "monetary_eur": round(a["monetary"], 2),
+            "monetary_gbp": round(a["monetary"], 2),
             "stage": stage,
         }
     return out
@@ -159,10 +159,10 @@ def run() -> dict[str, object]:
     reachable_value = sorted(
         [c for c in enriched.values()
          if c["campaign_eligible"] and c["stage"] in ("At risk", "Dormant")],
-        key=lambda c: c["monetary_eur"], reverse=True,
+        key=lambda c: c["monetary_gbp"], reverse=True,
     )[:10]
     top = [
-        {"stage": c["stage"], "monetary_eur": c["monetary_eur"],
+        {"stage": c["stage"], "monetary_gbp": c["monetary_gbp"],
          "lead_score": c["score"], "why": c["reason"]}
         for c in reachable_value
     ]
@@ -233,7 +233,7 @@ def _md(r: dict[str, object]) -> str:
     L.append("| --- | ---: | ---: | --- |")
     for t in r["priority_reachable_value_accounts"]:
         L.append(
-            f"| {t['stage']} | EUR {t['monetary_eur']:,.0f} | "
+            f"| {t['stage']} | GBP {t['monetary_gbp']:,.0f} | "
             f"{t['lead_score']} | {t['why']} |"
         )
     L.append("")

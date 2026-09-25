@@ -119,12 +119,22 @@ def build_weekly_insights(rows: list[dict[str, str]]) -> str:
     last_week = by_week[max(by_week)]
     conversion_change = last_week["conversions"] - first_week["conversions"]
     roas_change = last_week["roas"] - first_week["roas"]
+    # The narrative follows the numbers: a regenerated dataset must not keep
+    # saying "increased" / "stable" when it no longer is.
+    direction = "increased" if conversion_change >= 0 else "decreased"
+    roas_rel = roas_change / first_week["roas"] if first_week["roas"] else 0.0
+    if abs(roas_rel) < 0.05:
+        roas_read = "Blended ROAS is stable (within 5% of week 1), so volume grew without a major efficiency drop."
+    elif roas_rel > 0:
+        roas_read = f"Blended ROAS improved {roas_rel:+.0%} vs week 1: efficiency rose with volume."
+    else:
+        roas_read = f"Blended ROAS fell {roas_rel:+.0%} vs week 1: the extra volume is being bought less efficiently."
 
     return f"""# Weekly Campaign Insights
 
 ## Trend summary
 
-Conversions increased by {conversion_change:.0f} from the first to the last simulated week. Blended ROAS moved by {roas_change:.2f} points over the same period.
+Conversions {direction} by {abs(conversion_change):.0f} from the first to the last simulated week. Blended ROAS moved by {roas_change:+.2f} points over the same period.
 
 | Week | Clicks | Conversions | Cost | Revenue | ROAS |
 | --- | ---: | ---: | ---: | ---: | ---: |
@@ -132,8 +142,8 @@ Conversions increased by {conversion_change:.0f} from the first to the last simu
 
 ## Interpretation
 
-- Growth is volume-led: spend, traffic and conversions rise gradually week by week.
-- Blended ROAS is stable, which suggests the simulated campaign scales without a major efficiency drop.
+- {roas_read}
+- Week-to-week volatility and the trend fit are in `analysis/campaign_deep_dive.md`.
 - The next reporting view should split this trend by channel and landing page before changing budget.
 """
 

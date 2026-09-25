@@ -2,7 +2,8 @@
 
 Runs on `data/online_retail_orders.csv`, prepared by `prepare_real_data.py`
 from the UCI *Online Retail II* dataset (CC BY 4.0) — real UK online-retail
-transactions, Dec 2009 - Dec 2011. See `data/REAL_DATA_PROVENANCE.md`.
+transactions, Dec 2009 - Dec 2011, prices in GBP. See
+`data/REAL_DATA_PROVENANCE.md`.
 
 Four standard lifecycle artefacts a CRM / e-commerce / customer-insights
 team ships:
@@ -61,7 +62,7 @@ def read_orders() -> list[dict[str, object]]:
                     "cohort_month": r["cohort_month"],
                     "signup_date": _d(r["signup_date"]),
                     "order_date": _d(r["order_date"]),
-                    "order_value_eur": float(r["order_value_eur"]),
+                    "order_value_gbp": float(r["order_value_gbp"]),
                 }
             )
         return rows
@@ -69,13 +70,17 @@ def read_orders() -> list[dict[str, object]]:
 
 def _quintile_scores(values: dict[str, float], reverse: bool) -> dict[str, int]:
     """Rank-based 1..5 score. reverse=True means lower raw value scores higher
-    (used for recency: more recent = better)."""
-    ordered = sorted(values.items(), key=lambda kv: kv[1], reverse=not reverse)
+    (used for recency: more recent = better).
+
+    Ties share one score, taken at the midpoint of their rank run. Without
+    this, customers with the same value (e.g. the many one-order customers
+    on F) were split across quintiles by file order alone."""
+    ordered = sorted(values.values(), reverse=not reverse)
     n = len(ordered)
-    scores: dict[str, int] = {}
-    for i, (key, _v) in enumerate(ordered):
-        scores[key] = 5 - min(4, int(i * 5 / n))
-    return scores
+    run: dict[float, tuple[int, int]] = {}
+    for i, v in enumerate(ordered):
+        run[v] = (run.get(v, (i, i))[0], i)
+    return {k: 5 - min(4, int(sum(run[v]) / 2 * 5 / n)) for k, v in values.items()}
 
 
 def _segment(r: int, fm: int) -> str:
@@ -123,7 +128,7 @@ def rfm(orders: list[dict[str, object]], as_of: date) -> dict[str, object]:
             },
         )
         c["orders"] += 1
-        c["monetary"] += o["order_value_eur"]
+        c["monetary"] += o["order_value_gbp"]
         if o["order_date"] > c["last"]:
             c["last"] = o["order_date"]
 
@@ -150,7 +155,7 @@ def rfm(orders: list[dict[str, object]], as_of: date) -> dict[str, object]:
             "segment": seg,
             "customers": seg_counts[seg],
             "customer_share": round(seg_counts[seg] / total, 4),
-            "revenue_eur": round(seg_revenue[seg], 2),
+            "revenue_gbp": round(seg_revenue[seg], 2),
             "automation_flow": AUTOMATION[seg][0],
             "trigger": AUTOMATION[seg][1],
         }
@@ -199,8 +204,8 @@ def clv_by_country(rfm_result: dict[str, object]) -> dict[str, object]:
             "country": country,
             "customers": n,
             "orders_per_customer": round(a["orders"] / n, 2),
-            "avg_order_value_eur": round(a["revenue"] / a["orders"], 2),
-            "historical_clv_eur": round(a["revenue"] / n, 2),
+            "avg_order_value_gbp": round(a["revenue"] / a["orders"], 2),
+            "historical_clv_gbp": round(a["revenue"] / n, 2),
         }
         if n >= MIN_CUSTOMERS_FOR_CLV:
             ranked.append(row)
@@ -208,7 +213,7 @@ def clv_by_country(rfm_result: dict[str, object]) -> dict[str, object]:
             pooled["countries"] += 1
             pooled["customers"] += n
             pooled["revenue"] += a["revenue"]
-    ranked.sort(key=lambda r: r["historical_clv_eur"], reverse=True)
+    ranked.sort(key=lambda r: r["historical_clv_gbp"], reverse=True)
     pooled["revenue"] = round(pooled["revenue"], 2)
     return {"ranked": ranked, "small_n_pooled": pooled, "min_customers": MIN_CUSTOMERS_FOR_CLV}
 
@@ -246,7 +251,7 @@ def _md(r: dict[str, object]) -> str:
     for s in r["rfm"]["segments"]:
         L.append(
             f"| {s['segment']} | {s['customers']:,} | {s['customer_share']:.0%} | "
-            f"EUR {s['revenue_eur']:,.0f} | {s['automation_flow']} | {s['trigger']} |"
+            f"GBP {s['revenue_gbp']:,.0f} | {s['automation_flow']} | {s['trigger']} |"
         )
     L.append("")
 
@@ -277,22 +282,22 @@ def _md(r: dict[str, object]) -> str:
     for c in clv["ranked"]:
         L.append(
             f"| {c['country']} | {c['customers']:,} | "
-            f"{c['orders_per_customer']:.2f} | EUR {c['avg_order_value_eur']:.2f} | "
-            f"EUR {c['historical_clv_eur']:.2f} |"
+            f"{c['orders_per_customer']:.2f} | GBP {c['avg_order_value_gbp']:.2f} | "
+            f"GBP {c['historical_clv_gbp']:.2f} |"
         )
     L.append("")
     p = clv["small_n_pooled"]
     L.append(
         f"_{p['countries']} smaller countries ({p['customers']:,} customers, "
-        f"EUR {p['revenue']:,.0f} revenue) are pooled and not ranked._\n"
+        f"GBP {p['revenue']:,.0f} revenue) are pooled and not ranked._\n"
     )
     if clv["ranked"]:
         best, worst = clv["ranked"][0], clv["ranked"][-1]
         L.append(
             f"Among comparable markets, **{best['country']}** shows the "
-            f"highest historical CLV (EUR {best['historical_clv_eur']:,.0f}) "
+            f"highest historical CLV (GBP {best['historical_clv_gbp']:,.0f}) "
             f"and **{worst['country']}** the lowest "
-            f"(EUR {worst['historical_clv_eur']:,.0f}). Acquisition and CRM "
+            f"(GBP {worst['historical_clv_gbp']:,.0f}). Acquisition and CRM "
             f"treatment should weigh realised lifetime value by market, not "
             f"first-order value alone.\n"
         )

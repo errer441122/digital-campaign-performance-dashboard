@@ -55,5 +55,5 @@ def test_overlay_keys_onto_real_customers_only() -> None:
 def test_priority_list_is_reachable_lapsing_value() -> None:
     for t in RESULT["priority_reachable_value_accounts"]:
         assert t["stage"] in ("At risk", "Dormant")
-        assert t["monetary_eur"] > 0
+        assert t["monetary_gbp"] > 0
         assert 0 <= t["lead_score"] <= 100

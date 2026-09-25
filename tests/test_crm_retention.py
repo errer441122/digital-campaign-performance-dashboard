@@ -40,6 +40,17 @@ def test_rfm_segments_partition_all_customers() -> None:
     assert abs(sum(s["customer_share"] for s in segs) - 1.0) < 0.01
 
 
+def test_quintile_scores_give_ties_one_score() -> None:
+    # 6 of 10 customers tied on frequency 1: they must share one F score.
+    freq = {f"c{i}": 1.0 for i in range(6)} | {"c6": 2.0, "c7": 3.0, "c8": 5.0, "c9": 9.0}
+    scores = cr._quintile_scores(freq, reverse=False)
+    assert len({scores[f"c{i}"] for i in range(6)}) == 1
+    assert scores["c9"] == 5 and scores["c0"] < scores["c6"]
+    # recency: lower is better
+    rec = cr._quintile_scores({"a": 1.0, "b": 50.0, "c": 400.0}, reverse=True)
+    assert rec["a"] > rec["b"] > rec["c"]
+
+
 def test_cohort_retention_anchored_and_bounded() -> None:
     co = RESULT["cohort_retention"]
     for c in co["cohorts"]:
@@ -51,10 +62,10 @@ def test_cohort_retention_anchored_and_bounded() -> None:
 def test_clv_by_country_is_ranked_thresholded_and_consistent() -> None:
     clv = RESULT["clv_by_country"]
     ranked = clv["ranked"]
-    scores = [c["historical_clv_eur"] for c in ranked]
+    scores = [c["historical_clv_gbp"] for c in ranked]
     assert scores == sorted(scores, reverse=True)
     for c in ranked:
         assert c["customers"] >= clv["min_customers"]
-        implied = c["orders_per_customer"] * c["avg_order_value_eur"]
-        assert abs(implied - c["historical_clv_eur"]) <= max(2.0, c["historical_clv_eur"] * 0.02)
+        implied = c["orders_per_customer"] * c["avg_order_value_gbp"]
+        assert abs(implied - c["historical_clv_gbp"]) <= max(2.0, c["historical_clv_gbp"] * 0.02)
     assert clv["small_n_pooled"]["countries"] >= 0

@@ -15,6 +15,6 @@ Conversions increased by 77 from the first to the last simulated week. Blended R
 
 ## Interpretation
 
-- Growth is volume-led: spend, traffic and conversions rise gradually week by week.
-- Blended ROAS is stable, which suggests the simulated campaign scales without a major efficiency drop.
+- Blended ROAS is stable (within 5% of week 1), so volume grew without a major efficiency drop.
+- Week-to-week volatility and the trend fit are in `analysis/campaign_deep_dive.md`.
 - The next reporting view should split this trend by channel and landing page before changing budget.

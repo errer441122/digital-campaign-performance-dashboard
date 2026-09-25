@@ -71,12 +71,12 @@ def build_preview(result: dict[str, object]) -> None:
              "real UK e-commerce, 2009-2011",
              fontproperties=_font(13), color=MUTE)
 
-    top_seg = max(segments, key=lambda s: s["revenue_eur"])
+    top_seg = max(segments, key=lambda s: s["revenue_gbp"])
     kpis = [
         (f"{result['orders']:,}", "real orders"),
         (f"{rfm['total_customers']:,}", "customers"),
         (f"{top_seg['customer_share']:.0%}", f"are {top_seg['segment']}"),
-        (f"EUR {top_seg['revenue_eur']/1e6:.1f}M", f"{top_seg['segment']} revenue"),
+        (f"GBP {top_seg['revenue_gbp']/1e6:.1f}M", f"{top_seg['segment']} revenue"),
     ]
     ax_k = fig.add_subplot(gs[0, :])
     ax_k.axis("off")
@@ -94,7 +94,7 @@ def build_preview(result: dict[str, object]) -> None:
     custs = [s["customers"] for s in segs]
     ax1.barh(names, custs, color=ACCENTS[0])
     for i, s in enumerate(segs):
-        ax1.text(s["customers"], i, f"  EUR {s['revenue_eur']/1e6:.1f}M",
+        ax1.text(s["customers"], i, f"  GBP {s['revenue_gbp']/1e6:.1f}M",
                  va="center", fontproperties=_font(11), color=MUTE)
     ax1.set_title("RFM lifecycle segments (customers; revenue labelled)",
                   fontproperties=_font(15, "bold"), color=INK, loc="left", pad=10)
@@ -106,16 +106,16 @@ def build_preview(result: dict[str, object]) -> None:
     # ---- CLV by country ----
     ax2 = fig.add_subplot(gs[1, 1])
     cnames = [c["country"] for c in clv]
-    cvals = [c["historical_clv_eur"] for c in clv]
+    cvals = [c["historical_clv_gbp"] for c in clv]
     ax2.bar(cnames, cvals, color=ACCENTS[1])
     for i, c in enumerate(clv):
-        ax2.text(i, c["historical_clv_eur"], f"EUR {c['historical_clv_eur']:,.0f}",
+        ax2.text(i, c["historical_clv_gbp"], f"GBP {c['historical_clv_gbp']:,.0f}",
                  ha="center", va="bottom", fontproperties=_font(10), color=MUTE)
     ax2.set_title("Historical CLV by country (≥ %d customers)"
                   % result["clv_by_country"]["min_customers"],
                   fontproperties=_font(15, "bold"), color=INK, loc="left", pad=10)
     ax2.tick_params(labelsize=11)
-    ax2.set_ylabel("EUR / customer", fontproperties=_font(11), color=MUTE)
+    ax2.set_ylabel("GBP / customer", fontproperties=_font(11), color=MUTE)
     for sp in ("top", "right"):
         ax2.spines[sp].set_visible(False)
 
@@ -166,15 +166,15 @@ def build_workbook(result: dict[str, object]) -> None:
     wb.remove(wb.active)
     write_sheet(
         "RFM segments",
-        ["Segment", "Customers", "Share", "Revenue EUR", "Automation flow", "Trigger"],
-        [[s["segment"], s["customers"], s["customer_share"], s["revenue_eur"],
+        ["Segment", "Customers", "Share", "Revenue GBP", "Automation flow", "Trigger"],
+        [[s["segment"], s["customers"], s["customer_share"], s["revenue_gbp"],
           s["automation_flow"], s["trigger"]] for s in result["rfm"]["segments"]],
     )
     write_sheet(
         "CLV by country",
-        ["Country", "Customers", "Orders/customer", "AOV EUR", "Historical CLV EUR"],
+        ["Country", "Customers", "Orders/customer", "AOV GBP", "Historical CLV GBP"],
         [[c["country"], c["customers"], c["orders_per_customer"],
-          c["avg_order_value_eur"], c["historical_clv_eur"]]
+          c["avg_order_value_gbp"], c["historical_clv_gbp"]]
          for c in result["clv_by_country"]["ranked"]],
     )
     co = result["cohort_retention"]

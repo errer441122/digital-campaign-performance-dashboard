@@ -1,4 +1,4 @@
-customer_id,order_id,order_date,cohort_month,signup_date,country,order_value_eur,n_items
+customer_id,order_id,order_date,cohort_month,signup_date,country,order_value_gbp,n_items
 12346,491725,2009-12-14,2009-12,2009-12-14,United Kingdom,45.0,10
 12346,491742,2009-12-14,2009-12,2009-12-14,United Kingdom,22.5,5
 12346,491744,2009-12-14,2009-12,2009-12-14,United Kingdom,22.5,5

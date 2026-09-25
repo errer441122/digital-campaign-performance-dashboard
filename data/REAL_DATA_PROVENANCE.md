@@ -12,6 +12,8 @@
 - **Source archive SHA256:** `572e36277c2390fbfde10664750731e0a86f55e33470d91919085f0408e67bfb`
 - **Status:** REAL public transactional data (UK online retailer,
   Dec 2009 - Dec 2011). Not simulated.
+- **Currency:** GBP (pounds sterling), as published in the source `Price`
+  column. Monetary fields are therefore suffixed `_gbp`; no FX conversion.
 
 ## Cleaning rules applied
 
@@ -29,7 +31,7 @@
 - **Distinct customers:** 5,878
 - **Distinct countries:** 41
 - **Order date range:** 2009-12-01 … 2011-12-09
-- **Prepared file SHA256:** `7cba38b532f7e1da69b9ed579f65afd3bcc23febc71dc7a8bce6644e43d03795`
+- **Prepared file SHA256:** `548c65de4962cfe98dcd451e14261dd0a2d2c7b6d6627439ce666f1eccb630d9`
 
 Re-running `python src/prepare_real_data.py` reproduces this file byte-for-byte
 from the SHA256-pinned source.

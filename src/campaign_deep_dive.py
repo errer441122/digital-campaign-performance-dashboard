@@ -310,8 +310,12 @@ def write_reports(result: dict[str, object]) -> None:
         f"Conversions slope **{wt['conversions_slope_per_week']:+.1f}/week** "
         f"(R² {wt['conversions_trend_r2']:.2f}); coefficient of variation — "
         f"conversions {wt['conversions_cv']:.1%}, ROAS {wt['roas_cv']:.1%}, "
-        f"CPA {wt['cpa_cv']:.1%}. Verdict: **{wt['verdict']}** — the rise is "
-        f"explained by a stable upward slope, not week-to-week noise.\n"
+        f"CPA {wt['cpa_cv']:.1%}. Verdict: **{wt['verdict']}** — "
+        + (
+            "the rise is explained by a stable upward slope, not week-to-week noise.\n"
+            if wt["verdict"] == "trend-led growth"
+            else "the slope does not explain the week-to-week movement; do not read it as growth.\n"
+        )
     )
 
     L.append("## Uplift over time (vs week-1 baseline)\n")

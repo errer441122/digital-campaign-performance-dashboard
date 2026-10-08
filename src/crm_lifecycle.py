@@ -252,8 +252,8 @@ def _md(r: dict[str, object]) -> str:
 def main() -> None:
     result = run()
     ANALYSIS_DIR.mkdir(parents=True, exist_ok=True)
-    METRICS_PATH.write_text(json.dumps(result, indent=2, sort_keys=True) + "\n", encoding="utf-8")
-    REPORT_PATH.write_text(_md(result), encoding="utf-8")
+    METRICS_PATH.write_text(json.dumps(result, indent=2, sort_keys=True) + "\n", encoding="utf-8", newline="\n")
+    REPORT_PATH.write_text(_md(result), encoding="utf-8", newline="\n")
     print(f"Wrote {REPORT_PATH.relative_to(ROOT)} and {METRICS_PATH.relative_to(ROOT)}")
 
 

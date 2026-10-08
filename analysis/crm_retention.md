@@ -6,13 +6,13 @@
 
 | Segment | Customers | Share | Revenue | Automation flow | Trigger |
 | --- | ---: | ---: | ---: | --- | --- |
-| Champions | 1,532 | 26% | GBP 12,662,714 | VIP & referral flow | RFM in top quintiles |
-| Loyal customers | 938 | 16% | GBP 2,310,804 | Cross-sell & loyalty tier | ≥2 orders, recent |
-| At risk | 1,174 | 20% | GBP 1,449,813 | Win-back sequence | Recency in 2nd quintile |
-| Hibernating | 1,060 | 18% | GBP 462,963 | Low-cost reactivation then sunset | Low recency and value |
-| Can't lose them | 118 | 2% | GBP 390,847 | High-touch reactivation | High value, lapsed |
-| New / promising | 584 | 10% | GBP 258,364 | Welcome / onboarding series | Recent first order, low freq/value |
-| Needs attention | 472 | 8% | GBP 207,924 | Targeted reactivation offer | Recency slipping |
+| Champions | 1,537 | 26% | GBP 12,433,253 | VIP & referral flow | RFM in top quintiles |
+| Loyal customers | 937 | 16% | GBP 2,283,898 | Cross-sell & loyalty tier | ≥2 orders, recent |
+| At risk | 1,174 | 20% | GBP 1,402,158 | Win-back sequence | Recency in 2nd quintile |
+| Hibernating | 1,059 | 18% | GBP 461,722 | Low-cost reactivation then sunset | Low recency and value |
+| Can't lose them | 119 | 2% | GBP 392,088 | High-touch reactivation | High value, lapsed |
+| New / promising | 581 | 10% | GBP 251,783 | Welcome / onboarding series | Recent first order, low freq/value |
+| Needs attention | 471 | 8% | GBP 206,649 | Targeted reactivation offer | Recency slipping |
 
 ## Cohort retention (repeat-purchase, by signup month)
 
@@ -36,15 +36,15 @@
 | 2011-03 | 179 | 100% | 18% | 22% | 20% | 22% | 15% | 21% |
 | 2011-04 | 106 | 100% | 25% | 20% | 20% | 18% | 24% | 18% |
 | 2011-05 | 111 | 100% | 23% | 24% | 16% | 22% | 21% | 26% |
-| 2011-06 | 108 | 100% | 23% | 21% | 27% | 20% | 29% | 8% |
-| 2011-07 | 102 | 100% | 22% | 30% | 27% | 34% | 16% | 0% |
-| 2011-08 | 106 | 100% | 27% | 31% | 26% | 17% | 0% | 0% |
-| 2011-09 | 189 | 100% | 27% | 38% | 15% | 0% | 0% | 0% |
-| 2011-10 | 221 | 100% | 32% | 16% | 0% | 0% | 0% | 0% |
-| 2011-11 | 191 | 100% | 14% | 0% | 0% | 0% | 0% | 0% |
-| 2011-12 | 28 | 100% | 0% | 0% | 0% | 0% | 0% | 0% |
+| 2011-06 | 108 | 100% | 23% | 21% | 27% | 20% | 29% | — |
+| 2011-07 | 102 | 100% | 22% | 30% | 27% | 34% | — | — |
+| 2011-08 | 106 | 100% | 27% | 31% | 26% | — | — | — |
+| 2011-09 | 189 | 100% | 27% | 38% | — | — | — | — |
+| 2011-10 | 221 | 100% | 32% | — | — | — | — | — |
+| 2011-11 | 191 | 100% | — | — | — | — | — | — |
+| 2011-12 | 28 | 100% | — | — | — | — | — | — |
 
-M0 is the acquisition month (100% by construction); later columns are the share of the cohort that placed another order in that month offset. Late cohorts are right-censored (fewer observable months).
+M0 is the acquisition month (100% by construction); later columns are the share of the cohort that placed another order in that month offset. — marks a month the data does not fully cover yet (the last complete month is 2011-11): late cohorts are right-censored, not churned.
 
 ## Historical CLV by country
 
@@ -52,14 +52,14 @@ Online Retail II has no media/channel field, so lifetime value is broken down by
 
 | Country | Customers | Orders/customer | AOV | Historical CLV |
 | --- | ---: | ---: | ---: | ---: |
-| Germany | 107 | 7.38 | GBP 547.07 | GBP 4039.09 |
-| France | 93 | 6.56 | GBP 579.64 | GBP 3801.93 |
-| Spain | 39 | 3.87 | GBP 718.74 | GBP 2782.83 |
-| United Kingdom | 5,349 | 6.27 | GBP 438.96 | GBP 2752.37 |
+| Germany | 107 | 7.38 | GBP 539.87 | GBP 3985.97 |
+| France | 93 | 6.56 | GBP 569.33 | GBP 3734.29 |
+| Spain | 39 | 3.87 | GBP 713.48 | GBP 2762.45 |
+| United Kingdom | 5,349 | 6.27 | GBP 430.66 | GBP 2700.27 |
 
-_37 smaller countries (290 customers, GBP 2,126,713 revenue) are pooled and not ranked._
+_37 smaller countries (290 customers, GBP 2,106,260 revenue) are pooled and not ranked._
 
-Among comparable markets, **Germany** shows the highest historical CLV (GBP 4,039) and **United Kingdom** the lowest (GBP 2,752). Acquisition and CRM treatment should weigh realised lifetime value by market, not first-order value alone.
+Among comparable markets, **Germany** shows the highest historical CLV (GBP 3,986) and **United Kingdom** the lowest (GBP 2,700). Acquisition and CRM treatment should weigh realised lifetime value by market, not first-order value alone.
 
 ## Boundary
 

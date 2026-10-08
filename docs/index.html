@@ -3,133 +3,222 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
-<title>CRM & Campaign Dashboard</title>
-<meta name="description" content="RFM, cohort retention and CLV on real Online Retail II data, plus attribution and A/B testing on disclosed simulated data.">
+<meta name="color-scheme" content="light dark">
+<title>CRM & Campaign Performance Dashboard</title>
+<meta name="description" content="RFM segments, cohort retention and customer lifetime value on 5,878 real customers (UCI Online Retail II), plus attribution, A/B test and budget model on disclosed simulated data.">
+<meta property="og:title" content="CRM & Campaign Performance Dashboard">
+<meta property="og:description" content="26% of customers bring 71% of revenue: RFM, retention and CLV on real e-commerce data, plus attribution and A/B testing.">
+<meta property="og:type" content="website">
+<meta property="og:url" content="https://errer441122.github.io/digital-campaign-performance-dashboard/">
+<meta property="og:image" content="https://errer441122.github.io/digital-campaign-performance-dashboard/preview.png">
+<meta name="twitter:card" content="summary_large_image">
 <style>
 :root {
   color-scheme: light;
-  --page: #f9f9f7; --surface: #fcfcfb; --ink: #0b0b0b; --ink-2: #52514e; --muted: #898781;
-  --grid: #e1e0d9; --axis: #c3c2b7; --ring: rgba(11,11,11,0.10);
-  --series-1: #2a78d6; --series-2: #eb6834; --real: #006300; --sim: #8a5a00;
+  --page: #f5f6f8; --surface: #ffffff; --ink: #0f172a; --ink-2: #475569; --muted: #64748b;
+  --line: #e2e8f0; --track: #edf1f6; --shadow: 0 1px 2px rgba(15,23,42,.06);
+  --accent: #2563eb; --accent-2: #ea7a2c; --accent-3: #0f9488; --real: #15803d; --sim: #a16207; --hatch: #cbd5e1;
 }
 @media (prefers-color-scheme: dark) {
-  :root:where(:not([data-theme="light"])) {
+  :root {
     color-scheme: dark;
-    --page: #0d0d0d; --surface: #1a1a19; --ink: #ffffff; --ink-2: #c3c2b7; --muted: #898781;
-    --grid: #2c2c2a; --axis: #383835; --ring: rgba(255,255,255,0.10);
-    --series-1: #3987e5; --series-2: #d95926; --real: #0ca30c; --sim: #fab219;
+    --page: #0b1020; --surface: #121a2b; --ink: #eef2f7; --ink-2: #c3ccd9; --muted: #93a0b4;
+    --line: #23304a; --track: #1d2840; --shadow: none;
+    --accent: #5b9cf6; --accent-2: #f39a55; --accent-3: #2dc4b0; --real: #4ade80; --sim: #f5c04a; --hatch: #33415c;
   }
 }
-:root[data-theme="dark"] {
-  color-scheme: dark;
-  --page: #0d0d0d; --surface: #1a1a19; --ink: #ffffff; --ink-2: #c3c2b7; --muted: #898781;
-  --grid: #2c2c2a; --axis: #383835; --ring: rgba(255,255,255,0.10);
-  --series-1: #3987e5; --series-2: #d95926; --real: #0ca30c; --sim: #fab219;
-}
 * { box-sizing: border-box; }
+html { scroll-behavior: smooth; scroll-padding-top: 64px; }
 body { margin: 0; background: var(--page); color: var(--ink);
-  font: 15px/1.5 system-ui, -apple-system, "Segoe UI", sans-serif; }
-main { max-width: 1080px; margin: 0 auto; padding: 32px 16px 48px; }
-h1 { font-size: 28px; margin: 0 0 4px; letter-spacing: -0.01em; }
-h2 { font-size: 18px; margin: 0 0 4px; }
-.sub { color: var(--ink-2); margin: 0 0 24px; max-width: 70ch; }
-.tag { display: inline-block; font-size: 11px; font-weight: 700; letter-spacing: .06em;
-  text-transform: uppercase; padding: 2px 8px; border-radius: 999px; border: 1px solid currentColor; }
+  font: 15px/1.55 system-ui, -apple-system, "Segoe UI", Roboto, sans-serif; }
+a { color: var(--accent); }
+.sr { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0); }
+.wrap { max-width: 1160px; margin: 0 auto; padding: 0 20px; }
+header.top { position: sticky; top: 0; z-index: 2; background: var(--page); background: color-mix(in srgb, var(--page) 88%, transparent);
+  backdrop-filter: blur(8px); border-bottom: 1px solid var(--line); }
+header.top .wrap { display: flex; align-items: center; gap: 20px; height: 52px; overflow-x: auto; white-space: nowrap; }
+header.top b { font-size: 14px; }
+header.top nav { display: flex; gap: 16px; font-size: 14px; }
+header.top nav a { color: var(--ink-2); text-decoration: none; }
+header.top nav a:hover { color: var(--ink); }
+header.top .src { margin-left: auto; font-size: 14px; }
+.hero { padding: 36px 0 8px; }
+h1 { font-size: clamp(26px, 4vw, 36px); line-height: 1.15; margin: 0 0 10px; letter-spacing: -0.02em; }
+.lead { color: var(--ink-2); max-width: 74ch; margin: 0 0 14px; font-size: 16px; }
+.chips { display: flex; flex-wrap: wrap; gap: 8px; margin: 0 0 22px; }
+.chip { font-size: 13px; color: var(--ink-2); background: var(--surface); border: 1px solid var(--line);
+  border-radius: 999px; padding: 4px 12px; }
+.tag { display: inline-block; font-size: 11px; font-weight: 700; letter-spacing: .07em; text-transform: uppercase;
+  padding: 2px 8px; border-radius: 999px; border: 1px solid currentColor; vertical-align: 2px; }
 .tag.real { color: var(--real); } .tag.sim { color: var(--sim); }
-.kpis { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 12px; margin-bottom: 24px; }
-.kpi, .card { background: var(--surface); border: 1px solid var(--ring); border-radius: 10px; padding: 16px 18px; }
-.kpi b { display: block; font-size: 28px; line-height: 1.2; margin: 4px 0 2px; }
-.kpi span { color: var(--ink-2); font-size: 13px; }
-.grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(460px, 1fr)); gap: 16px; margin-bottom: 16px; }
-@media (max-width: 520px) { .grid { grid-template-columns: 1fr; } }
-.card p { color: var(--ink-2); margin: 4px 0 12px; font-size: 14px; }
-.card .take { color: var(--ink); margin-top: 12px; }
-.chart { width: 100%; height: auto; display: block; }
-.chart .lbl { fill: var(--ink-2); font-size: 13px; }
-.chart .val { fill: var(--ink); font-size: 12px; font-variant-numeric: tabular-nums; }
-.chart .axis { stroke: var(--axis); stroke-width: 1; }
-.legend { display: flex; gap: 16px; font-size: 13px; color: var(--ink-2); margin-bottom: 8px; }
-.legend i { display: inline-block; width: 10px; height: 10px; border-radius: 2px; margin-right: 6px; vertical-align: -1px; }
-table { border-collapse: collapse; width: 100%; font-size: 13px; }
-th, td { padding: 6px 8px; text-align: left; border-bottom: 1px solid var(--grid); }
-td.n, .heat td { text-align: right; font-variant-numeric: tabular-nums; }
-.heat td { border: 2px solid var(--surface); }
-.heat td.m0 { color: var(--muted); }
+.kpis { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 14px; margin-bottom: 18px; }
+.card, .kpi { background: var(--surface); border: 1px solid var(--line); border-radius: 14px; box-shadow: var(--shadow); }
+.kpi { padding: 16px 18px; }
+.kpi span { display: block; color: var(--ink-2); font-size: 13px; }
+.kpi b { display: block; font-size: 30px; line-height: 1.15; margin: 6px 0 4px; letter-spacing: -0.01em;
+  font-variant-numeric: tabular-nums; }
+.kpi small { color: var(--muted); font-size: 13px; }
+.takeaways { padding: 18px 22px; margin-bottom: 30px; }
+.takeaways h2 { font-size: 15px; margin: 0 0 8px; }
+.takeaways ol { margin: 0; padding-left: 20px; display: grid; gap: 6px; }
+.takeaways li::marker { color: var(--muted); font-weight: 600; }
+section.block { margin: 0 0 34px; }
+.block > h2 { font-size: 21px; margin: 0 0 4px; letter-spacing: -0.01em; }
+.block > p.desc { color: var(--ink-2); margin: 0 0 14px; max-width: 80ch; }
+.grid { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 16px; }
+.card { padding: 20px 22px; min-width: 0; }
+.card h3 { font-size: 16px; margin: 0 0 4px; }
+.card .note { color: var(--ink-2); font-size: 14px; margin: 0 0 14px; }
+.card .take { margin: 14px 0 0; padding-top: 12px; border-top: 1px solid var(--line); font-size: 14px; }
+table { border-collapse: collapse; width: 100%; font-size: 14px; }
+th, td { padding: 7px 8px; text-align: left; vertical-align: middle; }
+thead th { font-size: 12px; font-weight: 600; color: var(--muted); text-transform: uppercase; letter-spacing: .05em;
+  border-bottom: 1px solid var(--line); }
+tbody tr + tr > * { border-top: 1px solid var(--line); }
+th[scope=row] { font-weight: 600; }
+th[scope=row] small { display: block; font-weight: 400; color: var(--muted); font-size: 12.5px; }
+.n, .num { text-align: right; font-variant-numeric: tabular-nums; white-space: nowrap; }
+.cell { display: flex; align-items: center; gap: 10px; }
+.bar { flex: 1; min-width: 36px; height: 10px; border-radius: 5px; background: var(--track); overflow: hidden; }
+.bar i { display: block; height: 100%; border-radius: 5px; background: var(--accent); }
+.bar.alt i { background: var(--accent-2); }
+.bar.rev i { background: var(--accent-3); }
+.num em { font-style: normal; color: var(--muted); margin-left: 4px; }
+.cell .num { min-width: 6.5em; }
+.pair { display: grid; grid-template-columns: minmax(0, 1fr) 3.4em; gap: 4px 10px; align-items: center; }
+.legend { display: flex; flex-wrap: wrap; gap: 16px; font-size: 13px; color: var(--ink-2); margin: 0 0 8px; }
+.legend i { display: inline-block; width: 10px; height: 10px; border-radius: 3px; margin-right: 6px; vertical-align: -1px; }
+.delta { font-weight: 600; }
 .scroll { overflow-x: auto; }
-details { margin-top: 12px; } summary { cursor: pointer; color: var(--ink-2); font-size: 13px; }
-.ab { display: grid; grid-template-columns: repeat(auto-fit, minmax(140px, 1fr)); gap: 12px; }
-.ab b { display: block; font-size: 22px; }
-footer { color: var(--ink-2); font-size: 13px; margin-top: 32px; }
-a { color: var(--series-1); }
+.heat { font-size: 13px; }
+.heat th, .heat td { padding: 5px 6px; }
+.heat td.c { text-align: center; color: #0f1b2d; font-variant-numeric: tabular-nums; border: 2px solid var(--surface); }
+.heat td.c.dk { color: #ffffff; }
+.heat td.na { text-align: center; color: var(--muted); border: 2px solid var(--surface);
+  background: repeating-linear-gradient(135deg, transparent 0 5px, var(--hatch) 5px 6px); }
+.scale { display: flex; align-items: center; gap: 10px; font-size: 12.5px; color: var(--muted); margin-top: 10px; flex-wrap: wrap; }
+.scale .ramp { width: 160px; height: 10px; border-radius: 5px; }
+.scale .na { display: inline-block; width: 22px; height: 12px; border-radius: 3px; vertical-align: -2px;
+  background: repeating-linear-gradient(135deg, transparent 0 4px, var(--hatch) 4px 5px); border: 1px solid var(--line); }
+.variants { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 12px; margin-bottom: 14px; }
+.variant { border: 1px solid var(--line); border-radius: 10px; padding: 12px 14px; }
+.variant span { display: block; font-size: 13px; color: var(--ink-2); }
+.variant b { display: block; font-size: 24px; font-variant-numeric: tabular-nums; margin: 2px 0 6px; }
+.variant small { color: var(--muted); }
+.ci { position: relative; height: 30px; margin: 6px 0 2px; }
+.ci::before { content: ""; position: absolute; left: 0; right: 0; top: 14px; height: 2px; background: var(--track); }
+.ci .range { position: absolute; top: 9px; height: 12px; border-radius: 6px; background: color-mix(in srgb, var(--accent) 35%, transparent); }
+.ci .pt { position: absolute; top: 6px; width: 4px; height: 18px; margin-left: -2px; border-radius: 2px; background: var(--accent); }
+.ci .zero { position: absolute; top: 0; bottom: 0; width: 2px; margin-left: -1px; background: var(--ink-2); }
+.ci-lbl { position: relative; height: 16px; font-size: 12.5px; color: var(--muted); }
+.ci-lbl span { position: absolute; transform: translateX(-50%); }
+.stats { display: flex; flex-wrap: wrap; gap: 6px 16px; font-size: 13.5px; color: var(--ink-2); margin: 12px 0 0; }
+.move { display: flex; align-items: center; flex-wrap: wrap; gap: 10px; font-size: 18px; font-weight: 600; margin: 4px 0 10px; }
+.move .arrow { color: var(--muted); }
+.move .amt { color: var(--accent); font-variant-numeric: tabular-nums; }
+footer { color: var(--ink-2); font-size: 13.5px; border-top: 1px solid var(--line); padding: 22px 0 40px; }
+footer p { margin: 0 0 8px; max-width: 95ch; }
+@media (max-width: 900px) { .kpis { grid-template-columns: repeat(2, minmax(0, 1fr)); } .grid { grid-template-columns: 1fr; } }
+@media (max-width: 520px) {
+  .wrap { padding: 0 14px; } .kpi b { font-size: 24px; } .card { padding: 16px; }
+  .variants { grid-template-columns: 1fr; }
+  .cell { flex-direction: column; align-items: stretch; gap: 4px; } .cell .num { text-align: left; min-width: 0; }
+  .cell .bar { flex: none; }
+  th, td { padding: 7px 6px; }
+}
+@media print { header.top { position: static; } .card, .kpi { box-shadow: none; break-inside: avoid; } }
 </style>
 </head>
 <body>
-<main>
-<h1>CRM & Campaign Performance</h1>
-<p class="sub">Which customers deserve which CRM action, and where should media budget move?
-<span class="tag real">Real data</span> UCI Online Retail II, 36,969 orders, prices in GBP.
-<span class="tag sim">Simulated</span> campaign, attribution and A/B sections, labelled on every card.</p>
-
-<section class="kpis" aria-label="Headline figures (real data)">
-  <div class="kpi"><span>Real customers analysed</span><b>5,878</b><span>36,969 orders, 2009–2011</span></div>
-  <div class="kpi"><span>Champions share of revenue</span><b>71%</b><span>from 26% of customers</span></div>
-  <div class="kpi"><span>Highest CLV market</span><b>GBP 4,039</b><span>Germany vs GBP 2,752 United Kingdom</span></div>
-  <div class="kpi"><span>A/B test (simulated)</span><b>+18%</b><span>conversion rate, p = 0.007</span></div>
-</section>
-
-<div class="grid">
-<section class="card">
-  <span class="tag real">Real</span>
-  <h2>Revenue by RFM segment</h2>
-  <p>Each segment maps to one automation flow. Hover a bar for the numbers.</p>
-  <svg viewBox="0 0 620 210" role="img" class="chart"><g><title>Champions: 1,532 customers (26%), GBP 12,662,714 → VIP &amp; referral flow</title><rect x="0" y="0" width="620" height="30" fill="transparent"/><text x="142" y="19" text-anchor="end" class="lbl">Champions</text><rect x="150" y="7" width="380.0" height="16" rx="3" fill="var(--series-1)"/><text x="536.0" y="19" class="val">GBP 12.7M</text></g><g><title>Loyal customers: 938 customers (16%), GBP 2,310,804 → Cross-sell &amp; loyalty tier</title><rect x="0" y="30" width="620" height="30" fill="transparent"/><text x="142" y="49" text-anchor="end" class="lbl">Loyal customers</text><rect x="150" y="37" width="69.3" height="16" rx="3" fill="var(--series-1)"/><text x="225.3" y="49" class="val">GBP 2.3M</text></g><g><title>At risk: 1,174 customers (20%), GBP 1,449,813 → Win-back sequence</title><rect x="0" y="60" width="620" height="30" fill="transparent"/><text x="142" y="79" text-anchor="end" class="lbl">At risk</text><rect x="150" y="67" width="43.5" height="16" rx="3" fill="var(--series-1)"/><text x="199.5" y="79" class="val">GBP 1.4M</text></g><g><title>Hibernating: 1,060 customers (18%), GBP 462,963 → Low-cost reactivation then sunset</title><rect x="0" y="90" width="620" height="30" fill="transparent"/><text x="142" y="109" text-anchor="end" class="lbl">Hibernating</text><rect x="150" y="97" width="13.9" height="16" rx="3" fill="var(--series-1)"/><text x="169.9" y="109" class="val">GBP 463k</text></g><g><title>Can&#x27;t lose them: 118 customers (2%), GBP 390,847 → High-touch reactivation</title><rect x="0" y="120" width="620" height="30" fill="transparent"/><text x="142" y="139" text-anchor="end" class="lbl">Can&#x27;t lose them</text><rect x="150" y="127" width="11.7" height="16" rx="3" fill="var(--series-1)"/><text x="167.7" y="139" class="val">GBP 391k</text></g><g><title>New / promising: 584 customers (10%), GBP 258,364 → Welcome / onboarding series</title><rect x="0" y="150" width="620" height="30" fill="transparent"/><text x="142" y="169" text-anchor="end" class="lbl">New / promising</text><rect x="150" y="157" width="7.8" height="16" rx="3" fill="var(--series-1)"/><text x="163.8" y="169" class="val">GBP 258k</text></g><g><title>Needs attention: 472 customers (8%), GBP 207,924 → Targeted reactivation offer</title><rect x="0" y="180" width="620" height="30" fill="transparent"/><text x="142" y="199" text-anchor="end" class="lbl">Needs attention</text><rect x="150" y="187" width="6.2" height="16" rx="3" fill="var(--series-1)"/><text x="162.2" y="199" class="val">GBP 208k</text></g><line x1="150" x2="150" y1="0" y2="210" class="axis"/></svg>
-  <p class="take">Champions are 26% of customers and 71% of revenue: protect them with a VIP flow before spending on acquisition.</p>
-  <details><summary>Table view</summary><table><thead><tr><th>Segment</th><th>Customers</th><th>Revenue share</th><th>Automation flow</th></tr></thead><tbody><tr><td>Champions</td><td class="n">1,532</td><td class="n">71%</td><td>VIP &amp; referral flow</td></tr><tr><td>Loyal customers</td><td class="n">938</td><td class="n">13%</td><td>Cross-sell &amp; loyalty tier</td></tr><tr><td>At risk</td><td class="n">1,174</td><td class="n">8%</td><td>Win-back sequence</td></tr><tr><td>Hibernating</td><td class="n">1,060</td><td class="n">3%</td><td>Low-cost reactivation then sunset</td></tr><tr><td>Can&#x27;t lose them</td><td class="n">118</td><td class="n">2%</td><td>High-touch reactivation</td></tr><tr><td>New / promising</td><td class="n">584</td><td class="n">1%</td><td>Welcome / onboarding series</td></tr><tr><td>Needs attention</td><td class="n">472</td><td class="n">1%</td><td>Targeted reactivation offer</td></tr></tbody></table></details>
-</section>
-<section class="card">
-  <span class="tag real">Real</span>
-  <h2>Historical CLV by country</h2>
-  <p>Revenue per customer, markets with at least 30 customers.</p>
-  <svg viewBox="0 0 620 120" role="img" class="chart"><g><title>Germany: 107 customers, 7.38 orders each, AOV GBP 547.07</title><rect x="0" y="0" width="620" height="30" fill="transparent"/><text x="142" y="19" text-anchor="end" class="lbl">Germany</text><rect x="150" y="7" width="380.0" height="16" rx="3" fill="var(--series-1)"/><text x="536.0" y="19" class="val">GBP 4,039</text></g><g><title>France: 93 customers, 6.56 orders each, AOV GBP 579.64</title><rect x="0" y="30" width="620" height="30" fill="transparent"/><text x="142" y="49" text-anchor="end" class="lbl">France</text><rect x="150" y="37" width="357.7" height="16" rx="3" fill="var(--series-1)"/><text x="513.7" y="49" class="val">GBP 3,802</text></g><g><title>Spain: 39 customers, 3.87 orders each, AOV GBP 718.74</title><rect x="0" y="60" width="620" height="30" fill="transparent"/><text x="142" y="79" text-anchor="end" class="lbl">Spain</text><rect x="150" y="67" width="261.8" height="16" rx="3" fill="var(--series-1)"/><text x="417.8" y="79" class="val">GBP 2,783</text></g><g><title>United Kingdom: 5,349 customers, 6.27 orders each, AOV GBP 438.96</title><rect x="0" y="90" width="620" height="30" fill="transparent"/><text x="142" y="109" text-anchor="end" class="lbl">United Kingdom</text><rect x="150" y="97" width="258.9" height="16" rx="3" fill="var(--series-1)"/><text x="414.9" y="109" class="val">GBP 2,752</text></g><line x1="150" x2="150" y1="0" y2="120" class="axis"/></svg>
-  <p class="take">A customer in Germany is worth 47% more over their lifetime than one in United Kingdom: judge acquisition cost by market, not by first order.</p>
-</section>
+<header class="top"><div class="wrap">
+<b>CRM & Campaign Dashboard</b>
+<nav aria-label="Sections"><a href="#customers">Customers</a><a href="#retention">Retention</a><a href="#markets">Markets</a><a href="#media">Media &amp; tests</a></nav>
+<a class="src" href="https://github.com/errer441122/digital-campaign-performance-dashboard">Source ↗</a>
+</div></header>
+<main class="wrap">
+<div class="hero">
+<h1>Which customers deserve which CRM action, and where should media budget move?</h1>
+<p class="lead">RFM segmentation, cohort retention and lifetime value on a real UK online retailer, followed by
+attribution, an A/B test and a budget model on simulated campaign data. Every card says which kind of data it uses.</p>
+<div class="chips"><span class="chip"><span class="tag real">Real</span> UCI Online Retail II · 36,969 orders · Dec 2009 – Dec 2011 · GBP</span>
+<span class="chip"><span class="tag sim">Simulated</span> campaigns, journeys and A/B test · EUR</span>
+<span class="chip">Cross-checked with pandas, DuckDB and statsmodels</span></div>
 </div>
 
-<section class="card" style="margin-bottom:16px">
-  <span class="tag real">Real</span>
-  <h2>Cohort retention</h2>
-  <p>Share of each signup-month cohort that ordered again k months later. Darker = higher retention. Later cohorts are right-censored.</p>
-  <div class="scroll"><table class="heat"><thead><tr><th>Cohort</th><th>Customers</th><th>M0</th><th>M1</th><th>M2</th><th>M3</th><th>M4</th><th>M5</th><th>M6</th></tr></thead><tbody><tr><th scope="row">2009-12</th><td class="n">955</td><td class="m0">100%</td><td style="background:#1c5cab;color:#ffffff" title="2009-12 cohort, month 1: 35.3% placed another order">35%</td><td style="background:#256abf;color:#ffffff" title="2009-12 cohort, month 2: 33.4% placed another order">33%</td><td style="background:#104281;color:#ffffff" title="2009-12 cohort, month 3: 42.5% placed another order">43%</td><td style="background:#184f95;color:#ffffff" title="2009-12 cohort, month 4: 38.0% placed another order">38%</td><td style="background:#1c5cab;color:#ffffff" title="2009-12 cohort, month 5: 35.9% placed another order">36%</td><td style="background:#184f95;color:#ffffff" title="2009-12 cohort, month 6: 37.7% placed another order">38%</td></tr><tr><th scope="row">2010-01</th><td class="n">383</td><td class="m0">100%</td><td style="background:#5598e7;color:#0b0b0b" title="2010-01 cohort, month 1: 20.6% placed another order">21%</td><td style="background:#256abf;color:#ffffff" title="2010-01 cohort, month 2: 31.1% placed another order">31%</td><td style="background:#2a78d6;color:#ffffff" title="2010-01 cohort, month 3: 30.6% placed another order">31%</td><td style="background:#3987e5;color:#ffffff" title="2010-01 cohort, month 4: 26.4% placed another order">26%</td><td style="background:#2a78d6;color:#ffffff" title="2010-01 cohort, month 5: 30.0% placed another order">30%</td><td style="background:#3987e5;color:#ffffff" title="2010-01 cohort, month 6: 25.9% placed another order">26%</td></tr><tr><th scope="row">2010-02</th><td class="n">374</td><td class="m0">100%</td><td style="background:#5598e7;color:#0b0b0b" title="2010-02 cohort, month 1: 23.8% placed another order">24%</td><td style="background:#5598e7;color:#0b0b0b" title="2010-02 cohort, month 2: 22.5% placed another order">22%</td><td style="background:#2a78d6;color:#ffffff" title="2010-02 cohort, month 3: 29.1% placed another order">29%</td><td style="background:#3987e5;color:#ffffff" title="2010-02 cohort, month 4: 24.6% placed another order">25%</td><td style="background:#6da7ec;color:#0b0b0b" title="2010-02 cohort, month 5: 20.1% placed another order">20%</td><td style="background:#6da7ec;color:#0b0b0b" title="2010-02 cohort, month 6: 19.2% placed another order">19%</td></tr><tr><th scope="row">2010-03</th><td class="n">443</td><td class="m0">100%</td><td style="background:#6da7ec;color:#0b0b0b" title="2010-03 cohort, month 1: 19.0% placed another order">19%</td><td style="background:#5598e7;color:#0b0b0b" title="2010-03 cohort, month 2: 23.0% placed another order">23%</td><td style="background:#3987e5;color:#ffffff" title="2010-03 cohort, month 3: 24.1% placed another order">24%</td><td style="background:#5598e7;color:#0b0b0b" title="2010-03 cohort, month 4: 23.2% placed another order">23%</td><td style="background:#6da7ec;color:#0b0b0b" title="2010-03 cohort, month 5: 20.3% placed another order">20%</td><td style="background:#3987e5;color:#ffffff" title="2010-03 cohort, month 6: 24.6% placed another order">25%</td></tr><tr><th scope="row">2010-04</th><td class="n">294</td><td class="m0">100%</td><td style="background:#6da7ec;color:#0b0b0b" title="2010-04 cohort, month 1: 19.4% placed another order">19%</td><td style="background:#6da7ec;color:#0b0b0b" title="2010-04 cohort, month 2: 19.4% placed another order">19%</td><td style="background:#86b6ef;color:#0b0b0b" title="2010-04 cohort, month 3: 16.3% placed another order">16%</td><td style="background:#6da7ec;color:#0b0b0b" title="2010-04 cohort, month 4: 18.4% placed another order">18%</td><td style="background:#5598e7;color:#0b0b0b" title="2010-04 cohort, month 5: 22.4% placed another order">22%</td><td style="background:#2a78d6;color:#ffffff" title="2010-04 cohort, month 6: 27.6% placed another order">28%</td></tr><tr><th scope="row">2010-05</th><td class="n">254</td><td class="m0">100%</td><td style="background:#86b6ef;color:#0b0b0b" title="2010-05 cohort, month 1: 15.8% placed another order">16%</td><td style="background:#86b6ef;color:#0b0b0b" title="2010-05 cohort, month 2: 16.9% placed another order">17%</td><td style="background:#6da7ec;color:#0b0b0b" title="2010-05 cohort, month 3: 17.3% placed another order">17%</td><td style="background:#6da7ec;color:#0b0b0b" title="2010-05 cohort, month 4: 17.7% placed another order">18%</td><td style="background:#3987e5;color:#ffffff" title="2010-05 cohort, month 5: 25.6% placed another order">26%</td><td style="background:#5598e7;color:#0b0b0b" title="2010-05 cohort, month 6: 21.3% placed another order">21%</td></tr><tr><th scope="row">2010-06</th><td class="n">270</td><td class="m0">100%</td><td style="background:#6da7ec;color:#0b0b0b" title="2010-06 cohort, month 1: 17.4% placed another order">17%</td><td style="background:#6da7ec;color:#0b0b0b" title="2010-06 cohort, month 2: 18.9% placed another order">19%</td><td style="background:#6da7ec;color:#0b0b0b" title="2010-06 cohort, month 3: 20.4% placed another order">20%</td><td style="background:#5598e7;color:#0b0b0b" title="2010-06 cohort, month 4: 23.0% placed another order">23%</td><td style="background:#2a78d6;color:#ffffff" title="2010-06 cohort, month 5: 28.5% placed another order">29%</td><td style="background:#9ec5f4;color:#0b0b0b" title="2010-06 cohort, month 6: 12.6% placed another order">13%</td></tr><tr><th scope="row">2010-07</th><td class="n">186</td><td class="m0">100%</td><td style="background:#86b6ef;color:#0b0b0b" title="2010-07 cohort, month 1: 15.6% placed another order">16%</td><td style="background:#6da7ec;color:#0b0b0b" title="2010-07 cohort, month 2: 18.3% placed another order">18%</td><td style="background:#2a78d6;color:#ffffff" title="2010-07 cohort, month 3: 29.6% placed another order">30%</td><td style="background:#2a78d6;color:#ffffff" title="2010-07 cohort, month 4: 29.0% placed another order">29%</td><td style="background:#86b6ef;color:#0b0b0b" title="2010-07 cohort, month 5: 14.0% placed another order">14%</td><td style="background:#9ec5f4;color:#0b0b0b" title="2010-07 cohort, month 6: 11.3% placed another order">11%</td></tr><tr><th scope="row">2010-08</th><td class="n">162</td><td class="m0">100%</td><td style="background:#6da7ec;color:#0b0b0b" title="2010-08 cohort, month 1: 20.4% placed another order">20%</td><td style="background:#2a78d6;color:#ffffff" title="2010-08 cohort, month 2: 29.6% placed another order">30%</td><td style="background:#256abf;color:#ffffff" title="2010-08 cohort, month 3: 32.1% placed another order">32%</td><td style="background:#6da7ec;color:#0b0b0b" title="2010-08 cohort, month 4: 17.3% placed another order">17%</td><td style="background:#9ec5f4;color:#0b0b0b" title="2010-08 cohort, month 5: 11.7% placed another order">12%</td><td style="background:#b7d3f6;color:#0b0b0b" title="2010-08 cohort, month 6: 9.9% placed another order">10%</td></tr><tr><th scope="row">2010-09</th><td class="n">243</td><td class="m0">100%</td><td style="background:#5598e7;color:#0b0b0b" title="2010-09 cohort, month 1: 22.6% placed another order">23%</td><td style="background:#5598e7;color:#0b0b0b" title="2010-09 cohort, month 2: 23.5% placed another order">23%</td><td style="background:#9ec5f4;color:#0b0b0b" title="2010-09 cohort, month 3: 12.3% placed another order">12%</td><td style="background:#b7d3f6;color:#0b0b0b" title="2010-09 cohort, month 4: 9.0% placed another order">9%</td><td style="background:#b7d3f6;color:#0b0b0b" title="2010-09 cohort, month 5: 10.3% placed another order">10%</td><td style="background:#9ec5f4;color:#0b0b0b" title="2010-09 cohort, month 6: 13.6% placed another order">14%</td></tr><tr><th scope="row">2010-10</th><td class="n">377</td><td class="m0">100%</td><td style="background:#3987e5;color:#ffffff" title="2010-10 cohort, month 1: 25.7% placed another order">26%</td><td style="background:#86b6ef;color:#0b0b0b" title="2010-10 cohort, month 2: 14.6% placed another order">15%</td><td style="background:#9ec5f4;color:#0b0b0b" title="2010-10 cohort, month 3: 12.5% placed another order">12%</td><td style="background:#b7d3f6;color:#0b0b0b" title="2010-10 cohort, month 4: 8.8% placed another order">9%</td><td style="background:#b7d3f6;color:#0b0b0b" title="2010-10 cohort, month 5: 8.2% placed another order">8%</td><td style="background:#9ec5f4;color:#0b0b0b" title="2010-10 cohort, month 6: 13.0% placed another order">13%</td></tr><tr><th scope="row">2010-11</th><td class="n">325</td><td class="m0">100%</td><td style="background:#6da7ec;color:#0b0b0b" title="2010-11 cohort, month 1: 17.5% placed another order">18%</td><td style="background:#b7d3f6;color:#0b0b0b" title="2010-11 cohort, month 2: 9.2% placed another order">9%</td><td style="background:#b7d3f6;color:#0b0b0b" title="2010-11 cohort, month 3: 9.5% placed another order">10%</td><td style="background:#b7d3f6;color:#0b0b0b" title="2010-11 cohort, month 4: 7.7% placed another order">8%</td><td style="background:#b7d3f6;color:#0b0b0b" title="2010-11 cohort, month 5: 8.6% placed another order">9%</td><td style="background:#9ec5f4;color:#0b0b0b" title="2010-11 cohort, month 6: 12.9% placed another order">13%</td></tr><tr><th scope="row">2010-12</th><td class="n">76</td><td class="m0">100%</td><td style="background:#b7d3f6;color:#0b0b0b" title="2010-12 cohort, month 1: 9.2% placed another order">9%</td><td style="background:#cde2fb;color:#0b0b0b" title="2010-12 cohort, month 2: 5.3% placed another order">5%</td><td style="background:#b7d3f6;color:#0b0b0b" title="2010-12 cohort, month 3: 9.2% placed another order">9%</td><td style="background:#9ec5f4;color:#0b0b0b" title="2010-12 cohort, month 4: 11.8% placed another order">12%</td><td style="background:#cde2fb;color:#0b0b0b" title="2010-12 cohort, month 5: 6.6% placed another order">7%</td><td style="background:#cde2fb;color:#0b0b0b" title="2010-12 cohort, month 6: 5.3% placed another order">5%</td></tr></tbody></table></div>
+<section class="kpis" aria-label="Headline figures, real data">
+<div class="kpi"><span>Customers analysed</span><b>5,878</b><small>36,969 orders over two years</small></div>
+<div class="kpi"><span>Revenue</span><b>£17.4M</b><small>identified customers, excl. returns and cancellations</small></div>
+<div class="kpi"><span>Revenue from Champions</span><b>71%</b><small>from 26% of customers</small></div>
+<div class="kpi"><span>Revenue per customer, Germany</span><b>£3,986</b><small>+48% vs United Kingdom (£2,700)</small></div>
 </section>
 
-<div class="grid">
-<section class="card">
-  <span class="tag sim">Simulated</span>
-  <h2>Last-touch vs data-driven attribution</h2>
-  <div class="legend"><span><i style="background:var(--series-1)"></i>Last touch</span><span><i style="background:var(--series-2)"></i>Markov removal effect</span></div>
-  <svg viewBox="0 0 620 264" role="img" class="chart"><text x="142" y="25" text-anchor="end" class="lbl">Paid Search</text><g><title>Paid Search — Last touch: 1,022 conversions</title><rect x="150" y="6" width="380.0" height="14" rx="3" fill="var(--series-1)"/><text x="536.0" y="17" class="val">1,022</text></g><g><title>Paid Search — Markov: 659 conversions</title><rect x="150" y="22" width="245.1" height="14" rx="3" fill="var(--series-2)"/><text x="401.1" y="33" class="val">659</text></g><text x="142" y="69" text-anchor="end" class="lbl">Email</text><g><title>Email — Last touch: 650 conversions</title><rect x="150" y="50" width="241.7" height="14" rx="3" fill="var(--series-1)"/><text x="397.7" y="61" class="val">650</text></g><g><title>Email — Markov: 413 conversions</title><rect x="150" y="66" width="153.6" height="14" rx="3" fill="var(--series-2)"/><text x="309.6" y="77" class="val">413</text></g><text x="142" y="113" text-anchor="end" class="lbl">Paid Social</text><g><title>Paid Social — Last touch: 98 conversions</title><rect x="150" y="94" width="36.4" height="14" rx="3" fill="var(--series-1)"/><text x="192.4" y="105" class="val">98</text></g><g><title>Paid Social — Markov: 346 conversions</title><rect x="150" y="110" width="128.5" height="14" rx="3" fill="var(--series-2)"/><text x="284.5" y="121" class="val">346</text></g><text x="142" y="157" text-anchor="end" class="lbl">Display</text><g><title>Display — Last touch: 70 conversions</title><rect x="150" y="138" width="26.0" height="14" rx="3" fill="var(--series-1)"/><text x="182.0" y="149" class="val">70</text></g><g><title>Display — Markov: 336 conversions</title><rect x="150" y="154" width="124.9" height="14" rx="3" fill="var(--series-2)"/><text x="280.9" y="165" class="val">336</text></g><text x="142" y="201" text-anchor="end" class="lbl">Organic Search</text><g><title>Organic Search — Last touch: 115 conversions</title><rect x="150" y="182" width="42.8" height="14" rx="3" fill="var(--series-1)"/><text x="198.8" y="193" class="val">115</text></g><g><title>Organic Search — Markov: 201 conversions</title><rect x="150" y="198" width="74.6" height="14" rx="3" fill="var(--series-2)"/><text x="230.6" y="209" class="val">201</text></g><text x="142" y="245" text-anchor="end" class="lbl">Direct</text><g><title>Direct — Last touch: 104 conversions</title><rect x="150" y="226" width="38.7" height="14" rx="3" fill="var(--series-1)"/><text x="194.7" y="237" class="val">104</text></g><g><title>Direct — Markov: 105 conversions</title><rect x="150" y="242" width="38.9" height="14" rx="3" fill="var(--series-2)"/><text x="194.9" y="253" class="val">105</text></g><line x1="150" x2="150" y1="0" y2="264" class="axis"/></svg>
-  <p class="take">Last touch over-credits Paid Search (-363 conversions under Markov) and under-credits Display (+266).</p>
+<section class="card takeaways" aria-label="Takeaways">
+<h2>What the numbers say</h2>
+<ol>
+<li>Protect <b>Champions</b> before buying reach: 26% of customers, 71% of revenue (VIP &amp; referral flow).</li>
+<li>Judge acquisition cost by market: a customer in Germany is worth <b>48% more</b> over their lifetime than one in United Kingdom.</li>
+<li>Do not fund media on last click: it under-credits Display by <b>266 conversions</b> and over-credits Paid Search by 363 <span class="tag sim">Simulated</span></li>
+</ol>
 </section>
-<section class="card">
-  <span class="tag sim">Simulated</span>
-  <h2>Landing-page A/B test</h2>
-  <div class="ab">
-    <div><span>A · control</span><b>5.50%</b></div>
-    <div><span>B · short form</span><b>6.50%</b></div>
-    <div><span>Uplift (95% CI)</span><b>+1.00 pp</b><span>[+0.28, +1.72] pp</span></div>
-  </div>
-  <p class="take"><b>Ship variant B with a guarded rollout.</b> Two-proportion z = 2.71, p = 0.0067; P(B beats A) = 99.7%.</p>
-  <h2 style="margin-top:20px">Budget move</h2>
-  <p class="take">Shift EUR 4,197 from Paid Social to Display (bounded at 15% of paid spend / 50% of the donor budget). Protect Paid Social&#x27;s remaining budget and hold Email — its volume is list-driven, not spend-driven.</p>
-</section>
+
+<section class="block" id="customers">
+<h2>Customers <span class="tag real">Real data</span></h2>
+<p class="desc">Recency, frequency and monetary quintiles put every customer into one segment, and each segment into one automation flow.</p>
+<div class="card">
+<h3>RFM segments: who they are and what they bring</h3>
+<p class="note">Bars show each segment's share of all customers and of all revenue.</p>
+<div class="scroll"><table><caption class="sr">Customers and revenue by RFM segment</caption><thead><tr><th scope="col">Segment → flow</th><th scope="col">Customers</th><th scope="col">Revenue</th></tr></thead><tbody><tr><th scope="row">Champions<small>VIP &amp; referral flow</small></th><td><div class="cell"><span class="bar "><i style="width:26.2%"></i></span><span class="num">1,537<em>26%</em></span></div></td><td><div class="cell"><span class="bar rev"><i style="width:71.3%"></i></span><span class="num">£12.4M<em>71%</em></span></div></td></tr><tr><th scope="row">Loyal customers<small>Cross-sell &amp; loyalty tier</small></th><td><div class="cell"><span class="bar "><i style="width:15.9%"></i></span><span class="num">937<em>16%</em></span></div></td><td><div class="cell"><span class="bar rev"><i style="width:13.1%"></i></span><span class="num">£2.3M<em>13%</em></span></div></td></tr><tr><th scope="row">At risk<small>Win-back sequence</small></th><td><div class="cell"><span class="bar "><i style="width:20.0%"></i></span><span class="num">1,174<em>20%</em></span></div></td><td><div class="cell"><span class="bar rev"><i style="width:8.0%"></i></span><span class="num">£1.4M<em>8%</em></span></div></td></tr><tr><th scope="row">Hibernating<small>Low-cost reactivation then sunset</small></th><td><div class="cell"><span class="bar "><i style="width:18.0%"></i></span><span class="num">1,059<em>18%</em></span></div></td><td><div class="cell"><span class="bar rev"><i style="width:2.6%"></i></span><span class="num">£462k<em>3%</em></span></div></td></tr><tr><th scope="row">Can&#x27;t lose them<small>High-touch reactivation</small></th><td><div class="cell"><span class="bar "><i style="width:2.0%"></i></span><span class="num">119<em>2%</em></span></div></td><td><div class="cell"><span class="bar rev"><i style="width:2.2%"></i></span><span class="num">£392k<em>2%</em></span></div></td></tr><tr><th scope="row">New / promising<small>Welcome / onboarding series</small></th><td><div class="cell"><span class="bar "><i style="width:9.9%"></i></span><span class="num">581<em>10%</em></span></div></td><td><div class="cell"><span class="bar rev"><i style="width:1.4%"></i></span><span class="num">£252k<em>1%</em></span></div></td></tr><tr><th scope="row">Needs attention<small>Targeted reactivation offer</small></th><td><div class="cell"><span class="bar "><i style="width:8.0%"></i></span><span class="num">471<em>8%</em></span></div></td><td><div class="cell"><span class="bar rev"><i style="width:1.2%"></i></span><span class="num">£207k<em>1%</em></span></div></td></tr></tbody></table></div>
+<p class="take">Champions are 26% of customers and 71% of revenue. Next by revenue: Loyal customers (Cross-sell &amp; loyalty tier) and At risk (Win-back sequence).</p>
 </div>
+</section>
 
-<footer>
-Generated by <code>src/build_web_dashboard.py</code> from the committed analysis outputs; every figure is checked again with pandas, DuckDB and statsmodels in
-<a href="https://github.com/errer441122/digital-campaign-performance-dashboard/blob/main/notebooks/cross_check.ipynb">the cross-check notebook</a>.
-Real data: Chen, D. (2019) <i>Online Retail II</i>, UCI ML Repository, CC BY 4.0 — <a href="https://github.com/errer441122/digital-campaign-performance-dashboard/blob/main/data/REAL_DATA_PROVENANCE.md">provenance</a>.
-Simulated data is disclosed in the <a href="https://github.com/errer441122/digital-campaign-performance-dashboard/blob/main/data/DATA_CARD.md">data card</a>. <a href="https://github.com/errer441122/digital-campaign-performance-dashboard">Source code</a>.
-</footer>
+<section class="block" id="retention">
+<h2>Retention <span class="tag real">Real data</span></h2>
+<p class="desc">Share of each signup-month cohort that ordered again k months later.</p>
+<div class="card">
+<h3>Repeat purchase by cohort</h3>
+<p class="note">The data ends on 9 Dec 2011, so months after Nov 2011 are hatched (not observed yet) instead of shown as 0%. The Dec 2009 cohort also contains customers acquired before the data starts, which is why it retains best.</p>
+<div class="scroll"><table class="heat"><caption class="sr">Repeat-purchase rate by signup cohort and month</caption><thead><tr><th scope="col">Cohort</th><th scope="col" class="n">Customers</th><th scope="col" class="n">M1</th><th scope="col" class="n">M2</th><th scope="col" class="n">M3</th><th scope="col" class="n">M4</th><th scope="col" class="n">M5</th><th scope="col" class="n">M6</th></tr></thead><tbody><tr><th scope="row">Dec 2009</th><td class="n">955</td><td class="c dk" style="background:#3672cf" title="Dec 2009 cohort, month 1: 35.3% ordered again">35%</td><td class="c dk" style="background:#3672cf" title="Dec 2009 cohort, month 2: 33.4% ordered again">33%</td><td class="c dk" style="background:#184795" title="Dec 2009 cohort, month 3: 42.5% ordered again">43%</td><td class="c dk" style="background:#235ab5" title="Dec 2009 cohort, month 4: 38.0% ordered again">38%</td><td class="c dk" style="background:#235ab5" title="Dec 2009 cohort, month 5: 35.9% ordered again">36%</td><td class="c dk" style="background:#235ab5" title="Dec 2009 cohort, month 6: 37.7% ordered again">38%</td></tr><tr><th scope="row">Jan 2010</th><td class="n">383</td><td class="c" style="background:#98bef1" title="Jan 2010 cohort, month 1: 20.6% ordered again">21%</td><td class="c dk" style="background:#3672cf" title="Jan 2010 cohort, month 2: 31.1% ordered again">31%</td><td class="c dk" style="background:#538ce0" title="Jan 2010 cohort, month 3: 30.6% ordered again">31%</td><td class="c dk" style="background:#538ce0" title="Jan 2010 cohort, month 4: 26.4% ordered again">26%</td><td class="c dk" style="background:#538ce0" title="Jan 2010 cohort, month 5: 30.0% ordered again">30%</td><td class="c" style="background:#75a6ea" title="Jan 2010 cohort, month 6: 25.9% ordered again">26%</td></tr><tr><th scope="row">Feb 2010</th><td class="n">374</td><td class="c" style="background:#75a6ea" title="Feb 2010 cohort, month 1: 23.8% ordered again">24%</td><td class="c" style="background:#75a6ea" title="Feb 2010 cohort, month 2: 22.5% ordered again">22%</td><td class="c dk" style="background:#538ce0" title="Feb 2010 cohort, month 3: 29.1% ordered again">29%</td><td class="c" style="background:#75a6ea" title="Feb 2010 cohort, month 4: 24.6% ordered again">25%</td><td class="c" style="background:#98bef1" title="Feb 2010 cohort, month 5: 20.1% ordered again">20%</td><td class="c" style="background:#98bef1" title="Feb 2010 cohort, month 6: 19.2% ordered again">19%</td></tr><tr><th scope="row">Mar 2010</th><td class="n">443</td><td class="c" style="background:#98bef1" title="Mar 2010 cohort, month 1: 19.0% ordered again">19%</td><td class="c" style="background:#75a6ea" title="Mar 2010 cohort, month 2: 23.0% ordered again">23%</td><td class="c" style="background:#75a6ea" title="Mar 2010 cohort, month 3: 24.1% ordered again">24%</td><td class="c" style="background:#75a6ea" title="Mar 2010 cohort, month 4: 23.2% ordered again">23%</td><td class="c" style="background:#98bef1" title="Mar 2010 cohort, month 5: 20.3% ordered again">20%</td><td class="c" style="background:#75a6ea" title="Mar 2010 cohort, month 6: 24.6% ordered again">25%</td></tr><tr><th scope="row">Apr 2010</th><td class="n">294</td><td class="c" style="background:#98bef1" title="Apr 2010 cohort, month 1: 19.4% ordered again">19%</td><td class="c" style="background:#98bef1" title="Apr 2010 cohort, month 2: 19.4% ordered again">19%</td><td class="c" style="background:#b9d3f7" title="Apr 2010 cohort, month 3: 16.3% ordered again">16%</td><td class="c" style="background:#98bef1" title="Apr 2010 cohort, month 4: 18.4% ordered again">18%</td><td class="c" style="background:#75a6ea" title="Apr 2010 cohort, month 5: 22.4% ordered again">22%</td><td class="c dk" style="background:#538ce0" title="Apr 2010 cohort, month 6: 27.6% ordered again">28%</td></tr><tr><th scope="row">May 2010</th><td class="n">254</td><td class="c" style="background:#b9d3f7" title="May 2010 cohort, month 1: 15.8% ordered again">16%</td><td class="c" style="background:#98bef1" title="May 2010 cohort, month 2: 16.9% ordered again">17%</td><td class="c" style="background:#98bef1" title="May 2010 cohort, month 3: 17.3% ordered again">17%</td><td class="c" style="background:#98bef1" title="May 2010 cohort, month 4: 17.7% ordered again">18%</td><td class="c" style="background:#75a6ea" title="May 2010 cohort, month 5: 25.6% ordered again">26%</td><td class="c" style="background:#98bef1" title="May 2010 cohort, month 6: 21.3% ordered again">21%</td></tr><tr><th scope="row">Jun 2010</th><td class="n">270</td><td class="c" style="background:#98bef1" title="Jun 2010 cohort, month 1: 17.4% ordered again">17%</td><td class="c" style="background:#98bef1" title="Jun 2010 cohort, month 2: 18.9% ordered again">19%</td><td class="c" style="background:#98bef1" title="Jun 2010 cohort, month 3: 20.4% ordered again">20%</td><td class="c" style="background:#75a6ea" title="Jun 2010 cohort, month 4: 23.0% ordered again">23%</td><td class="c dk" style="background:#538ce0" title="Jun 2010 cohort, month 5: 28.5% ordered again">29%</td><td class="c" style="background:#b9d3f7" title="Jun 2010 cohort, month 6: 12.6% ordered again">13%</td></tr><tr><th scope="row">Jul 2010</th><td class="n">186</td><td class="c" style="background:#b9d3f7" title="Jul 2010 cohort, month 1: 15.6% ordered again">16%</td><td class="c" style="background:#98bef1" title="Jul 2010 cohort, month 2: 18.3% ordered again">18%</td><td class="c dk" style="background:#538ce0" title="Jul 2010 cohort, month 3: 29.6% ordered again">30%</td><td class="c dk" style="background:#538ce0" title="Jul 2010 cohort, month 4: 29.0% ordered again">29%</td><td class="c" style="background:#b9d3f7" title="Jul 2010 cohort, month 5: 14.0% ordered again">14%</td><td class="c" style="background:#d4e4fb" title="Jul 2010 cohort, month 6: 11.3% ordered again">11%</td></tr><tr><th scope="row">Aug 2010</th><td class="n">162</td><td class="c" style="background:#98bef1" title="Aug 2010 cohort, month 1: 20.4% ordered again">20%</td><td class="c dk" style="background:#538ce0" title="Aug 2010 cohort, month 2: 29.6% ordered again">30%</td><td class="c dk" style="background:#3672cf" title="Aug 2010 cohort, month 3: 32.1% ordered again">32%</td><td class="c" style="background:#98bef1" title="Aug 2010 cohort, month 4: 17.3% ordered again">17%</td><td class="c" style="background:#d4e4fb" title="Aug 2010 cohort, month 5: 11.7% ordered again">12%</td><td class="c" style="background:#d4e4fb" title="Aug 2010 cohort, month 6: 9.9% ordered again">10%</td></tr><tr><th scope="row">Sep 2010</th><td class="n">243</td><td class="c" style="background:#75a6ea" title="Sep 2010 cohort, month 1: 22.6% ordered again">23%</td><td class="c" style="background:#75a6ea" title="Sep 2010 cohort, month 2: 23.5% ordered again">23%</td><td class="c" style="background:#b9d3f7" title="Sep 2010 cohort, month 3: 12.3% ordered again">12%</td><td class="c" style="background:#d4e4fb" title="Sep 2010 cohort, month 4: 9.0% ordered again">9%</td><td class="c" style="background:#d4e4fb" title="Sep 2010 cohort, month 5: 10.3% ordered again">10%</td><td class="c" style="background:#b9d3f7" title="Sep 2010 cohort, month 6: 13.6% ordered again">14%</td></tr><tr><th scope="row">Oct 2010</th><td class="n">377</td><td class="c" style="background:#75a6ea" title="Oct 2010 cohort, month 1: 25.7% ordered again">26%</td><td class="c" style="background:#b9d3f7" title="Oct 2010 cohort, month 2: 14.6% ordered again">15%</td><td class="c" style="background:#b9d3f7" title="Oct 2010 cohort, month 3: 12.5% ordered again">12%</td><td class="c" style="background:#d4e4fb" title="Oct 2010 cohort, month 4: 8.8% ordered again">9%</td><td class="c" style="background:#d4e4fb" title="Oct 2010 cohort, month 5: 8.2% ordered again">8%</td><td class="c" style="background:#b9d3f7" title="Oct 2010 cohort, month 6: 13.0% ordered again">13%</td></tr><tr><th scope="row">Nov 2010</th><td class="n">325</td><td class="c" style="background:#98bef1" title="Nov 2010 cohort, month 1: 17.5% ordered again">18%</td><td class="c" style="background:#d4e4fb" title="Nov 2010 cohort, month 2: 9.2% ordered again">9%</td><td class="c" style="background:#d4e4fb" title="Nov 2010 cohort, month 3: 9.5% ordered again">10%</td><td class="c" style="background:#d4e4fb" title="Nov 2010 cohort, month 4: 7.7% ordered again">8%</td><td class="c" style="background:#d4e4fb" title="Nov 2010 cohort, month 5: 8.6% ordered again">9%</td><td class="c" style="background:#b9d3f7" title="Nov 2010 cohort, month 6: 12.9% ordered again">13%</td></tr><tr><th scope="row">Dec 2010</th><td class="n">76</td><td class="c" style="background:#d4e4fb" title="Dec 2010 cohort, month 1: 9.2% ordered again">9%</td><td class="c" style="background:#eaf2fd" title="Dec 2010 cohort, month 2: 5.3% ordered again">5%</td><td class="c" style="background:#d4e4fb" title="Dec 2010 cohort, month 3: 9.2% ordered again">9%</td><td class="c" style="background:#d4e4fb" title="Dec 2010 cohort, month 4: 11.8% ordered again">12%</td><td class="c" style="background:#eaf2fd" title="Dec 2010 cohort, month 5: 6.6% ordered again">7%</td><td class="c" style="background:#eaf2fd" title="Dec 2010 cohort, month 6: 5.3% ordered again">5%</td></tr><tr><th scope="row">Jan 2011</th><td class="n">71</td><td class="c" style="background:#b9d3f7" title="Jan 2011 cohort, month 1: 16.9% ordered again">17%</td><td class="c" style="background:#98bef1" title="Jan 2011 cohort, month 2: 21.1% ordered again">21%</td><td class="c" style="background:#98bef1" title="Jan 2011 cohort, month 3: 19.7% ordered again">20%</td><td class="c" style="background:#98bef1" title="Jan 2011 cohort, month 4: 21.1% ordered again">21%</td><td class="c" style="background:#b9d3f7" title="Jan 2011 cohort, month 5: 15.5% ordered again">15%</td><td class="c" style="background:#b9d3f7" title="Jan 2011 cohort, month 6: 15.5% ordered again">15%</td></tr><tr><th scope="row">Feb 2011</th><td class="n">124</td><td class="c" style="background:#b9d3f7" title="Feb 2011 cohort, month 1: 16.1% ordered again">16%</td><td class="c" style="background:#b9d3f7" title="Feb 2011 cohort, month 2: 15.3% ordered again">15%</td><td class="c" style="background:#98bef1" title="Feb 2011 cohort, month 3: 18.6% ordered again">19%</td><td class="c" style="background:#75a6ea" title="Feb 2011 cohort, month 4: 21.8% ordered again">22%</td><td class="c" style="background:#b9d3f7" title="Feb 2011 cohort, month 5: 15.3% ordered again">15%</td><td class="c" style="background:#b9d3f7" title="Feb 2011 cohort, month 6: 15.3% ordered again">15%</td></tr><tr><th scope="row">Mar 2011</th><td class="n">179</td><td class="c" style="background:#98bef1" title="Mar 2011 cohort, month 1: 18.4% ordered again">18%</td><td class="c" style="background:#75a6ea" title="Mar 2011 cohort, month 2: 21.8% ordered again">22%</td><td class="c" style="background:#98bef1" title="Mar 2011 cohort, month 3: 20.1% ordered again">20%</td><td class="c" style="background:#75a6ea" title="Mar 2011 cohort, month 4: 22.4% ordered again">22%</td><td class="c" style="background:#b9d3f7" title="Mar 2011 cohort, month 5: 15.1% ordered again">15%</td><td class="c" style="background:#98bef1" title="Mar 2011 cohort, month 6: 20.7% ordered again">21%</td></tr><tr><th scope="row">Apr 2011</th><td class="n">106</td><td class="c" style="background:#75a6ea" title="Apr 2011 cohort, month 1: 25.5% ordered again">25%</td><td class="c" style="background:#98bef1" title="Apr 2011 cohort, month 2: 19.8% ordered again">20%</td><td class="c" style="background:#98bef1" title="Apr 2011 cohort, month 3: 19.8% ordered again">20%</td><td class="c" style="background:#98bef1" title="Apr 2011 cohort, month 4: 17.9% ordered again">18%</td><td class="c" style="background:#75a6ea" title="Apr 2011 cohort, month 5: 23.6% ordered again">24%</td><td class="c" style="background:#98bef1" title="Apr 2011 cohort, month 6: 17.9% ordered again">18%</td></tr><tr><th scope="row">May 2011</th><td class="n">111</td><td class="c" style="background:#75a6ea" title="May 2011 cohort, month 1: 23.4% ordered again">23%</td><td class="c" style="background:#75a6ea" title="May 2011 cohort, month 2: 24.3% ordered again">24%</td><td class="c" style="background:#b9d3f7" title="May 2011 cohort, month 3: 16.2% ordered again">16%</td><td class="c" style="background:#75a6ea" title="May 2011 cohort, month 4: 21.6% ordered again">22%</td><td class="c" style="background:#98bef1" title="May 2011 cohort, month 5: 20.7% ordered again">21%</td><td class="c" style="background:#75a6ea" title="May 2011 cohort, month 6: 26.1% ordered again">26%</td></tr><tr><th scope="row">Jun 2011</th><td class="n">108</td><td class="c" style="background:#75a6ea" title="Jun 2011 cohort, month 1: 23.2% ordered again">23%</td><td class="c" style="background:#98bef1" title="Jun 2011 cohort, month 2: 21.3% ordered again">21%</td><td class="c dk" style="background:#538ce0" title="Jun 2011 cohort, month 3: 26.9% ordered again">27%</td><td class="c" style="background:#98bef1" title="Jun 2011 cohort, month 4: 20.4% ordered again">20%</td><td class="c dk" style="background:#538ce0" title="Jun 2011 cohort, month 5: 28.7% ordered again">29%</td><td class="na" title="Jun 2011 cohort, month 6: not fully observed yet">–</td></tr><tr><th scope="row">Jul 2011</th><td class="n">102</td><td class="c" style="background:#75a6ea" title="Jul 2011 cohort, month 1: 21.6% ordered again">22%</td><td class="c dk" style="background:#538ce0" title="Jul 2011 cohort, month 2: 30.4% ordered again">30%</td><td class="c dk" style="background:#538ce0" title="Jul 2011 cohort, month 3: 27.5% ordered again">27%</td><td class="c dk" style="background:#3672cf" title="Jul 2011 cohort, month 4: 34.3% ordered again">34%</td><td class="na" title="Jul 2011 cohort, month 5: not fully observed yet">–</td><td class="na" title="Jul 2011 cohort, month 6: not fully observed yet">–</td></tr><tr><th scope="row">Aug 2011</th><td class="n">106</td><td class="c dk" style="background:#538ce0" title="Aug 2011 cohort, month 1: 27.4% ordered again">27%</td><td class="c dk" style="background:#3672cf" title="Aug 2011 cohort, month 2: 31.1% ordered again">31%</td><td class="c dk" style="background:#538ce0" title="Aug 2011 cohort, month 3: 26.4% ordered again">26%</td><td class="na" title="Aug 2011 cohort, month 4: not fully observed yet">–</td><td class="na" title="Aug 2011 cohort, month 5: not fully observed yet">–</td><td class="na" title="Aug 2011 cohort, month 6: not fully observed yet">–</td></tr><tr><th scope="row">Sep 2011</th><td class="n">189</td><td class="c dk" style="background:#538ce0" title="Sep 2011 cohort, month 1: 27.0% ordered again">27%</td><td class="c dk" style="background:#235ab5" title="Sep 2011 cohort, month 2: 37.6% ordered again">38%</td><td class="na" title="Sep 2011 cohort, month 3: not fully observed yet">–</td><td class="na" title="Sep 2011 cohort, month 4: not fully observed yet">–</td><td class="na" title="Sep 2011 cohort, month 5: not fully observed yet">–</td><td class="na" title="Sep 2011 cohort, month 6: not fully observed yet">–</td></tr><tr><th scope="row">Oct 2011</th><td class="n">221</td><td class="c dk" style="background:#3672cf" title="Oct 2011 cohort, month 1: 32.1% ordered again">32%</td><td class="na" title="Oct 2011 cohort, month 2: not fully observed yet">–</td><td class="na" title="Oct 2011 cohort, month 3: not fully observed yet">–</td><td class="na" title="Oct 2011 cohort, month 4: not fully observed yet">–</td><td class="na" title="Oct 2011 cohort, month 5: not fully observed yet">–</td><td class="na" title="Oct 2011 cohort, month 6: not fully observed yet">–</td></tr><tr><th scope="row">Nov 2011</th><td class="n">191</td><td class="na" title="Nov 2011 cohort, month 1: not fully observed yet">–</td><td class="na" title="Nov 2011 cohort, month 2: not fully observed yet">–</td><td class="na" title="Nov 2011 cohort, month 3: not fully observed yet">–</td><td class="na" title="Nov 2011 cohort, month 4: not fully observed yet">–</td><td class="na" title="Nov 2011 cohort, month 5: not fully observed yet">–</td><td class="na" title="Nov 2011 cohort, month 6: not fully observed yet">–</td></tr><tr><th scope="row">Dec 2011</th><td class="n">28</td><td class="na" title="Dec 2011 cohort, month 1: not fully observed yet">–</td><td class="na" title="Dec 2011 cohort, month 2: not fully observed yet">–</td><td class="na" title="Dec 2011 cohort, month 3: not fully observed yet">–</td><td class="na" title="Dec 2011 cohort, month 4: not fully observed yet">–</td><td class="na" title="Dec 2011 cohort, month 5: not fully observed yet">–</td><td class="na" title="Dec 2011 cohort, month 6: not fully observed yet">–</td></tr></tbody></table></div><div class="scale"><span>5%</span><span class="ramp" style="background:linear-gradient(90deg,#eaf2fd,#d4e4fb,#b9d3f7,#98bef1,#75a6ea,#538ce0,#3672cf,#235ab5,#184795)"></span><span>43% ordered again</span><span><i class="na"></i> month not fully observed yet</span></div>
+</div>
+</section>
+
+<section class="block" id="markets">
+<h2>Markets <span class="tag real">Real data</span></h2>
+<p class="desc">Historical revenue per customer for markets with at least 30 customers; 37 smaller markets (290 customers) are pooled, not ranked.</p>
+<div class="card">
+<h3>Lifetime value by market</h3>
+<p class="note">Revenue per customer = orders per customer × average order value.</p>
+<div class="scroll"><table><caption class="sr">Historical customer lifetime value by country</caption><thead><tr><th scope="col">Market</th><th scope="col">Revenue per customer</th><th scope="col" class="n">Customers</th><th scope="col" class="n">Orders each</th><th scope="col" class="n">Avg order</th></tr></thead><tbody><tr><th scope="row">Germany</th><td><div class="cell"><span class="bar "><i style="width:100.0%"></i></span><span class="num">£3,986</span></div></td><td class="n">107</td><td class="n">7.4</td><td class="n">£540</td></tr><tr><th scope="row">France</th><td><div class="cell"><span class="bar "><i style="width:93.7%"></i></span><span class="num">£3,734</span></div></td><td class="n">93</td><td class="n">6.6</td><td class="n">£569</td></tr><tr><th scope="row">Spain</th><td><div class="cell"><span class="bar "><i style="width:69.3%"></i></span><span class="num">£2,762</span></div></td><td class="n">39</td><td class="n">3.9</td><td class="n">£713</td></tr><tr><th scope="row">United Kingdom</th><td><div class="cell"><span class="bar "><i style="width:67.7%"></i></span><span class="num">£2,700</span></div></td><td class="n">5,349</td><td class="n">6.3</td><td class="n">£431</td></tr></tbody></table></div>
+<p class="take">A customer in Germany is worth 48% more than one in United Kingdom: a higher acquisition cost can still pay back there.</p>
+</div>
+</section>
+
+<section class="block" id="media">
+<h2>Media &amp; tests <span class="tag sim">Simulated data</span></h2>
+<p class="desc">No public dataset carries ad spend, user journeys and experiments together, so this part runs on a disclosed, deterministic simulation.</p>
+<div class="grid">
+<div class="card">
+<h3>Last touch vs data-driven attribution</h3>
+<p class="note">Conversions credited to each channel by last click and by a Markov removal-effect model.</p>
+<div class="legend"><span><i style="background:var(--accent)"></i>Last touch</span><span><i style="background:var(--accent-2)"></i>Markov removal effect</span></div><div class="scroll"><table><caption class="sr">Conversions credited per channel, last touch vs Markov</caption><thead><tr><th scope="col">Channel</th><th scope="col">Conversions credited</th><th scope="col" class="n">Shift</th></tr></thead><tbody><tr><th scope="row">Paid Search</th><td><div class="pair"><span class="bar "><i style="width:100.0%"></i></span><span class="num">1,022</span><span class="bar alt"><i style="width:64.5%"></i></span><span class="num">659</span></div></td><td class="n delta">▼ −363</td></tr><tr><th scope="row">Email</th><td><div class="pair"><span class="bar "><i style="width:63.6%"></i></span><span class="num">650</span><span class="bar alt"><i style="width:40.4%"></i></span><span class="num">413</span></div></td><td class="n delta">▼ −237</td></tr><tr><th scope="row">Paid Social</th><td><div class="pair"><span class="bar "><i style="width:9.6%"></i></span><span class="num">98</span><span class="bar alt"><i style="width:33.8%"></i></span><span class="num">346</span></div></td><td class="n delta">▲ +248</td></tr><tr><th scope="row">Display</th><td><div class="pair"><span class="bar "><i style="width:6.8%"></i></span><span class="num">70</span><span class="bar alt"><i style="width:32.9%"></i></span><span class="num">336</span></div></td><td class="n delta">▲ +266</td></tr><tr><th scope="row">Organic Search</th><td><div class="pair"><span class="bar "><i style="width:11.3%"></i></span><span class="num">115</span><span class="bar alt"><i style="width:19.6%"></i></span><span class="num">201</span></div></td><td class="n delta">▲ +86</td></tr><tr><th scope="row">Direct</th><td><div class="pair"><span class="bar "><i style="width:10.2%"></i></span><span class="num">104</span><span class="bar alt"><i style="width:10.2%"></i></span><span class="num">105</span></div></td><td class="n delta">▲ +1</td></tr></tbody></table></div>
+<p class="take">Last touch over-credits Paid Search (−363) and under-credits Display (+266): upper-funnel channels assist conversions that the closer gets credit for.</p>
+</div>
+<div class="card">
+<h3>Landing-page A/B test</h3>
+<p class="note">Conversion rate per variant and the uplift's 95% confidence interval.</p>
+<div class="variants"><div class="variant"><span>A · Control landing page</span><b>5.50%</b><span class="bar "><i style="width:84.6%"></i></span><small>462 of 8,400 sessions</small></div><div class="variant"><span>B · Short-form landing page</span><b>6.50%</b><span class="bar alt"><i style="width:100.0%"></i></span><small>533 of 8,200 sessions</small></div></div><div class="ci" role="img" aria-label="Uplift +1.00 percentage points, 95% CI +0.28 to +1.72"><span class="range" style="left:27.4%;width:calc(83.3% - 27.4%)"></span><span class="zero" style="left:16.7%"></span><span class="pt" style="left:55.4%"></span></div><div class="ci-lbl"><span style="left:16.7%">0</span></div><p class="note" style="margin:8px 0 0">Uplift <b>+1.00 pp</b>, 95% CI +0.28 to +1.72 pp: entirely above zero.</p><p class="stats"><span>z = 2.71</span><span>p = 0.0067</span><span>P(B beats A) = 99.7%</span><span>relative uplift +18%</span><span>revenue per session €4.85 → €5.93</span></p><p class="take"><b>Ship variant B with a guarded rollout.</b> Guardrails after rollout: mobile conversion rate, revenue per session, refunds.</p>
+</div>
+</div>
+<div class="card" style="margin-top:16px">
+<h3>Budget move</h3>
+<p class="note">Attribution-driven and saturation-aware: a square-root response curve per channel.</p>
+<div class="move"><span>Paid Social</span><span class="arrow">→</span><span>Display</span><span class="amt">€4,197</span></div><p class="note">Expected under the saturation model: <b>+16 conversions</b> and <b>+€1,458</b> revenue on €38,331 of paid spend. The move is capped at 15% of paid spend and 50% of the donor budget; Email is held because its volume is list-driven, not spend-driven.</p><p class="take">Directional: each curve is fitted through one observed point, so this sizes the next spend test rather than replacing it.</p>
+</div>
+</section>
 </main>
+<footer><div class="wrap">
+<p>Generated by <code>src/build_web_dashboard.py</code> from the committed analysis outputs; every headline figure is recomputed with pandas, DuckDB and statsmodels in <a href="https://github.com/errer441122/digital-campaign-performance-dashboard/blob/main/notebooks/cross_check.ipynb">the cross-check notebook</a>.</p>
+<p>Real data: Chen, D. (2019) <i>Online Retail II</i>, UCI Machine Learning Repository, CC BY 4.0 — <a href="https://github.com/errer441122/digital-campaign-performance-dashboard/blob/main/data/REAL_DATA_PROVENANCE.md">provenance and cleaning rules</a>. Simulated data is disclosed in the <a href="https://github.com/errer441122/digital-campaign-performance-dashboard/blob/main/data/DATA_CARD.md">data card</a>. Relationships are observational, not causal.</p>
+</div></footer>
 </body>
 </html>

@@ -282,7 +282,7 @@ def _pct(x: float) -> str:
 
 def write_reports(result: dict[str, object]) -> None:
     ANALYSIS_DIR.mkdir(parents=True, exist_ok=True)
-    METRICS_PATH.write_text(json.dumps(result, indent=2, sort_keys=True) + "\n", encoding="utf-8")
+    METRICS_PATH.write_text(json.dumps(result, indent=2, sort_keys=True) + "\n", encoding="utf-8", newline="\n")
 
     wt = result["weekly_trend"]
     up = result["uplift_over_time"]
@@ -370,7 +370,7 @@ def write_reports(result: dict[str, object]) -> None:
         "CSVs are independent simulated samples — the reconciliation checks "
         "internal consistency and shared keys, not equality across samples.\n"
     )
-    REPORT_PATH.write_text("\n".join(L), encoding="utf-8")
+    REPORT_PATH.write_text("\n".join(L), encoding="utf-8", newline="\n")
 
 
 def main() -> None:

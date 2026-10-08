@@ -3,38 +3,38 @@
     "min_customers": 30,
     "ranked": [
       {
-        "avg_order_value_gbp": 547.07,
+        "avg_order_value_gbp": 539.87,
         "country": "Germany",
         "customers": 107,
-        "historical_clv_gbp": 4039.09,
+        "historical_clv_gbp": 3985.97,
         "orders_per_customer": 7.38
       },
       {
-        "avg_order_value_gbp": 579.64,
+        "avg_order_value_gbp": 569.33,
         "country": "France",
         "customers": 93,
-        "historical_clv_gbp": 3801.93,
+        "historical_clv_gbp": 3734.29,
         "orders_per_customer": 6.56
       },
       {
-        "avg_order_value_gbp": 718.74,
+        "avg_order_value_gbp": 713.48,
         "country": "Spain",
         "customers": 39,
-        "historical_clv_gbp": 2782.83,
+        "historical_clv_gbp": 2762.45,
         "orders_per_customer": 3.87
       },
       {
-        "avg_order_value_gbp": 438.96,
+        "avg_order_value_gbp": 430.66,
         "country": "United Kingdom",
         "customers": 5349,
-        "historical_clv_gbp": 2752.37,
+        "historical_clv_gbp": 2700.27,
         "orders_per_customer": 6.27
       }
     ],
     "small_n_pooled": {
       "countries": 37,
       "customers": 290,
-      "revenue": 2126713.37
+      "revenue": 2106260.38
     }
   },
   "cohort_retention": {
@@ -283,7 +283,7 @@
           0.2685,
           0.2037,
           0.287,
-          0.0833
+          null
         ]
       },
       {
@@ -295,8 +295,8 @@
           0.3039,
           0.2745,
           0.3431,
-          0.1569,
-          0.0
+          null,
+          null
         ]
       },
       {
@@ -307,9 +307,9 @@
           0.2736,
           0.3113,
           0.2642,
-          0.1698,
-          0.0,
-          0.0
+          null,
+          null,
+          null
         ]
       },
       {
@@ -319,10 +319,10 @@
           1.0,
           0.2698,
           0.3757,
-          0.1481,
-          0.0,
-          0.0,
-          0.0
+          null,
+          null,
+          null,
+          null
         ]
       },
       {
@@ -331,11 +331,11 @@
         "retention": [
           1.0,
           0.3213,
-          0.1584,
-          0.0,
-          0.0,
-          0.0,
-          0.0
+          null,
+          null,
+          null,
+          null,
+          null
         ]
       },
       {
@@ -343,12 +343,12 @@
         "customers": 191,
         "retention": [
           1.0,
-          0.1414,
-          0.0,
-          0.0,
-          0.0,
-          0.0,
-          0.0
+          null,
+          null,
+          null,
+          null,
+          null,
+          null
         ]
       },
       {
@@ -356,15 +356,16 @@
         "customers": 28,
         "retention": [
           1.0,
-          0.0,
-          0.0,
-          0.0,
-          0.0,
-          0.0,
-          0.0
+          null,
+          null,
+          null,
+          null,
+          null,
+          null
         ]
       }
     ],
+    "last_complete_month": "2011-11",
     "max_offset": 6
   },
   "dataset": "Online Retail II (UCI, CC BY 4.0) \u2014 real",
@@ -374,17 +375,17 @@
     "segments": [
       {
         "automation_flow": "VIP & referral flow",
-        "customer_share": 0.2606,
-        "customers": 1532,
-        "revenue_gbp": 12662714.43,
+        "customer_share": 0.2615,
+        "customers": 1537,
+        "revenue_gbp": 12433252.98,
         "segment": "Champions",
         "trigger": "RFM in top quintiles"
       },
       {
         "automation_flow": "Cross-sell & loyalty tier",
-        "customer_share": 0.1596,
-        "customers": 938,
-        "revenue_gbp": 2310803.78,
+        "customer_share": 0.1594,
+        "customers": 937,
+        "revenue_gbp": 2283898.41,
         "segment": "Loyal customers",
         "trigger": "\u22652 orders, recent"
       },
@@ -392,39 +393,39 @@
         "automation_flow": "Win-back sequence",
         "customer_share": 0.1997,
         "customers": 1174,
-        "revenue_gbp": 1449812.55,
+        "revenue_gbp": 1402158.49,
         "segment": "At risk",
         "trigger": "Recency in 2nd quintile"
       },
       {
         "automation_flow": "Low-cost reactivation then sunset",
-        "customer_share": 0.1803,
-        "customers": 1060,
-        "revenue_gbp": 462962.76,
+        "customer_share": 0.1802,
+        "customers": 1059,
+        "revenue_gbp": 461722.15,
         "segment": "Hibernating",
         "trigger": "Low recency and value"
       },
       {
         "automation_flow": "High-touch reactivation",
-        "customer_share": 0.0201,
-        "customers": 118,
-        "revenue_gbp": 390847.15,
+        "customer_share": 0.0202,
+        "customers": 119,
+        "revenue_gbp": 392087.76,
         "segment": "Can't lose them",
         "trigger": "High value, lapsed"
       },
       {
         "automation_flow": "Welcome / onboarding series",
-        "customer_share": 0.0994,
-        "customers": 584,
-        "revenue_gbp": 258364.15,
+        "customer_share": 0.0988,
+        "customers": 581,
+        "revenue_gbp": 251782.86,
         "segment": "New / promising",
         "trigger": "Recent first order, low freq/value"
       },
       {
         "automation_flow": "Targeted reactivation offer",
-        "customer_share": 0.0803,
-        "customers": 472,
-        "revenue_gbp": 207924.34,
+        "customer_share": 0.0801,
+        "customers": 471,
+        "revenue_gbp": 206648.51,
         "segment": "Needs attention",
         "trigger": "Recency slipping"
       }

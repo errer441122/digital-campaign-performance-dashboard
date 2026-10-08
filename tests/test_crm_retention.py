@@ -6,6 +6,7 @@ hand-known structure — because the input is now a real public dataset.
 
 from __future__ import annotations
 
+import csv
 import sys
 from datetime import timedelta
 from pathlib import Path
@@ -51,12 +52,30 @@ def test_quintile_scores_give_ties_one_score() -> None:
     assert rec["a"] > rec["b"] > rec["c"]
 
 
-def test_cohort_retention_anchored_and_bounded() -> None:
+def test_cohort_retention_anchored_bounded_and_censored() -> None:
     co = RESULT["cohort_retention"]
+    assert co["last_complete_month"] == "2011-11"  # the extract ends on 9 Dec 2011
     for c in co["cohorts"]:
         assert len(c["retention"]) == co["max_offset"] + 1
         assert abs(c["retention"][0] - 1.0) < 1e-9  # M0 = acquisition month
-        assert all(0.0 <= x <= 1.0 for x in c["retention"])
+        y, m = (int(p) for p in c["cohort_month"].split("-"))
+        for k, x in enumerate(c["retention"][1:], start=1):
+            idx = y * 12 + m - 1 + k
+            month = f"{idx // 12:04d}-{idx % 12 + 1:02d}"
+            if month > co["last_complete_month"]:
+                assert x is None, (c["cohort_month"], k)  # unknown, not 0%
+            else:
+                assert 0.0 <= x <= 1.0
+
+
+def test_dec_2010_sheet_overlap_is_not_double_counted() -> None:
+    # The source's two yearly sheets both contain 1-9 Dec 2010. Reading both
+    # doubled those orders, so every one of them had an even item count.
+    with cr.ORDERS_PATH.open(newline="", encoding="utf-8") as fh:
+        items = [int(r["n_items"]) for r in csv.DictReader(fh)
+                 if "2010-12-01" <= r["order_date"] <= "2010-12-09"]
+    assert len(items) > 100
+    assert sum(n % 2 == 0 for n in items) / len(items) < 0.9
 
 
 def test_clv_by_country_is_ranked_thresholded_and_consistent() -> None:

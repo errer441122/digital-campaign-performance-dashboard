@@ -28,9 +28,9 @@ Real At-risk/Dormant customers ranked by **real** lifetime spend, filtered to co
 | Dormant | GBP 44,534 | 59 | demo request; 12 page views; 1 form submits |
 | Dormant | GBP 39,916 | 37 | 2 key-page views; 11 page views; 1 form submits |
 | At risk | GBP 26,259 | 21 | 1 form submits; 2 email clicks; 6 page views |
-| Dormant | GBP 18,410 | 55 | 3 key-page views; 2 form submits; 4 email clicks |
+| Dormant | GBP 17,388 | 55 | 3 key-page views; 2 form submits; 4 email clicks |
 | At risk | GBP 17,335 | 22 | 13 page views; 1 form submits; 1 email clicks |
-| At risk | GBP 17,250 | 46 | 4 key-page views; 4 email clicks; 14 page views |
+| At risk | GBP 16,710 | 46 | 4 key-page views; 4 email clicks; 14 page views |
 | At risk | GBP 16,250 | 63 | 3 form submits; 5 email clicks; 2 key-page views |
 | At risk | GBP 16,246 | 23 | 2 key-page views; 2 email clicks; 5 page views |
 | At risk | GBP 15,601 | 20 | 5 email clicks; 5 page views |

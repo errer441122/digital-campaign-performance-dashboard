@@ -21,17 +21,21 @@
 2. Keep Quantity > 0 and Price > 0 (drops returns, credits, zero lines).
 3. Drop cancellation invoices (Invoice starting with `C`).
 4. Aggregate to one row per (Customer ID, Invoice) = one order.
+5. Read each invoice once. The two yearly sheets overlap on 1-9 Dec 2010;
+   rows of an invoice already read from the earlier sheet are skipped
+   (otherwise every order in that window is counted twice).
 
 ## Prepared sample
 
 - **File:** `data/online_retail_orders.csv`
 - **Raw source rows scanned:** 1,067,371
-- **Rows kept after cleaning:** 805,549
+- **Rows skipped as the 1-9 Dec 2010 sheet overlap:** 22,523
+- **Rows kept after cleaning:** 791,045
 - **Orders (rows in prepared file):** 36,969
 - **Distinct customers:** 5,878
 - **Distinct countries:** 41
 - **Order date range:** 2009-12-01 … 2011-12-09
-- **Prepared file SHA256:** `548c65de4962cfe98dcd451e14261dd0a2d2c7b6d6627439ce666f1eccb630d9`
+- **Prepared file SHA256:** `9fa5dfbcf0c531287008807e4cf54b47367f38d540291df28af61ebc9aa415d0`
 
 Re-running `python src/prepare_real_data.py` reproduces this file byte-for-byte
 from the SHA256-pinned source.

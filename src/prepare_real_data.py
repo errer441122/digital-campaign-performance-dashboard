@@ -12,6 +12,8 @@ the CRM analyses consume. Only the prepared CSV + provenance are committed;
 the 45 MB source is cached locally and git-ignored.
 
 Cleaning rules (documented, conservative for RFM/CLV):
+  - read each invoice once: the two yearly sheets overlap on 1-9 Dec 2010,
+    so an invoice already read from an earlier sheet is skipped;
   - keep rows with a Customer ID;
   - keep Quantity > 0 and Price > 0 (drops returns/credits and zero lines);
   - drop cancellation invoices (Invoice starting with 'C');
@@ -74,23 +76,33 @@ def _norm_customer(value: object) -> str:
     return str(value).strip()
 
 
-def build_orders() -> tuple[list[dict[str, object]], int, int]:
+def build_orders() -> tuple[list[dict[str, object]], int, int, int]:
     wb = openpyxl.load_workbook(SOURCE_XLSX, read_only=True, data_only=True)
     # order key -> aggregated record
     orders: dict[tuple[str, str], dict[str, object]] = {}
     raw_rows = 0
     kept_rows = 0
+    overlap_rows = 0
+    # The "Year 2009-2010" and "Year 2010-2011" sheets both contain 1-9 Dec
+    # 2010. Summing both copies doubled every order in that window, so an
+    # invoice already read from an earlier sheet is skipped.
+    earlier_sheets: set[str] = set()
 
     for sheet in wb.sheetnames:
         ws = wb[sheet]
         rows = ws.iter_rows(values_only=True)
         next(rows)  # header
+        this_sheet: set[str] = set()
         for invoice, _stock, _desc, qty, inv_date, price, cust, country in rows:
             raw_rows += 1
+            inv = str(invoice).strip()
+            if inv in earlier_sheets:
+                overlap_rows += 1
+                continue
+            this_sheet.add(inv)
             customer = _norm_customer(cust)
             if not customer:
                 continue
-            inv = str(invoice).strip()
             if inv.startswith("C"):  # cancellation
                 continue
             try:
@@ -118,6 +130,7 @@ def build_orders() -> tuple[list[dict[str, object]], int, int]:
                 rec["n_items"] += quantity
                 if inv_date.date() < rec["order_date"]:
                     rec["order_date"] = inv_date.date()
+        earlier_sheets |= this_sheet
 
     # Per-customer first purchase -> signup / cohort.
     first_date: dict[str, object] = {}
@@ -143,10 +156,10 @@ def build_orders() -> tuple[list[dict[str, object]], int, int]:
             }
         )
     out.sort(key=lambda r: (r["customer_id"], r["order_date"], r["order_id"]))
-    return out, raw_rows, kept_rows
+    return out, raw_rows, kept_rows, overlap_rows
 
 
-def write_provenance(rows: list[dict[str, object]], raw: int, kept: int) -> None:
+def write_provenance(rows: list[dict[str, object]], raw: int, kept: int, overlap: int) -> None:
     customers = sorted({r["customer_id"] for r in rows})
     dates = [r["order_date"] for r in rows]
     countries = len({r["country"] for r in rows})
@@ -174,11 +187,15 @@ def write_provenance(rows: list[dict[str, object]], raw: int, kept: int) -> None
 2. Keep Quantity > 0 and Price > 0 (drops returns, credits, zero lines).
 3. Drop cancellation invoices (Invoice starting with `C`).
 4. Aggregate to one row per (Customer ID, Invoice) = one order.
+5. Read each invoice once. The two yearly sheets overlap on 1-9 Dec 2010;
+   rows of an invoice already read from the earlier sheet are skipped
+   (otherwise every order in that window is counted twice).
 
 ## Prepared sample
 
 - **File:** `data/online_retail_orders.csv`
 - **Raw source rows scanned:** {raw:,}
+- **Rows skipped as the 1-9 Dec 2010 sheet overlap:** {overlap:,}
 - **Rows kept after cleaning:** {kept:,}
 - **Orders (rows in prepared file):** {len(rows):,}
 - **Distinct customers:** {len(customers):,}
@@ -198,12 +215,13 @@ have **no equivalent in any permissive public dataset** and remain
 **clearly-labelled simulated** data — see `data/DATA_CARD.md`.
 """,
         encoding="utf-8",
+        newline="\n",
     )
 
 
 def main() -> None:
     ensure_source()
-    rows, raw, kept = build_orders()
+    rows, raw, kept, overlap = build_orders()
     OUT_CSV.parent.mkdir(parents=True, exist_ok=True)
     # Explicit LF so the file is byte-identical locally, in git (eol=lf) and
     # in CI — the provenance SHA256 gate depends on it.
@@ -211,7 +229,7 @@ def main() -> None:
         writer = csv.DictWriter(fh, fieldnames=list(rows[0].keys()), lineterminator="\n")
         writer.writeheader()
         writer.writerows(rows)
-    write_provenance(rows, raw, kept)
+    write_provenance(rows, raw, kept, overlap)
     print(
         f"Wrote {len(rows):,} orders for "
         f"{len({r['customer_id'] for r in rows}):,} customers "

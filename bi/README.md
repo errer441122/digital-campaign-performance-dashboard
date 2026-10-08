@@ -10,9 +10,7 @@ This folder gives a recruiter-friendly bridge from the Excel/static dashboard to
 | Power BI | `powerbi/report_spec.json` | Page and visual specification for Campaign Performance, Landing Pages, A/B Testing and Weekly Trend |
 | Tableau | `tableau/campaign_performance_workbook.twb` | Text workbook skeleton with marketing analyst worksheets |
 | Looker Studio | `looker_studio/report_spec.md`, `../tracking/looker_studio_dashboard_spec.md` | Dashboard specification for executive, channel, landing-page, UTM-quality, funnel, experiment and tracking-readiness views |
-| Screenshot preview | `../assets/campaign_dashboard_preview.png` | Existing dashboard preview image for quick visual review |
-
-Screenshot reference for reviewers: `assets/campaign_dashboard_preview.png`.
+| Live dashboard | [`../docs/index.html`](https://errer441122.github.io/digital-campaign-performance-dashboard/), `../assets/web_dashboard.png` | The published web dashboard and a screenshot of it for quick visual review |
 
 ## Boundary
 

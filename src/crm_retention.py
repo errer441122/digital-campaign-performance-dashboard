@@ -164,6 +164,17 @@ def rfm(orders: list[dict[str, object]], as_of: date) -> dict[str, object]:
     return {"total_customers": total, "segments": segments, "_by_customer": by_customer}
 
 
+def last_complete_month(orders: list[dict[str, object]]) -> str:
+    """Last calendar month the data covers in full ("YYYY-MM").
+
+    The extract ends on 9 Dec 2011, so December 2011 is only partly
+    observed and the last complete month is November 2011."""
+    last = max(o["order_date"] for o in orders)
+    if (last + timedelta(days=1)).month == last.month:
+        last = last.replace(day=1) - timedelta(days=1)
+    return f"{last.year:04d}-{last.month:02d}"
+
+
 def cohort_retention(orders: list[dict[str, object]]) -> dict[str, object]:
     cohort_customers: dict[str, set[str]] = defaultdict(set)
     active: dict[tuple[str, int], set[str]] = defaultdict(set)
@@ -174,16 +185,21 @@ def cohort_retention(orders: list[dict[str, object]]) -> dict[str, object]:
         if 0 <= offset <= COHORT_MAX_OFFSET:
             active[(cohort, offset)].add(o["customer_id"])
 
+    # A month the data does not fully cover is unknown (None), not 0%:
+    # late cohorts are right-censored, they did not stop buying.
+    last_full = last_complete_month(orders)
     table = []
     for cohort in sorted(cohort_customers):
         base = len(cohort_customers[cohort])
+        observable = _month_index(cohort, _d(last_full + "-01"))  # last fully seen offset
         row = {"cohort_month": cohort, "customers": base, "retention": []}
         for k in range(COHORT_MAX_OFFSET + 1):
-            row["retention"].append(
-                round(len(active[(cohort, k)]) / base, 4) if base else 0.0
-            )
+            if k and k > observable:  # M0 is 100% by construction
+                row["retention"].append(None)
+            else:
+                row["retention"].append(round(len(active[(cohort, k)]) / base, 4))
         table.append(row)
-    return {"max_offset": COHORT_MAX_OFFSET, "cohorts": table}
+    return {"max_offset": COHORT_MAX_OFFSET, "last_complete_month": last_full, "cohorts": table}
 
 
 def clv_by_country(rfm_result: dict[str, object]) -> dict[str, object]:
@@ -260,13 +276,15 @@ def _md(r: dict[str, object]) -> str:
     L.append(f"| Cohort | Customers | {head} |")
     L.append("| --- | ---: | " + " | ".join(["---:"] * (r["cohort_retention"]["max_offset"] + 1)) + " |")
     for c in r["cohort_retention"]["cohorts"]:
-        cells = " | ".join(f"{x:.0%}" for x in c["retention"])
+        cells = " | ".join("—" if x is None else f"{x:.0%}" for x in c["retention"])
         L.append(f"| {c['cohort_month']} | {c['customers']:,} | {cells} |")
     L.append("")
     L.append(
         "M0 is the acquisition month (100% by construction); later columns "
         "are the share of the cohort that placed another order in that month "
-        "offset. Late cohorts are right-censored (fewer observable months).\n"
+        "offset. — marks a month the data does not fully cover yet (the last "
+        f"complete month is {r['cohort_retention']['last_complete_month']}): "
+        "late cohorts are right-censored, not churned.\n"
     )
 
     clv = r["clv_by_country"]
@@ -316,8 +334,8 @@ def _md(r: dict[str, object]) -> str:
 def main() -> None:
     result = run()
     ANALYSIS_DIR.mkdir(parents=True, exist_ok=True)
-    METRICS_PATH.write_text(json.dumps(result, indent=2, sort_keys=True) + "\n", encoding="utf-8")
-    REPORT_PATH.write_text(_md(result), encoding="utf-8")
+    METRICS_PATH.write_text(json.dumps(result, indent=2, sort_keys=True) + "\n", encoding="utf-8", newline="\n")
+    REPORT_PATH.write_text(_md(result), encoding="utf-8", newline="\n")
     print(f"Wrote {REPORT_PATH.relative_to(ROOT)} and {METRICS_PATH.relative_to(ROOT)}")
 
 

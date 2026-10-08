@@ -3,8 +3,10 @@
 from __future__ import annotations
 
 import csv
-from collections import defaultdict
 from pathlib import Path
+
+# Same zero-safe helpers as the deep dive, so both reports agree.
+from campaign_deep_dive import aggregate, enrich
 
 
 ROOT = Path(__file__).resolve().parents[1]
@@ -15,36 +17,6 @@ REPORTS_DIR = ROOT / "reports"
 def read_campaign_rows() -> list[dict[str, str]]:
     with CAMPAIGN_PATH.open(newline="", encoding="utf-8") as handle:
         return list(csv.DictReader(handle))
-
-
-def aggregate(rows: list[dict[str, str]], key: str) -> dict[str, dict[str, float]]:
-    grouped: dict[str, dict[str, float]] = defaultdict(
-        lambda: {"impressions": 0, "clicks": 0, "cost_eur": 0.0, "conversions": 0, "revenue_eur": 0.0}
-    )
-    for row in rows:
-        group = grouped[row[key]]
-        group["impressions"] += int(row["impressions"])
-        group["clicks"] += int(row["clicks"])
-        group["cost_eur"] += float(row["cost_eur"])
-        group["conversions"] += int(row["conversions"])
-        group["revenue_eur"] += float(row["revenue_eur"])
-    return grouped
-
-
-def enrich(metrics: dict[str, float]) -> dict[str, float]:
-    clicks = metrics["clicks"]
-    impressions = metrics["impressions"]
-    cost = metrics["cost_eur"]
-    conversions = metrics["conversions"]
-    revenue = metrics["revenue_eur"]
-    return {
-        **metrics,
-        "ctr": clicks / impressions,
-        "cpc": cost / clicks,
-        "conversion_rate": conversions / clicks,
-        "cpa": cost / conversions,
-        "roas": revenue / cost,
-    }
 
 
 def fmt_eur(value: float) -> str:
@@ -151,8 +123,8 @@ Conversions {direction} by {abs(conversion_change):.0f} from the first to the la
 def main() -> None:
     rows = read_campaign_rows()
     REPORTS_DIR.mkdir(exist_ok=True)
-    (REPORTS_DIR / "executive_summary.md").write_text(build_executive_summary(rows), encoding="utf-8")
-    (REPORTS_DIR / "weekly_campaign_insights.md").write_text(build_weekly_insights(rows), encoding="utf-8")
+    (REPORTS_DIR / "executive_summary.md").write_text(build_executive_summary(rows), encoding="utf-8", newline="\n")
+    (REPORTS_DIR / "weekly_campaign_insights.md").write_text(build_weekly_insights(rows), encoding="utf-8", newline="\n")
     print("Wrote executive_summary.md and weekly_campaign_insights.md")
 
 

@@ -166,8 +166,8 @@ This is simulated portfolio evidence only. It does not use real advertising-plat
 def main() -> None:
     results = analyze()
     REPORTS_DIR.mkdir(exist_ok=True)
-    JSON_PATH.write_text(json.dumps(results, indent=2) + "\n", encoding="utf-8")
-    MD_PATH.write_text(build_markdown(results), encoding="utf-8")
+    JSON_PATH.write_text(json.dumps(results, indent=2) + "\n", encoding="utf-8", newline="\n")
+    MD_PATH.write_text(build_markdown(results), encoding="utf-8", newline="\n")
     print(f"Wrote {JSON_PATH.name} and {MD_PATH.name}")
 
 

@@ -83,7 +83,7 @@ def main() -> None:
     rows = build_overlay()
     OVERLAY_PATH.parent.mkdir(parents=True, exist_ok=True)
     with OVERLAY_PATH.open("w", newline="", encoding="utf-8") as fh:
-        writer = csv.DictWriter(fh, fieldnames=list(rows[0].keys()))
+        writer = csv.DictWriter(fh, fieldnames=list(rows[0].keys()), lineterminator="\n")
         writer.writeheader()
         writer.writerows(rows)
     print(

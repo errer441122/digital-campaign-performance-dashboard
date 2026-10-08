@@ -179,3 +179,10 @@ To run the SQL evidence after installing DuckDB:
 ```bash
 duckdb < sql/marketing_analytics_evidence.sql
 ```
+
+## How I built this
+
+Built with AI coding assistants as a pair programmer: they drafted most of the
+code and docs. My part: choosing the business question and the data, defining
+the rules and metrics, checking results against the source data and deciding
+what to report, including what did not work.

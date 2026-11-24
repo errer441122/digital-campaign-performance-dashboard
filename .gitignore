@@ -3,5 +3,5 @@ __pycache__/
 *.pyc
 .pytest_cache/
 .cache/
-# store_report.py output: customer lists with emails
-report/
+# campaign_check.py output: customer lists
+plan/

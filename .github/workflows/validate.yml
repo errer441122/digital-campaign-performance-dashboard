@@ -1,4 +1,4 @@
-name: Validate CRM analysis
+name: Validate
 
 on:
   push:
@@ -39,12 +39,12 @@ jobs:
           python src/crm_lifecycle.py
           python src/build_dashboard.py
           python src/build_web_dashboard.py
-          python src/store_report.py --orders data/shopify_orders_example.csv --store "Example shop" --out build/report
+          python src/backtest.py
 
       - name: Committed reports must match the code that generates them
         # A report edited by hand, or code changed without re-running it, fails
         # here instead of reaching a reviewer. Binary outputs are excluded.
-        run: git diff --exit-code -- analysis docs/index.html
+        run: git diff --exit-code -- analysis docs/analysis.html docs/campaign_check.json
 
       - name: Run test suite
         run: python -m pytest -q

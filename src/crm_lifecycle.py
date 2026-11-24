@@ -3,7 +3,7 @@
 Runs on `data/online_retail_orders.csv` (Online Retail II, UCI, CC BY 4.0).
 Recency and order count put every customer into one stage: New, Repeat,
 At risk, Dormant or Churned. The same thresholds drive the win-back segment
-in the lifecycle-automation-lab repo.
+in the klaviyo-lifecycle-lab repo.
 
 Pure standard library.
 """

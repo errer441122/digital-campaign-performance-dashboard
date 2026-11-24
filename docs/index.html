@@ -4,270 +4,618 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
 <meta name="color-scheme" content="light dark">
-<title>CRM retention practice: RFM, lifecycle and repeat purchases</title>
-<meta name="description" content="RFM segments, lifecycle stages and repeat purchases for 5,878 customers of a UK online shop, on a public dataset (UCI Online Retail II).">
-<meta property="og:title" content="CRM retention practice">
-<meta property="og:description" content="26% of customers bring 71% of revenue. RFM segments, lifecycle stages and repeat purchases on a public e-commerce dataset.">
+<title>Campaign Performance: did the campaign bring orders?</title>
+<meta name="description" content="A control group for B2B campaigns, measured on the orders in your ERP. Tested on six campaigns that never happened.">
+<meta property="og:title" content="The campaign report says it worked. Did it?">
+<meta property="og:description" content="A control group for B2B campaigns, measured on the orders in your ERP.">
 <meta property="og:type" content="website">
 <meta property="og:url" content="https://errer441122.github.io/digital-campaign-performance-dashboard/">
-<meta property="og:image" content="https://errer441122.github.io/digital-campaign-performance-dashboard/preview.png">
-<meta name="twitter:card" content="summary_large_image">
 <style>
+/* Corporate B2B: white, cool green-grey bands, one green. One radius: 6px. */
 :root {
   color-scheme: light;
-  --page: #f4f6f4; --surface: #fbfcfb; --ink: #101614; --ink-2: #47524d; --muted: #6a7570;
-  --line: #dde3df; --rest: #d5dcd8; --accent: #0b6e4f; --heat: #145c40; --on-accent: #ffffff;
-  --tint: #e7f1ec; --cell-hi: #101614;
+  --page: #ffffff; --band: #f3f6f4; --surface: #ffffff; --ink: #0f1a16; --ink-2: #3f4c46; --muted: #5d6a64;
+  --line: #d9e1dd; --rest: #aab5b0; --accent: #0b6e4f; --accent-2: #07543c; --on-accent: #ffffff; --tint: #e6f1ec;
+  --out: #74828b; --bad: #a3361f; --bad-tint: #fbece8; --r: 6px;
+  --sans: "Segoe UI Variable Text", "Segoe UI", -apple-system, BlinkMacSystemFont, "Helvetica Neue", Arial, sans-serif;
+  --display: "Segoe UI Variable Display", "Segoe UI", -apple-system, BlinkMacSystemFont, "Helvetica Neue", Arial, sans-serif;
 }
 @media (prefers-color-scheme: dark) {
   :root {
     color-scheme: dark;
-    --page: #0c1210; --surface: #121a17; --ink: #edf2ef; --ink-2: #b9c4be; --muted: #8b9690;
-    --line: #25302b; --rest: #2b3833; --accent: #5fd3a4; --heat: #5fd3a4; --on-accent: #06100c;
-    --tint: #16241e; --cell-hi: #06100c;
+    --page: #0c1210; --band: #101815; --surface: #141d19; --ink: #edf2ef; --ink-2: #bcc7c1; --muted: #93a098;
+    --line: #26312c; --rest: #4a5852; --accent: #5fd3a4; --accent-2: #86e0bb; --on-accent: #06100c; --tint: #16261f;
+    --out: #8d9ba4; --bad: #ff9b85; --bad-tint: #2a1714;
   }
 }
 * { box-sizing: border-box; }
-html { scroll-behavior: smooth; scroll-padding-top: 76px; }
+html { scroll-behavior: smooth; scroll-padding-top: 80px; }
 @media (prefers-reduced-motion: reduce) { html { scroll-behavior: auto; } }
-body { margin: 0; background: var(--page); color: var(--ink);
-  font: 16px/1.6 "Segoe UI Variable Text", "Segoe UI", -apple-system, BlinkMacSystemFont, "Helvetica Neue", Arial, sans-serif; }
+body { margin: 0; background: var(--page); color: var(--ink); font: 16px/1.6 var(--sans); }
 a { color: var(--accent); text-underline-offset: 3px; }
-.sr { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0); }
-.wrap { max-width: 1120px; margin: 0 auto; padding: 0 24px; }
+code { font-family: ui-monospace, "Cascadia Mono", Consolas, monospace; font-size: .88em; }
+:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
+.wrap { width: min(1160px, 100% - 48px); margin-inline: auto; }
 .num { font-variant-numeric: tabular-nums; white-space: nowrap; }
 
-.top { position: sticky; top: 0; z-index: 2; background: var(--page); border-bottom: 1px solid var(--line); }
-.top .wrap { display: flex; align-items: center; gap: 28px; height: 60px; white-space: nowrap; overflow-x: auto; }
-.top b { font-size: 15px; letter-spacing: -0.01em; }
-.top nav { display: flex; gap: 22px; font-size: 14.5px; }
+.top { position: sticky; top: 0; z-index: 5; background: var(--page); border-bottom: 1px solid var(--line); }
+.top .wrap { display: flex; align-items: center; gap: 30px; height: 64px; }
+.brand { display: flex; align-items: center; gap: 11px; font-weight: 650; color: var(--ink); text-decoration: none; white-space: nowrap; }
+.brand::before { content: ""; width: 16px; height: 16px; border-radius: 3px; background: var(--accent); }
+.top nav { display: flex; gap: 24px; font-size: 15px; margin-left: auto; white-space: nowrap; }
 .top nav a { color: var(--ink-2); text-decoration: none; }
-.top nav a:hover, .top nav a:focus-visible { color: var(--ink); text-decoration: underline; }
-.top .src { margin-left: auto; font-size: 14.5px; }
+.top nav a:hover { color: var(--ink); text-decoration: underline; }
+.lang { display: inline-flex; border: 1px solid var(--line); border-radius: var(--r); overflow: hidden; }
+.lang button { font: 600 13px/1 var(--sans); padding: 8px 11px; border: 0; background: transparent; color: var(--muted); cursor: pointer; }
+.lang button[aria-pressed=true] { background: var(--ink); color: var(--page); }
 
-.hero { display: grid; grid-template-columns: minmax(0, 1.2fr) minmax(0, .8fr); gap: 56px; align-items: center;
-  padding: 72px 0 64px; }
-.eyebrow { font-size: 12.5px; font-weight: 600; letter-spacing: .09em; text-transform: uppercase; color: var(--accent); margin: 0 0 18px; }
-h1 { font-family: "Segoe UI Variable Display", "Segoe UI", -apple-system, BlinkMacSystemFont, "Helvetica Neue", Arial, sans-serif;
-  font-size: clamp(32px, 4.2vw, 48px); line-height: 1.08; letter-spacing: -0.03em; font-weight: 650; margin: 0 0 20px;
-  text-wrap: balance; }
-.lead { font-size: 18px; color: var(--ink-2); max-width: 46ch; margin: 0 0 30px; }
-.cta { display: inline-block; background: var(--accent); color: var(--on-accent); text-decoration: none; font-weight: 600;
-  font-size: 15.5px; padding: 12px 24px; border-radius: 999px; transition: transform .15s ease; }
-.cta.alt { background: transparent; color: var(--accent); border: 1px solid var(--accent); margin-left: 8px; }
-.cta:hover { transform: translateY(-1px); }
-.cta:active { transform: translateY(1px); }
-.cta:focus-visible, a:focus-visible, summary:focus-visible { outline: 2px solid var(--accent); outline-offset: 3px; }
+h1, h2, h3 { font-family: var(--display); letter-spacing: -0.02em; text-wrap: balance; }
+h1 { font-size: clamp(2.1rem, 1.3rem + 2.5vw, 3.1rem); line-height: 1.1; font-weight: 650; margin: 0 0 20px; }
+h2 { font-size: clamp(1.6rem, 1.2rem + 1.2vw, 2.1rem); line-height: 1.18; font-weight: 650; margin: 0 0 12px; }
+h3 { font-size: 1.12rem; font-weight: 650; margin: 0 0 6px; letter-spacing: -0.01em; }
+.lead { font-size: 1.15rem; color: var(--ink-2); max-width: 46ch; margin: 0 0 30px; }
+.sub { font-size: 1.06rem; color: var(--ink-2); max-width: 66ch; margin: 0 0 34px; }
+.btn { display: inline-flex; align-items: center; justify-content: center; font: 600 15.5px/1 var(--sans); padding: 14px 22px;
+  border-radius: var(--r); border: 1px solid var(--accent); background: var(--accent); color: var(--on-accent);
+  text-decoration: none; cursor: pointer; white-space: nowrap; }
+.btn:hover { background: var(--accent-2); border-color: var(--accent-2); }
+.btn:active { transform: translateY(1px); }
+.btn.ghost { background: transparent; color: var(--accent); border-color: var(--rest); }
+.btn.ghost:hover { background: var(--tint); border-color: var(--accent); }
+.btn.small { padding: 10px 14px; font-size: 14px; }
+.btn:disabled { opacity: .55; cursor: progress; }
+.actions { display: flex; flex-wrap: wrap; gap: 12px; }
 
-.split { margin: 0; background: var(--surface); border: 1px solid var(--line); border-radius: 12px; padding: 30px 30px 26px; }
-.split figcaption { font-size: 15px; color: var(--ink-2); margin: 0 0 22px; }
-.split .row { display: grid; grid-template-columns: 1fr auto; align-items: end; gap: 6px 16px; margin-bottom: 22px; }
-.split .row span { font-size: 14px; color: var(--ink-2); }
-.split .row b { font-size: 40px; line-height: 1; letter-spacing: -0.03em; font-weight: 650; }
-.whole { grid-column: 1 / -1; height: 26px; border-radius: 6px; background: var(--rest); overflow: hidden; }
-.whole i { display: block; height: 100%; background: var(--accent); border-radius: 6px 0 0 6px; }
-.key { display: flex; gap: 20px; font-size: 13.5px; color: var(--ink-2); margin: 0; }
-.key i { display: inline-block; width: 11px; height: 11px; border-radius: 3px; margin-right: 7px; vertical-align: -1px; }
+.hero { background: var(--band); border-bottom: 1px solid var(--line); }
+.hero .wrap { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); gap: 64px; align-items: center; padding: 72px 0 76px; }
+.reading { margin: 0; background: var(--surface); border: 1px solid var(--line); border-radius: var(--r); }
+.reading figcaption, .reading .part { padding: 22px 28px; }
+.reading figcaption { font-weight: 650; border-bottom: 1px solid var(--line); padding-block: 16px; }
+.part + .part { border-top: 1px solid var(--line); }
+.part h3 { font-size: 14px; font-weight: 600; color: var(--muted); letter-spacing: 0; margin: 0 0 8px; font-family: var(--sans); }
+.part p { margin: 0; color: var(--ink-2); font-size: 15px; }
+.part .claim { font: 650 clamp(1.6rem, 1.1rem + 1.5vw, 2.15rem)/1.15 var(--display); letter-spacing: -0.02em; color: var(--ink); margin: 0 0 4px; }
+.bars { display: grid; gap: 12px; margin: 0 0 14px; }
+.bar { display: grid; grid-template-columns: 6rem minmax(0, 1fr); gap: 14px; align-items: center; font-size: 14.5px; color: var(--ink-2); }
+.bar > div { display: flex; align-items: center; gap: 12px; }
+.bar i { display: block; height: 22px; border-radius: 0 4px 4px 0; background: var(--accent); width: calc(var(--v) * 125%); max-width: 84%; min-width: 2px; }
+.bar.out i { background: var(--out); }
+.bar b { color: var(--ink); font-size: 17px; }
+.tag { display: inline-block; font-weight: 650; padding: 3px 10px; border-radius: 4px; background: var(--band); border: 1px solid var(--line); color: var(--ink); }
+.tag.worked { background: var(--tint); border-color: transparent; color: var(--accent-2); }
+.tag.hurt, .tag.err { background: var(--bad-tint); border-color: transparent; color: var(--bad); }
+.foot-note { font-size: 13.5px; color: var(--muted); }
 
-.figures { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); border-top: 1px solid var(--line);
-  border-bottom: 1px solid var(--line); margin: 0 0 88px; }
-.figures div { padding: 26px 24px 24px 0; }
-.figures div + div { padding-left: 24px; border-left: 1px solid var(--line); }
-.figures dt { font-size: 14px; color: var(--ink-2); }
-.figures dd { margin: 4px 0 2px; font-size: 32px; line-height: 1.15; letter-spacing: -0.02em; font-weight: 650; }
-.figures small { font-size: 13.5px; color: var(--muted); }
+section { padding: 84px 0; }
+section.alt { background: var(--band); border-block: 1px solid var(--line); }
 
-section.block { margin: 0 0 96px; }
-h2 { font-family: "Segoe UI Variable Display", "Segoe UI", -apple-system, BlinkMacSystemFont, "Helvetica Neue", Arial, sans-serif;
-  font-size: clamp(26px, 3vw, 34px); line-height: 1.15; letter-spacing: -0.025em; font-weight: 650; margin: 0 0 12px; }
-.block > p.desc { color: var(--ink-2); max-width: 62ch; margin: 0 0 34px; font-size: 17px; }
-.aside { color: var(--ink-2); font-size: 14.5px; max-width: 78ch; margin: 18px 0 0; }
-
-.jobs { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 18px; }
-.job { border: 1px solid var(--line); border-radius: 12px; padding: 24px 26px 12px; background: var(--surface); }
-.job.lead-job { background: var(--tint); border-color: transparent; }
-.job h3 { margin: 0 0 4px; font-size: 20px; letter-spacing: -0.015em; }
-.job > p { margin: 0 0 14px; color: var(--ink-2); font-size: 14.5px; }
-.seg { padding: 14px 0; }
-.seg + .seg { border-top: 1px solid var(--line); }
-.seg h4 { margin: 0; font-size: 16px; }
-.seg .flow { margin: 0 0 10px; font-size: 14px; color: var(--ink-2); }
-.pair { display: grid; grid-template-columns: 84px 1fr; align-items: center; gap: 4px 12px; font-size: 13.5px; color: var(--ink-2); }
-.meter { display: flex; align-items: center; gap: 10px; min-width: 0; }
-.meter i { display: block; height: 8px; border-radius: 4px; background: var(--accent); min-width: 3px; }
-.meter i.soft { opacity: .45; }
-.meter span { color: var(--ink); }
-.meter em { font-style: normal; color: var(--muted); margin-left: 5px; }
-
-.stack { display: flex; height: 34px; border-radius: 8px; overflow: hidden; gap: 2px; margin: 0 0 22px; }
-.stack i { display: block; height: 100%; min-width: 4px; }
-.stages { display: grid; grid-template-columns: repeat(5, minmax(0, 1fr)); gap: 24px; }
-.stage h3 { margin: 0 0 2px; font-size: 16px; }
-.stage h3 i { display: inline-block; width: 11px; height: 11px; border-radius: 3px; margin-right: 8px; }
-.stage b { display: block; font-size: 24px; letter-spacing: -0.02em; font-weight: 650; }
-.stage p { margin: 6px 0 0; font-size: 13.5px; color: var(--ink-2); line-height: 1.45; }
-.stage p.do { color: var(--ink); }
-.callout { margin: 34px 0 0; padding: 22px 26px; border-radius: 12px; background: var(--tint); font-size: 17px; max-width: 78ch; }
-
-.curve { display: grid; grid-template-columns: repeat(6, minmax(0, 1fr)); gap: 18px; align-items: end; max-width: 760px; }
-.curve div { display: flex; flex-direction: column; justify-content: flex-end; height: 190px; }
-.curve b { font-size: 24px; letter-spacing: -0.02em; font-weight: 650; }
-.curve i { display: block; background: var(--accent); border-radius: 6px 6px 0 0; margin-top: 6px; }
-.curve span { font-size: 13.5px; color: var(--ink-2); border-top: 1px solid var(--line); padding-top: 8px; }
-.second { margin-top: 48px; }
-.second h3 { margin: 0 0 6px; font-size: 20px; letter-spacing: -0.015em; }
-.second .note { margin: 0 0 20px; color: var(--ink-2); font-size: 15px; max-width: 62ch; }
-.steps { list-style: none; margin: 0; padding: 0; display: grid; grid-template-columns: repeat(5, minmax(0, 1fr));
-  gap: 20px; max-width: 900px; }
-.steps span { display: block; font-size: 13.5px; color: var(--ink-2); }
-.steps b { display: block; font-size: 28px; line-height: 1.2; letter-spacing: -0.02em; font-weight: 650; margin: 2px 0 8px; }
-.steps i { display: block; height: 8px; border-radius: 4px; background: var(--accent); min-width: 4px; }
-details { margin-top: 30px; }
-summary { cursor: pointer; font-weight: 600; font-size: 15px; color: var(--accent); width: fit-content; }
-.scroll { overflow-x: auto; margin-top: 16px; }
+.seg { display: inline-flex; flex-wrap: wrap; gap: 4px; padding: 4px; background: var(--band); border: 1px solid var(--line); border-radius: var(--r); margin: 0 0 16px; }
+.seg [role=tab] { font: 600 15px/1 var(--sans); padding: 12px 18px; border: 0; border-radius: 4px; background: transparent; color: var(--ink-2); cursor: pointer; }
+.seg [role=tab][aria-selected=true] { background: var(--surface); color: var(--ink); box-shadow: 0 0 0 1px var(--line); }
+.desk { display: grid; grid-template-columns: 350px minmax(0, 1fr); background: var(--surface); border: 1px solid var(--line); border-radius: var(--r); min-height: 470px; }
+.desk[hidden] { display: none; }
+.controls { display: grid; gap: 18px; align-content: start; padding: 28px; border-right: 1px solid var(--line); }
+.controls > p { margin: 0; font-size: 15px; color: var(--ink-2); }
+.output { min-width: 0; padding: 28px 32px; }
+.output[aria-busy=true] { opacity: .5; }
+.empty { min-height: 100%; display: grid; place-content: center; text-align: center; max-width: 46ch; margin: 0 auto; color: var(--muted); }
+.empty b { display: block; color: var(--ink); margin-bottom: 4px; }
+label { display: grid; gap: 6px; font-size: 14.5px; font-weight: 600; }
+label small { font-weight: 400; color: var(--muted); }
+input[type=text], input[type=date], input[type=number], select { width: 100%; font: 400 15px/1.4 var(--sans); color: var(--ink); background: var(--page); border: 1px solid var(--rest); border-radius: var(--r); padding: 9px 11px; }
+input[type=file] { width: 100%; font: 400 14px var(--sans); color: var(--ink-2); }
+input[type=file]::file-selector-button { font: 600 14px var(--sans); margin-right: 12px; padding: 8px 13px; border-radius: var(--r); border: 1px solid var(--rest); background: var(--band); color: var(--ink); cursor: pointer; }
+details { border-top: 1px solid var(--line); padding-top: 14px; }
+summary { width: fit-content; cursor: pointer; font-size: 14.5px; font-weight: 600; color: var(--accent); }
+.more { display: grid; gap: 14px; margin-top: 14px; }
+.status { margin: 12px 0 0; font-size: 14px; color: var(--muted); min-height: 1.6em; }
+.status.err { color: var(--bad); }
+.msg { margin: 0 0 14px; padding: 12px 16px; border-radius: var(--r); background: var(--band); border: 1px solid var(--line); }
+.msg.err { background: var(--bad-tint); color: var(--bad); border-color: transparent; }
+.stats { display: flex; flex-wrap: wrap; gap: 14px 46px; margin: 0 0 22px; }
+.stats b { display: block; font: 650 1.9rem/1.15 var(--display); letter-spacing: -0.02em; }
+.stats span { font-size: 14px; color: var(--ink-2); }
+.output h3 { margin: 26px 0 6px; }
+.output p { max-width: 68ch; }
+.output .reading { margin-bottom: 22px; }
+.output .part h3 { margin: 0 0 8px; }
+.output .part p { max-width: none; }
+.scroll { overflow-x: auto; border: 1px solid var(--line); border-radius: var(--r); margin: 8px 0 14px; }
 table { border-collapse: collapse; width: 100%; font-size: 14px; }
-th, td { padding: 8px 10px; text-align: left; }
-thead th { font-size: 13px; font-weight: 600; color: var(--muted); border-bottom: 1px solid var(--line); }
-.n { text-align: right; font-variant-numeric: tabular-nums; white-space: nowrap; }
-.heat { font-size: 13px; }
-.heat th, .heat td { padding: 5px 6px; }
-.heat th[scope=row] { font-weight: 500; white-space: nowrap; }
-.heat td.c { text-align: center; font-variant-numeric: tabular-nums; border: 2px solid var(--page); color: var(--ink);
-  background: color-mix(in srgb, var(--heat) calc(var(--p) * 1%), var(--surface)); }
-.heat td.na { border: 2px solid var(--page);
-  background: repeating-linear-gradient(135deg, transparent 0 5px, var(--rest) 5px 6px); }
-@media (prefers-color-scheme: dark) { .heat td.c.hi { color: var(--cell-hi); } }
-.scale { display: flex; align-items: center; gap: 10px; font-size: 13px; color: var(--muted); margin-top: 12px; flex-wrap: wrap; }
-.scale .ramp { width: 150px; height: 10px; border-radius: 5px;
-  background: linear-gradient(90deg, color-mix(in srgb, var(--heat) 8%, var(--surface)), color-mix(in srgb, var(--heat) 70%, var(--surface))); }
-.scale .na { display: inline-block; width: 22px; height: 12px; border-radius: 3px; vertical-align: -2px; border: 1px solid var(--line);
-  background: repeating-linear-gradient(135deg, transparent 0 4px, var(--rest) 4px 5px); }
+th, td { padding: 9px 12px; text-align: left; }
+thead th { font-size: 13px; font-weight: 600; color: var(--muted); background: var(--band); white-space: nowrap; }
+tbody tr + tr > * { border-top: 1px solid var(--line); }
+.output td { white-space: nowrap; }
 
-.markets { max-width: 860px; }
-.markets td { padding: 14px 10px; }
-.markets tbody tr + tr > * { border-top: 1px solid var(--line); }
-.markets th[scope=row] { font-weight: 600; font-size: 16px; white-space: nowrap; }
-.markets .meter i { height: 12px; border-radius: 6px; }
-.markets .meter span { font-size: 16px; font-weight: 600; }
+.proof { display: grid; grid-template-columns: minmax(0, 1.25fr) minmax(0, .75fr); gap: 56px; align-items: start; }
+.legend { display: flex; flex-wrap: wrap; gap: 8px 22px; font-size: 14px; color: var(--ink-2); margin: 0 0 18px; }
+.legend i { display: inline-block; width: 12px; height: 12px; border-radius: 3px; margin-right: 8px; vertical-align: -1px; background: var(--accent); }
+.legend .o i { background: var(--out); }
+.runs { display: grid; gap: 18px; }
+.run { display: grid; grid-template-columns: 6.4rem minmax(0, 1fr); gap: 16px; align-items: center; font-size: 14.5px; }
+.run > span { color: var(--ink-2); }
+.run .pair { display: grid; gap: 3px; }
+.run .pair div { display: flex; align-items: center; gap: 10px; }
+.run i { display: block; height: 12px; border-radius: 0 4px 4px 0; background: var(--accent); width: calc(var(--v) * 78%); }
+.run .o i { background: var(--out); }
+.run b { font-weight: 600; font-size: 13.5px; }
+.facts { display: grid; gap: 0; }
+.facts div { padding: 20px 0; }
+.facts div + div { border-top: 1px solid var(--line); }
+.facts div:first-child { padding-top: 0; }
+.facts b { display: block; font: 650 2.1rem/1.1 var(--display); letter-spacing: -0.02em; margin-bottom: 6px; }
+.facts p { margin: 0; color: var(--ink-2); font-size: 15.5px; }
+.facts table { font-size: 14.5px; margin-top: 10px; }
+.facts th, .facts td { padding: 6px 8px 6px 0; }
+.facts thead th { background: none; }
 
-.next { display: grid; grid-template-columns: minmax(0, 1fr); gap: 0; max-width: 820px; }
-.next article { padding: 26px 0; }
-.next article + article { border-top: 1px solid var(--line); }
-.next h3 { margin: 0 0 8px; font-size: 21px; letter-spacing: -0.015em; }
-.next p { margin: 0; color: var(--ink-2); }
+.gap-table { border: 1px solid var(--line); border-radius: var(--r); background: var(--surface); overflow-x: auto; }
+.gap-table table { font-size: 15px; min-width: 720px; }
+.gap-table th, .gap-table td { padding: 16px 20px; vertical-align: top; }
+.gap-table th[scope=row] { font-weight: 650; width: 23%; }
+.gap-table tr.me > * { background: var(--tint); }
 
-footer { border-top: 1px solid var(--line); padding: 30px 0 56px; color: var(--ink-2); font-size: 14.5px; }
-footer p { margin: 0 0 8px; max-width: 86ch; }
+.cv { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); gap: 56px; align-items: start; }
+.cv ul, .limits { margin: 0; padding: 0; list-style: none; }
+.cv li, .limits li { padding: 14px 0; border-top: 1px solid var(--line); color: var(--ink-2); }
+.cv li:first-child { border-top: 0; padding-top: 0; }
+.cv li b, .limits b { color: var(--ink); display: block; }
+.cv .stats { margin-bottom: 26px; }
+.limits { max-width: 78ch; }
 
-@media (max-width: 900px) {
-  .hero { grid-template-columns: 1fr; gap: 36px; padding: 44px 0 44px; }
-  .figures { grid-template-columns: repeat(2, minmax(0, 1fr)); }
-  .figures div:nth-child(3) { padding-left: 0; border-left: 0; }
-  .figures div:nth-child(n+3) { border-top: 1px solid var(--line); }
-  .jobs { grid-template-columns: 1fr; }
-  .stages { grid-template-columns: repeat(2, minmax(0, 1fr)); }
-  section.block { margin-bottom: 68px; }
-  .figures { margin-bottom: 64px; }
+footer { border-top: 1px solid var(--line); padding: 30px 0 56px; font-size: 14px; color: var(--ink-2); }
+footer p { margin: 0 0 8px; max-width: 92ch; }
+
+@media (max-width: 960px) {
+  .hero .wrap, .proof, .cv { grid-template-columns: 1fr; gap: 40px; }
+  .hero .wrap { padding: 48px 0 56px; }
+  .desk { grid-template-columns: 1fr; min-height: 0; }
+  .controls { border-right: 0; border-bottom: 1px solid var(--line); }
+  .output { min-height: 260px; }
+  section { padding: 64px 0; }
 }
-@media (max-width: 520px) {
-  .wrap { padding: 0 16px; }
+@media (max-width: 720px) {
+  .wrap { width: calc(100% - 32px); }
   .top nav { display: none; }
-  .split { padding: 22px 20px 20px; }
-  .split .row b { font-size: 32px; }
-  .figures dd { font-size: 26px; }
-  .figures div { padding: 20px 14px 18px 0; }
-  .figures div + div { padding-left: 14px; }
-  .figures div:nth-child(3) { padding-left: 0; }
-  .job { padding: 20px 18px 8px; }
-  .stages { grid-template-columns: 1fr; gap: 18px; }
-  .curve { gap: 8px; } .curve b { font-size: 18px; } .curve div { height: 150px; }
-  .steps { grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 16px; } .steps b { font-size: 22px; }
-  .callout { padding: 18px 18px; font-size: 16px; }
+  .lang { margin-left: auto; }
+  .reading figcaption, .reading .part { padding-inline: 18px; }
+  .bar { grid-template-columns: 5.4rem minmax(0, 1fr); gap: 10px; }
+  .run { grid-template-columns: 4.6rem minmax(0, 1fr); gap: 10px; }
+  .controls, .output { padding: 22px 18px; }
+  .seg { display: grid; } .seg [role=tab] { text-align: left; }
 }
-@media print { .top { position: static; } }
 </style>
 </head>
 <body>
 <header class="top"><div class="wrap">
-<b>CRM retention practice</b>
-<nav aria-label="Sections"><a href="#segments">Segments</a><a href="#lifecycle">Lifecycle</a><a href="#retention">Retention</a><a href="#markets">Markets</a><a href="#next">Next steps</a></nav>
-<a class="src" href="https://github.com/errer441122/digital-campaign-performance-dashboard">Source on GitHub</a>
+<a class="brand" href="#top">Campaign Performance</a>
+<nav aria-label="Sections">
+<a href="#check" data-i18n="nav_check">The check</a>
+<a href="#proof" data-i18n="nav_proof">Proof</a>
+<a href="#cv" data-i18n="nav_cv">CV analysis</a>
+<a href="https://github.com/errer441122/digital-campaign-performance-dashboard">GitHub</a>
+</nav>
+<div class="lang" role="group" aria-label="Language"><button type="button" data-lang="en">EN</button><button type="button" data-lang="it">IT</button></div>
 </div></header>
-<main class="wrap">
 
-<div class="hero">
+<main id="top">
+<div class="hero"><div class="wrap">
 <div>
-<p class="eyebrow">Practice project on public data</p>
-<h1>26% of customers bring 71% of revenue.</h1>
-<p class="lead">RFM segments, lifecycle stages and repeat purchases for 5,878 customers of a UK online shop. One CRM action per group.</p>
-<a class="cta" href="#segments">See the segments</a><a class="cta alt" href="app.html">Run it on your data</a>
+<h1 data-i18n="h1">The campaign report says it worked. Did it?</h1>
+<p class="lead" data-i18n="lead">B2B orders reach the ERP by phone or through a rep. This check keeps some accounts out of the campaign and compares the orders of the two groups.</p>
+<div class="actions"><a class="btn" href="#check" data-i18n="cta">Check a campaign</a><a class="btn ghost" href="#proof" data-i18n="cta2">See the proof</a></div>
 </div>
-<figure class="split">
-<figcaption>Champions compared with everyone else</figcaption>
-<div class="row"><span>Share of customers</span><b class="num">26%</b><div class="whole"><i style="width:26.2%"></i></div></div>
-<div class="row"><span>Share of revenue</span><b class="num">71%</b><div class="whole"><i style="width:71.3%"></i></div></div>
-<p class="key"><span><i style="background:var(--accent)"></i>Champions</span><span><i style="background:var(--rest)"></i>Everyone else</span></p>
+<figure class="reading">
+<figcaption data-i18n="hero_cap">One year of campaigns, read twice</figcaption>
+<div class="part"><h3 data-i18n="r_report">The campaign report</h3>
+<p class="claim"><span class="num">860</span> <span data-i18n="hero_back">reactivations</span></p>
+<p><span class="num" data-fmt="gbp" data-v="721498">£721,498</span> <span data-i18n="hero_rev">of orders in the 60 days after each campaign</span></p></div>
+<div class="part"><h3 data-i18n="r_check">The control group</h3>
+<div class="bars">
+<div class="bar"><span data-i18n="contacted">Contacted</span><div><i style="--v:.36"></i><b class="num">36%</b></div></div>
+<div class="bar out"><span data-i18n="left">Left out</span><div><i style="--v:.37"></i><b class="num">37%</b></div></div>
+</div>
+<p data-i18n="hero_truth">Share of accounts that ordered: 860 of 2,400 contacted, 224 of 600 left out. These campaigns were never sent.</p></div>
 </figure>
+</div></div>
+
+<section id="check"><div class="wrap">
+<h2 data-i18n="check_h">Two exports from the ERP, one answer</h2>
+<p class="sub" data-i18n="check_sub">Nothing to install and nothing to connect. The files stay in this browser: the page runs the repository's own Python on your computer.</p>
+<div class="seg" id="seg" role="tablist" aria-label="Steps">
+<button type="button" role="tab" id="t-demo" aria-controls="p-demo" aria-selected="true" data-i18n="tab_demo">Try it on real orders</button>
+<button type="button" role="tab" id="t-plan" aria-controls="p-plan" aria-selected="false" tabindex="-1" data-i18n="tab_plan">Before: draw the groups</button>
+<button type="button" role="tab" id="t-measure" aria-controls="p-measure" aria-selected="false" tabindex="-1" data-i18n="tab_measure">After: read the result</button>
 </div>
 
-<dl class="figures">
-<div><dt>Customers</dt><dd class="num">5,878</dd><small>Dec 2009 to Dec 2011</small></div>
-<div><dt>Orders</dt><dd class="num">36,969</dd><small>returns and cancellations removed</small></div>
-<div><dt>Revenue</dt><dd class="num">£17.4M</dd><small>in pounds, the currency of the data</small></div>
-<div><dt>At risk right now</dt><dd class="num">588</dd><small>customers, £1.06M spent so far</small></div>
-</dl>
-
-<section class="block" id="segments">
-<h2>Who gets which message</h2>
-<p class="desc">RFM scores every customer on how recently, how often and how much they buy. Each segment then gets one flow, so nobody receives a discount they did not need.</p>
-<div class="jobs"><article class="job lead-job"><h3>Protect</h3><p>Your best customers. Reward them, do not discount them.</p><div class="seg"><h4>Champions</h4><p class="flow">VIP &amp; referral flow</p><div class="pair"><span>Customers</span><div class="meter"><i class="soft" style="width:62.0%"></i><span class="num">1,537<em>26%</em></span></div><span>Revenue</span><div class="meter"><i style="width:62.0%"></i><span class="num">£12.4M<em>71%</em></span></div></div></div><div class="seg"><h4>Loyal customers</h4><p class="flow">Cross-sell &amp; loyalty tier</p><div class="pair"><span>Customers</span><div class="meter"><i class="soft" style="width:37.8%"></i><span class="num">937<em>16%</em></span></div><span>Revenue</span><div class="meter"><i style="width:11.4%"></i><span class="num">£2.28M<em>13%</em></span></div></div></div></article><article class="job"><h3>Develop</h3><p>Recent or cooling buyers. The goal is the next order.</p><div class="seg"><h4>New / promising</h4><p class="flow">Welcome / onboarding series</p><div class="pair"><span>Customers</span><div class="meter"><i class="soft" style="width:23.4%"></i><span class="num">581<em>10%</em></span></div><span>Revenue</span><div class="meter"><i style="width:1.3%"></i><span class="num">£252k<em>1%</em></span></div></div></div><div class="seg"><h4>Needs attention</h4><p class="flow">Targeted reactivation offer</p><div class="pair"><span>Customers</span><div class="meter"><i class="soft" style="width:19.0%"></i><span class="num">471<em>8%</em></span></div><span>Revenue</span><div class="meter"><i style="width:1.0%"></i><span class="num">£207k<em>1%</em></span></div></div></div></article><article class="job"><h3>Win back</h3><p>They used to buy and stopped. This is where an offer earns its cost.</p><div class="seg"><h4>At risk</h4><p class="flow">Win-back sequence</p><div class="pair"><span>Customers</span><div class="meter"><i class="soft" style="width:47.3%"></i><span class="num">1,174<em>20%</em></span></div><span>Revenue</span><div class="meter"><i style="width:7.0%"></i><span class="num">£1.40M<em>8%</em></span></div></div></div><div class="seg"><h4>Can&#x27;t lose them</h4><p class="flow">High-touch reactivation</p><div class="pair"><span>Customers</span><div class="meter"><i class="soft" style="width:4.8%"></i><span class="num">119<em>2%</em></span></div><span>Revenue</span><div class="meter"><i style="width:2.0%"></i><span class="num">£392k<em>2%</em></span></div></div></div></article><article class="job"><h3>Wind down</h3><p>Long inactive, low value. One cheap reminder, then stop mailing.</p><div class="seg"><h4>Hibernating</h4><p class="flow">Low-cost reactivation then sunset</p><div class="pair"><span>Customers</span><div class="meter"><i class="soft" style="width:42.7%"></i><span class="num">1,059<em>18%</em></span></div><span>Revenue</span><div class="meter"><i style="width:2.3%"></i><span class="num">£462k<em>3%</em></span></div></div></div></article></div>
-</section>
-
-<section class="block" id="lifecycle">
-<h2>Where each customer is today</h2>
-<p class="desc">Five stages based on the date of the last order. These are the same rules my Klaviyo win-back flow uses as its trigger.</p>
-<div class="stack" role="img" aria-label="Customers by lifecycle stage"><i style="width:6.2%;background:color-mix(in srgb, var(--accent) 100%, var(--rest))" title="New: 365 customers (6%)"></i><i style="width:42.9%;background:color-mix(in srgb, var(--accent) 78%, var(--rest))" title="Repeat: 2,524 customers (43%)"></i><i style="width:10.0%;background:color-mix(in srgb, var(--accent) 54%, var(--rest))" title="At risk: 588 customers (10%)"></i><i style="width:13.4%;background:color-mix(in srgb, var(--accent) 34%, var(--rest))" title="Dormant: 787 customers (13%)"></i><i style="width:27.5%;background:color-mix(in srgb, var(--accent) 18%, var(--rest))" title="Churned: 1,614 customers (27%)"></i></div><div class="stages"><div class="stage"><h3><i style="background:color-mix(in srgb, var(--accent) 100%, var(--rest))"></i>New</h3><b class="num">365</b><p>6% of customers, £139k spent so far</p><p>Last order within 90 days, 1 order</p><p class="do">Onboarding / second-purchase nudge</p></div><div class="stage"><h3><i style="background:color-mix(in srgb, var(--accent) 78%, var(--rest))"></i>Repeat</h3><b class="num">2,524</b><p>43% of customers, £13.9M spent so far</p><p>Last order within 90 days, 2+ orders</p><p class="do">Loyalty / cross-sell flow</p></div><div class="stage"><h3><i style="background:color-mix(in srgb, var(--accent) 54%, var(--rest))"></i>At risk</h3><b class="num">588</b><p>10% of customers, £1.06M spent so far</p><p>Last order 91-180 days ago</p><p class="do">Win-back sequence</p></div><div class="stage"><h3><i style="background:color-mix(in srgb, var(--accent) 34%, var(--rest))"></i>Dormant</h3><b class="num">787</b><p>13% of customers, £1.05M spent so far</p><p>Last order 181-365 days ago</p><p class="do">Reactivation offer</p></div><div class="stage"><h3><i style="background:color-mix(in srgb, var(--accent) 18%, var(--rest))"></i>Churned</h3><b class="num">1,614</b><p>27% of customers, £1.29M spent so far</p><p>Last order more than 365 days ago</p><p class="do">Low-cost reactivation, then sunset</p></div></div>
-<p class="callout"><b>588 customers are at risk.</b> Their last order was 91 to 180 days ago and they have spent £1.06M so far. That is the win-back list.</p>
-</section>
-
-<section class="block" id="retention">
-<h2>Do customers come back?</h2>
-<p class="desc">Average share of new customers who order again in each of the six months after their first purchase.</p>
-<div class="curve" role="img" aria-label="Average share of new customers who order again, by month"><div><b class="num">21%</b><i style="height:108px"></i><span>Month 1</span></div><div><b class="num">21%</b><i style="height:110px"></i><span>Month 2</span></div><div><b class="num">21%</b><i style="height:107px"></i><span>Month 3</span></div><div><b class="num">19%</b><i style="height:99px"></i><span>Month 4</span></div><div><b class="num">19%</b><i style="height:95px"></i><span>Month 5</span></div><div><b class="num">18%</b><i style="height:94px"></i><span>Month 6</span></div></div>
-<p class="aside">About one new customer in 5 orders again the following month. The average leaves out the Dec 2009 group, which also contains customers acquired before the data starts.</p>
-<div class="second" id="second-order"><h3>How long until the second order</h3><p class="note">Share of new customers who have ordered again by each day after their first purchase.</p><ol class="steps" aria-label="Share of new customers who ordered again, by day"><li><span>By day 30</span><b class="num">16%</b><i style="width:16.4%"></i></li><li><span>By day 60</span><b class="num">31%</b><i style="width:31.0%"></i></li><li><span>By day 90</span><b class="num">41%</b><i style="width:40.8%"></i></li><li><span>By day 180</span><b class="num">57%</b><i style="width:57.1%"></i></li><li><span>By day 365</span><b class="num">69%</b><i style="width:69.4%"></i></li></ol><p class="aside">Half of the customers who come back within a year do it within 71 days. Counted on 3,359 customers who all had a full year to return; a second invoice on the same day does not count as a second order.</p></div>
-<details>
-<summary>Show all 25 monthly groups</summary>
-<div class="scroll"><table class="heat"><caption class="sr">Repeat-purchase rate by signup cohort and month</caption><thead><tr><th scope="col">First order in</th><th scope="col" class="n">Customers</th><th scope="col" class="n">M1</th><th scope="col" class="n">M2</th><th scope="col" class="n">M3</th><th scope="col" class="n">M4</th><th scope="col" class="n">M5</th><th scope="col" class="n">M6</th></tr></thead><tbody><tr><th scope="row">Dec 2009</th><td class="n">955</td><td class="c" style="--p:50" title="Dec 2009 cohort, month 1: 35.3% ordered again">35%</td><td class="c" style="--p:50" title="Dec 2009 cohort, month 2: 33.4% ordered again">33%</td><td class="c hi" style="--p:70" title="Dec 2009 cohort, month 3: 42.5% ordered again">43%</td><td class="c hi" style="--p:60" title="Dec 2009 cohort, month 4: 38.0% ordered again">38%</td><td class="c hi" style="--p:60" title="Dec 2009 cohort, month 5: 35.9% ordered again">36%</td><td class="c hi" style="--p:60" title="Dec 2009 cohort, month 6: 37.7% ordered again">38%</td></tr><tr><th scope="row">Jan 2010</th><td class="n">383</td><td class="c" style="--p:29" title="Jan 2010 cohort, month 1: 20.6% ordered again">21%</td><td class="c" style="--p:50" title="Jan 2010 cohort, month 2: 31.1% ordered again">31%</td><td class="c" style="--p:43" title="Jan 2010 cohort, month 3: 30.6% ordered again">31%</td><td class="c" style="--p:43" title="Jan 2010 cohort, month 4: 26.4% ordered again">26%</td><td class="c" style="--p:43" title="Jan 2010 cohort, month 5: 30.0% ordered again">30%</td><td class="c" style="--p:36" title="Jan 2010 cohort, month 6: 25.9% ordered again">26%</td></tr><tr><th scope="row">Feb 2010</th><td class="n">374</td><td class="c" style="--p:36" title="Feb 2010 cohort, month 1: 23.8% ordered again">24%</td><td class="c" style="--p:36" title="Feb 2010 cohort, month 2: 22.5% ordered again">22%</td><td class="c" style="--p:43" title="Feb 2010 cohort, month 3: 29.1% ordered again">29%</td><td class="c" style="--p:36" title="Feb 2010 cohort, month 4: 24.6% ordered again">25%</td><td class="c" style="--p:29" title="Feb 2010 cohort, month 5: 20.1% ordered again">20%</td><td class="c" style="--p:29" title="Feb 2010 cohort, month 6: 19.2% ordered again">19%</td></tr><tr><th scope="row">Mar 2010</th><td class="n">443</td><td class="c" style="--p:29" title="Mar 2010 cohort, month 1: 19.0% ordered again">19%</td><td class="c" style="--p:36" title="Mar 2010 cohort, month 2: 23.0% ordered again">23%</td><td class="c" style="--p:36" title="Mar 2010 cohort, month 3: 24.1% ordered again">24%</td><td class="c" style="--p:36" title="Mar 2010 cohort, month 4: 23.2% ordered again">23%</td><td class="c" style="--p:29" title="Mar 2010 cohort, month 5: 20.3% ordered again">20%</td><td class="c" style="--p:36" title="Mar 2010 cohort, month 6: 24.6% ordered again">25%</td></tr><tr><th scope="row">Apr 2010</th><td class="n">294</td><td class="c" style="--p:29" title="Apr 2010 cohort, month 1: 19.4% ordered again">19%</td><td class="c" style="--p:29" title="Apr 2010 cohort, month 2: 19.4% ordered again">19%</td><td class="c" style="--p:22" title="Apr 2010 cohort, month 3: 16.3% ordered again">16%</td><td class="c" style="--p:29" title="Apr 2010 cohort, month 4: 18.4% ordered again">18%</td><td class="c" style="--p:36" title="Apr 2010 cohort, month 5: 22.4% ordered again">22%</td><td class="c" style="--p:43" title="Apr 2010 cohort, month 6: 27.6% ordered again">28%</td></tr><tr><th scope="row">May 2010</th><td class="n">254</td><td class="c" style="--p:22" title="May 2010 cohort, month 1: 15.8% ordered again">16%</td><td class="c" style="--p:29" title="May 2010 cohort, month 2: 16.9% ordered again">17%</td><td class="c" style="--p:29" title="May 2010 cohort, month 3: 17.3% ordered again">17%</td><td class="c" style="--p:29" title="May 2010 cohort, month 4: 17.7% ordered again">18%</td><td class="c" style="--p:36" title="May 2010 cohort, month 5: 25.6% ordered again">26%</td><td class="c" style="--p:29" title="May 2010 cohort, month 6: 21.3% ordered again">21%</td></tr><tr><th scope="row">Jun 2010</th><td class="n">270</td><td class="c" style="--p:29" title="Jun 2010 cohort, month 1: 17.4% ordered again">17%</td><td class="c" style="--p:29" title="Jun 2010 cohort, month 2: 18.9% ordered again">19%</td><td class="c" style="--p:29" title="Jun 2010 cohort, month 3: 20.4% ordered again">20%</td><td class="c" style="--p:36" title="Jun 2010 cohort, month 4: 23.0% ordered again">23%</td><td class="c" style="--p:43" title="Jun 2010 cohort, month 5: 28.5% ordered again">29%</td><td class="c" style="--p:22" title="Jun 2010 cohort, month 6: 12.6% ordered again">13%</td></tr><tr><th scope="row">Jul 2010</th><td class="n">186</td><td class="c" style="--p:22" title="Jul 2010 cohort, month 1: 15.6% ordered again">16%</td><td class="c" style="--p:29" title="Jul 2010 cohort, month 2: 18.3% ordered again">18%</td><td class="c" style="--p:43" title="Jul 2010 cohort, month 3: 29.6% ordered again">30%</td><td class="c" style="--p:43" title="Jul 2010 cohort, month 4: 29.0% ordered again">29%</td><td class="c" style="--p:22" title="Jul 2010 cohort, month 5: 14.0% ordered again">14%</td><td class="c" style="--p:15" title="Jul 2010 cohort, month 6: 11.3% ordered again">11%</td></tr><tr><th scope="row">Aug 2010</th><td class="n">162</td><td class="c" style="--p:29" title="Aug 2010 cohort, month 1: 20.4% ordered again">20%</td><td class="c" style="--p:43" title="Aug 2010 cohort, month 2: 29.6% ordered again">30%</td><td class="c" style="--p:50" title="Aug 2010 cohort, month 3: 32.1% ordered again">32%</td><td class="c" style="--p:29" title="Aug 2010 cohort, month 4: 17.3% ordered again">17%</td><td class="c" style="--p:15" title="Aug 2010 cohort, month 5: 11.7% ordered again">12%</td><td class="c" style="--p:15" title="Aug 2010 cohort, month 6: 9.9% ordered again">10%</td></tr><tr><th scope="row">Sep 2010</th><td class="n">243</td><td class="c" style="--p:36" title="Sep 2010 cohort, month 1: 22.6% ordered again">23%</td><td class="c" style="--p:36" title="Sep 2010 cohort, month 2: 23.5% ordered again">23%</td><td class="c" style="--p:22" title="Sep 2010 cohort, month 3: 12.3% ordered again">12%</td><td class="c" style="--p:15" title="Sep 2010 cohort, month 4: 9.0% ordered again">9%</td><td class="c" style="--p:15" title="Sep 2010 cohort, month 5: 10.3% ordered again">10%</td><td class="c" style="--p:22" title="Sep 2010 cohort, month 6: 13.6% ordered again">14%</td></tr><tr><th scope="row">Oct 2010</th><td class="n">377</td><td class="c" style="--p:36" title="Oct 2010 cohort, month 1: 25.7% ordered again">26%</td><td class="c" style="--p:22" title="Oct 2010 cohort, month 2: 14.6% ordered again">15%</td><td class="c" style="--p:22" title="Oct 2010 cohort, month 3: 12.5% ordered again">12%</td><td class="c" style="--p:15" title="Oct 2010 cohort, month 4: 8.8% ordered again">9%</td><td class="c" style="--p:15" title="Oct 2010 cohort, month 5: 8.2% ordered again">8%</td><td class="c" style="--p:22" title="Oct 2010 cohort, month 6: 13.0% ordered again">13%</td></tr><tr><th scope="row">Nov 2010</th><td class="n">325</td><td class="c" style="--p:29" title="Nov 2010 cohort, month 1: 17.5% ordered again">18%</td><td class="c" style="--p:15" title="Nov 2010 cohort, month 2: 9.2% ordered again">9%</td><td class="c" style="--p:15" title="Nov 2010 cohort, month 3: 9.5% ordered again">10%</td><td class="c" style="--p:15" title="Nov 2010 cohort, month 4: 7.7% ordered again">8%</td><td class="c" style="--p:15" title="Nov 2010 cohort, month 5: 8.6% ordered again">9%</td><td class="c" style="--p:22" title="Nov 2010 cohort, month 6: 12.9% ordered again">13%</td></tr><tr><th scope="row">Dec 2010</th><td class="n">76</td><td class="c" style="--p:15" title="Dec 2010 cohort, month 1: 9.2% ordered again">9%</td><td class="c" style="--p:8" title="Dec 2010 cohort, month 2: 5.3% ordered again">5%</td><td class="c" style="--p:15" title="Dec 2010 cohort, month 3: 9.2% ordered again">9%</td><td class="c" style="--p:15" title="Dec 2010 cohort, month 4: 11.8% ordered again">12%</td><td class="c" style="--p:8" title="Dec 2010 cohort, month 5: 6.6% ordered again">7%</td><td class="c" style="--p:8" title="Dec 2010 cohort, month 6: 5.3% ordered again">5%</td></tr><tr><th scope="row">Jan 2011</th><td class="n">71</td><td class="c" style="--p:22" title="Jan 2011 cohort, month 1: 16.9% ordered again">17%</td><td class="c" style="--p:29" title="Jan 2011 cohort, month 2: 21.1% ordered again">21%</td><td class="c" style="--p:29" title="Jan 2011 cohort, month 3: 19.7% ordered again">20%</td><td class="c" style="--p:29" title="Jan 2011 cohort, month 4: 21.1% ordered again">21%</td><td class="c" style="--p:22" title="Jan 2011 cohort, month 5: 15.5% ordered again">15%</td><td class="c" style="--p:22" title="Jan 2011 cohort, month 6: 15.5% ordered again">15%</td></tr><tr><th scope="row">Feb 2011</th><td class="n">124</td><td class="c" style="--p:22" title="Feb 2011 cohort, month 1: 16.1% ordered again">16%</td><td class="c" style="--p:22" title="Feb 2011 cohort, month 2: 15.3% ordered again">15%</td><td class="c" style="--p:29" title="Feb 2011 cohort, month 3: 18.6% ordered again">19%</td><td class="c" style="--p:36" title="Feb 2011 cohort, month 4: 21.8% ordered again">22%</td><td class="c" style="--p:22" title="Feb 2011 cohort, month 5: 15.3% ordered again">15%</td><td class="c" style="--p:22" title="Feb 2011 cohort, month 6: 15.3% ordered again">15%</td></tr><tr><th scope="row">Mar 2011</th><td class="n">179</td><td class="c" style="--p:29" title="Mar 2011 cohort, month 1: 18.4% ordered again">18%</td><td class="c" style="--p:36" title="Mar 2011 cohort, month 2: 21.8% ordered again">22%</td><td class="c" style="--p:29" title="Mar 2011 cohort, month 3: 20.1% ordered again">20%</td><td class="c" style="--p:36" title="Mar 2011 cohort, month 4: 22.4% ordered again">22%</td><td class="c" style="--p:22" title="Mar 2011 cohort, month 5: 15.1% ordered again">15%</td><td class="c" style="--p:29" title="Mar 2011 cohort, month 6: 20.7% ordered again">21%</td></tr><tr><th scope="row">Apr 2011</th><td class="n">106</td><td class="c" style="--p:36" title="Apr 2011 cohort, month 1: 25.5% ordered again">25%</td><td class="c" style="--p:29" title="Apr 2011 cohort, month 2: 19.8% ordered again">20%</td><td class="c" style="--p:29" title="Apr 2011 cohort, month 3: 19.8% ordered again">20%</td><td class="c" style="--p:29" title="Apr 2011 cohort, month 4: 17.9% ordered again">18%</td><td class="c" style="--p:36" title="Apr 2011 cohort, month 5: 23.6% ordered again">24%</td><td class="c" style="--p:29" title="Apr 2011 cohort, month 6: 17.9% ordered again">18%</td></tr><tr><th scope="row">May 2011</th><td class="n">111</td><td class="c" style="--p:36" title="May 2011 cohort, month 1: 23.4% ordered again">23%</td><td class="c" style="--p:36" title="May 2011 cohort, month 2: 24.3% ordered again">24%</td><td class="c" style="--p:22" title="May 2011 cohort, month 3: 16.2% ordered again">16%</td><td class="c" style="--p:36" title="May 2011 cohort, month 4: 21.6% ordered again">22%</td><td class="c" style="--p:29" title="May 2011 cohort, month 5: 20.7% ordered again">21%</td><td class="c" style="--p:36" title="May 2011 cohort, month 6: 26.1% ordered again">26%</td></tr><tr><th scope="row">Jun 2011</th><td class="n">108</td><td class="c" style="--p:36" title="Jun 2011 cohort, month 1: 23.2% ordered again">23%</td><td class="c" style="--p:29" title="Jun 2011 cohort, month 2: 21.3% ordered again">21%</td><td class="c" style="--p:43" title="Jun 2011 cohort, month 3: 26.9% ordered again">27%</td><td class="c" style="--p:29" title="Jun 2011 cohort, month 4: 20.4% ordered again">20%</td><td class="c" style="--p:43" title="Jun 2011 cohort, month 5: 28.7% ordered again">29%</td><td class="na" title="Jun 2011 cohort, month 6: not fully observed yet"></td></tr><tr><th scope="row">Jul 2011</th><td class="n">102</td><td class="c" style="--p:36" title="Jul 2011 cohort, month 1: 21.6% ordered again">22%</td><td class="c" style="--p:43" title="Jul 2011 cohort, month 2: 30.4% ordered again">30%</td><td class="c" style="--p:43" title="Jul 2011 cohort, month 3: 27.5% ordered again">27%</td><td class="c" style="--p:50" title="Jul 2011 cohort, month 4: 34.3% ordered again">34%</td><td class="na" title="Jul 2011 cohort, month 5: not fully observed yet"></td><td class="na" title="Jul 2011 cohort, month 6: not fully observed yet"></td></tr><tr><th scope="row">Aug 2011</th><td class="n">106</td><td class="c" style="--p:43" title="Aug 2011 cohort, month 1: 27.4% ordered again">27%</td><td class="c" style="--p:50" title="Aug 2011 cohort, month 2: 31.1% ordered again">31%</td><td class="c" style="--p:43" title="Aug 2011 cohort, month 3: 26.4% ordered again">26%</td><td class="na" title="Aug 2011 cohort, month 4: not fully observed yet"></td><td class="na" title="Aug 2011 cohort, month 5: not fully observed yet"></td><td class="na" title="Aug 2011 cohort, month 6: not fully observed yet"></td></tr><tr><th scope="row">Sep 2011</th><td class="n">189</td><td class="c" style="--p:43" title="Sep 2011 cohort, month 1: 27.0% ordered again">27%</td><td class="c hi" style="--p:60" title="Sep 2011 cohort, month 2: 37.6% ordered again">38%</td><td class="na" title="Sep 2011 cohort, month 3: not fully observed yet"></td><td class="na" title="Sep 2011 cohort, month 4: not fully observed yet"></td><td class="na" title="Sep 2011 cohort, month 5: not fully observed yet"></td><td class="na" title="Sep 2011 cohort, month 6: not fully observed yet"></td></tr><tr><th scope="row">Oct 2011</th><td class="n">221</td><td class="c" style="--p:50" title="Oct 2011 cohort, month 1: 32.1% ordered again">32%</td><td class="na" title="Oct 2011 cohort, month 2: not fully observed yet"></td><td class="na" title="Oct 2011 cohort, month 3: not fully observed yet"></td><td class="na" title="Oct 2011 cohort, month 4: not fully observed yet"></td><td class="na" title="Oct 2011 cohort, month 5: not fully observed yet"></td><td class="na" title="Oct 2011 cohort, month 6: not fully observed yet"></td></tr><tr><th scope="row">Nov 2011</th><td class="n">191</td><td class="na" title="Nov 2011 cohort, month 1: not fully observed yet"></td><td class="na" title="Nov 2011 cohort, month 2: not fully observed yet"></td><td class="na" title="Nov 2011 cohort, month 3: not fully observed yet"></td><td class="na" title="Nov 2011 cohort, month 4: not fully observed yet"></td><td class="na" title="Nov 2011 cohort, month 5: not fully observed yet"></td><td class="na" title="Nov 2011 cohort, month 6: not fully observed yet"></td></tr><tr><th scope="row">Dec 2011</th><td class="n">28</td><td class="na" title="Dec 2011 cohort, month 1: not fully observed yet"></td><td class="na" title="Dec 2011 cohort, month 2: not fully observed yet"></td><td class="na" title="Dec 2011 cohort, month 3: not fully observed yet"></td><td class="na" title="Dec 2011 cohort, month 4: not fully observed yet"></td><td class="na" title="Dec 2011 cohort, month 5: not fully observed yet"></td><td class="na" title="Dec 2011 cohort, month 6: not fully observed yet"></td></tr></tbody></table></div><div class="scale"><span>5%</span><span class="ramp"></span><span>43% ordered again</span><span><i class="na"></i> month not fully observed yet</span></div>
-</details>
-</section>
-
-<section class="block" id="markets">
-<h2>What a customer is worth, by market</h2>
-<p class="desc">Revenue per customer so far, for markets with at least 30 customers. A customer in Germany has spent 48% more than one in the United Kingdom.</p>
-<div class="scroll"><table class="markets"><caption class="sr">Revenue per customer by market</caption><thead><tr><th scope="col">Market</th><th scope="col">Revenue per customer</th><th scope="col" class="n">Customers</th><th scope="col" class="n">Orders each</th><th scope="col" class="n">Average order</th></tr></thead><tbody><tr><th scope="row">Germany</th><td><div class="meter"><i style="width:78.0%"></i><span class="num">£3,986</span></div></td><td class="n">107</td><td class="n">7.4</td><td class="n">£540</td></tr><tr><th scope="row">France</th><td><div class="meter"><i style="width:73.1%"></i><span class="num">£3,734</span></div></td><td class="n">93</td><td class="n">6.6</td><td class="n">£569</td></tr><tr><th scope="row">Spain</th><td><div class="meter"><i style="width:54.1%"></i><span class="num">£2,762</span></div></td><td class="n">39</td><td class="n">3.9</td><td class="n">£713</td></tr><tr><th scope="row">United Kingdom</th><td><div class="meter"><i style="width:52.8%"></i><span class="num">£2,700</span></div></td><td class="n">5,349</td><td class="n">6.3</td><td class="n">£431</td></tr></tbody></table></div>
-<p class="aside">37 smaller markets (290 customers in total) are too small to rank on their own.</p>
-</section>
-
-<section class="block" id="next">
-<h2>What I would do with this in a real shop</h2>
-<p class="desc">These are recommendations, not results. The dataset has no email or advertising data, so nothing here has been tested on customers.</p>
-<div class="next">
-<article><h3>Send the second-order email before day 71</h3>
-<p>Half of the new customers who come back within a year place their second order within 71 days, and by day 90, 41% of new customers have already ordered again. A reminder without a discount fits before day 71; the discount is better kept for the ones still missing after day 90.</p></article>
-<article><h3>Start the win-back at day 91, not after a year</h3>
-<p>Customers who stopped buying three to six months ago are a short list with a recent purchase history. The group silent for more than a year is 2.7 times larger, and the longer the silence, the harder the return.</p></article>
-<article><h3>Keep discounts for the customers who need a reason to return</h3>
-<p>Send the offer to the win-back group only. The best customers get early access or a thank-you instead, and long-inactive, low-value customers get one cheap reminder before they leave the mailing list.</p></article>
-<article><h3>Judge the cost of a new customer by market</h3>
-<p>If a customer in Germany spends 48% more over time, paying more to acquire one there can still make sense. One blended target for every country hides that.</p></article>
+<div class="desk" role="tabpanel" id="p-demo" aria-labelledby="t-demo">
+<div class="controls">
+<p data-i18n="demo_p">36,969 real orders of a UK wholesaler. Pick a start date: the page plans the campaign on that day and reads the result 60 days later.</p>
+<label><span data-i18n="demo_start">Campaign start</span><select id="d-start"></select></label>
+<label><span data-i18n="demo_effect">Effect of the campaign</span><select id="d-effect"><option value="0" data-i18n="eff0">None (real data)</option><option value="0.2" data-i18n="eff20">Invented: 20 more in 100</option></select></label>
+<button class="btn" id="d-run" data-i18n="demo_run">Run the campaign</button>
 </div>
-</section>
+<div class="output" id="d-out" aria-live="polite"><p class="empty"><b data-i18n="empty_demo_b">No campaign yet</b><span data-i18n="empty_demo">The two readings appear here. With real data the right answer is "no proof", because nothing was sent.</span></p></div>
+</div>
 
+<div class="desk" role="tabpanel" id="p-plan" aria-labelledby="t-plan" hidden>
+<div class="controls">
+<p data-i18n="plan_p">From the orders or invoices export: customer, date and, if you have it, amount and sales rep. Italian or English headers, Excel files saved as CSV.</p>
+<label><span data-i18n="f_orders">Orders export (CSV)</span><input type="file" id="p-orders" accept=".csv,.txt,text/csv"></label>
+<label><span data-i18n="f_name">Campaign name</span><input type="text" id="p-name" maxlength="60" value="Spring catalogue"></label>
+<label><span><span data-i18n="f_list">Accounts to contact</span> <small data-i18n="f_list_s">optional: without a list, the page proposes the accounts that are late against their own rhythm</small></span><input type="file" id="p-list" accept=".csv,.txt,text/csv"></label>
+<details><summary data-i18n="more">More settings</summary><div class="more">
+<label><span data-i18n="f_start">Start date</span><input type="date" id="p-start"></label>
+<label><span data-i18n="f_out">Leave out</span><select id="p-out"><option value="5" data-i18n="o5">1 account in 5</option><option value="3" data-i18n="o3">1 account in 3</option><option value="2" data-i18n="o2">1 account in 2</option></select></label>
+<label><span data-i18n="f_window">Days in which an order counts</span><input type="number" id="p-window" value="60" min="7" max="365"></label>
+<label><span data-i18n="f_key">Biggest accounts always contacted, never counted</span><input type="number" id="p-key" value="0" min="0" max="500"></label>
+</div></details>
+<button class="btn" id="p-run" data-i18n="plan_run">Draw the groups</button>
+</div>
+<div class="output" id="p-out" aria-live="polite"><p class="empty"><b data-i18n="empty_plan_b">No plan yet</b><span data-i18n="empty_plan">Here you get the list to contact, the list to leave alone, and how big an effect this test can show.</span></p></div>
+</div>
+
+<div class="desk" role="tabpanel" id="p-measure" aria-labelledby="t-measure" hidden>
+<div class="controls">
+<p data-i18n="meas_p">When the window is over: the plan.csv of step one and a new export that includes the days after the start.</p>
+<label><span data-i18n="f_plan">plan.csv</span><input type="file" id="m-plan" accept=".csv,.txt,text/csv"></label>
+<label><span data-i18n="f_orders2">New orders export (CSV)</span><input type="file" id="m-orders" accept=".csv,.txt,text/csv"></label>
+<button class="btn" id="m-run" data-i18n="meas_run">Read the result</button>
+</div>
+<div class="output" id="m-out" aria-live="polite"><p class="empty"><b data-i18n="empty_meas_b">No result yet</b><span data-i18n="empty_meas">Before the window ends the page refuses to answer. Looking early is the easiest way to be fooled.</span></p></div>
+</div>
+<p class="status" id="status" role="status"></p>
+</div></section>
+
+<section class="alt" id="proof"><div class="wrap">
+<h2 data-i18n="proof_h">Tested on campaigns that never happened</h2>
+<p class="sub" data-i18n="proof_sub">The public data of a real wholesaler contains orders, not campaigns. So I invented six of them, 60 days each, drew the groups and sent nothing. The right answer is known: no effect.</p>
+<div class="proof">
+<div>
+<h3 data-i18n="chart_h">Accounts that ordered within 60 days</h3>
+<p class="legend"><span><i></i><span data-i18n="lg_c">"contacted" (nothing was sent)</span></span><span class="o"><i></i><span data-i18n="left">Left out</span></span></p>
+<div class="runs" id="runs"></div>
+</div>
+<div class="facts">
+<div><b class="num" id="f-fooled">2.1%</b><p data-i18n-html="fact_fooled">of 1,800 made-up campaigns were called "worked" by mistake. An ordinary report would have claimed a success in all of them.</p></div>
+<div><b class="num" data-i18n="fact_base_b">1 in 3</b><p data-i18n="fact_base">late accounts comes back with no campaign at all. A win-back report counts them as its own result.</p></div>
+<div><h3 data-i18n="seen_h">How big an effect it can see</h3><p data-i18n="seen_p">On lists of 200 to 700 accounts, share of working campaigns it recognises:</p>
+<table><thead><tr><th scope="col" data-i18n="seen_out">Left out</th><th scope="col">+10</th><th scope="col">+15</th><th scope="col">+20</th></tr></thead><tbody id="seen"></tbody></table></div>
+</div>
+</div>
+</div></section>
+
+<section id="gap"><div class="wrap">
+<h2 data-i18n="gap_h">What your software already does</h2>
+<p class="sub" data-i18n="gap_sub">If one of these already gives you the answer, use it.</p>
+<div class="gap-table"><table>
+<thead><tr><th scope="col" data-i18n="gap_c1">Tool</th><th scope="col" data-i18n="gap_c2">What it does</th><th scope="col" data-i18n="gap_c3">What stays open in B2B</th></tr></thead>
+<tbody>
+<tr><th scope="row" data-i18n="g1">Email platform</th><td data-i18n-html="g1a">Opens, clicks, and orders from the online shop. Klaviyo also has <a href="https://help.klaviyo.com/hc/en-us/articles/18138290642971">control groups</a>, for accounts with at least 400,000 profiles.</td><td data-i18n="g1b">It sees an order placed by phone, email or rep only if someone connects the ERP, and a B2B list rarely reaches that size.</td></tr>
+<tr><th scope="row" data-i18n="g2">CRM</th><td data-i18n="g2a">Who was contacted, and the deals the sales team remembers to update.</td><td data-i18n="g2b">Invoices are usually in the ERP, and every contacted account that orders looks like a result of the campaign.</td></tr>
+<tr><th scope="row" data-i18n="g3">ERP</th><td data-i18n="g3a">Every order and every invoice.</td><td data-i18n="g3b">It does not know who was contacted, and has nobody to compare them with.</td></tr>
+<tr><th scope="row" data-i18n="g4">Sales analytics for distributors</th><td data-i18n-html="g4a">Alerts on accounts that spend less than before, for example <a href="https://support.sugarai.com/documentation/sales-i/user_guide/alerts">sales-i</a>. Better than this list if you own it.</td><td data-i18n="g4b">It tells you whom to call. Whether the call changed anything still needs a group that was not called.</td></tr>
+<tr class="me"><th scope="row" data-i18n="g5">This check</th><td data-i18n="g5a">Draws the groups before the campaign, compares their ERP orders after it, and says in advance what it will not be able to see.</td><td data-i18n="g5b">Small effects on short lists. See the limits below.</td></tr>
+</tbody></table></div>
+</div></section>
+
+<section class="alt" id="cv"><div class="wrap cv">
+<div>
+<h2 data-i18n="cv_h">The customer analysis in my CV</h2>
+<p class="sub" data-i18n="cv_sub">RFM segments, cohort retention and customer value on the same public data, before the campaign check was built on top of it.</p>
+<div class="stats"><div><b class="num" data-fmt="int" data-v="5878">5,878</b><span data-i18n="cv_s1">customers, 36,969 orders</span></div><div><b class="num">26% / 71%</b><span data-i18n="cv_s2">Champions: share of customers / of revenue</span></div></div>
+<div class="actions"><a class="btn" href="analysis.html" data-i18n="cv_cta">Open the analysis</a><a class="btn ghost" href="https://github.com/errer441122/digital-campaign-performance-dashboard/tree/main/analysis" data-i18n="cv_cta2">The tables</a></div>
+</div>
+<ul>
+<li data-i18n-html="cv1"><b>RFM, cohorts, customer value</b>Online in the analysis page. Customer value means what a customer has spent so far, by country. It is not a forecast.</li>
+<li data-i18n-html="cv2"><b>Markov attribution, GA4 plan, lead scoring</b>Kept in the <a href="https://github.com/errer441122/digital-campaign-performance-dashboard/tree/october-2026">October 2026 version</a>. They ran on campaign data I had simulated, so I removed them: numbers I invent cannot show how a campaign performs.</li>
+<li data-i18n-html="cv3"><b>What replaced them</b>The check on this page. It needs no simulated data, because it asks the company's own orders.</li>
+</ul>
+</div></section>
+
+<section id="limits"><div class="wrap">
+<h2 data-i18n="lim_h">What it cannot do</h2>
+<ul class="limits">
+<li data-i18n-html="l1"><b>See small effects on short lists.</b>With 500 accounts it recognises an effect of about 15 points. If you expect 3, do not run the test: the plan tells you before you start.</li>
+<li data-i18n-html="l2"><b>Work if the left-out accounts are contacted anyway.</b>The sales team has to agree to the list. The biggest accounts can be kept out of the test and contacted always.</li>
+<li data-i18n-html="l3"><b>Judge revenue.</b>It shows it, but one large order moves the total, so the verdict counts accounts that ordered.</li>
+<li data-i18n-html="l4"><b>Prove it on a company's own campaign, yet.</b>It has been tested on public data and on files written by hand. The first real campaign is still to come.</li>
+</ul>
+</div></section>
 </main>
+
 <footer><div class="wrap">
-<p>Data: Chen, D. (2019), <i>Online Retail II</i>, UCI Machine Learning Repository, CC BY 4.0. <a href="https://github.com/errer441122/digital-campaign-performance-dashboard/blob/main/data/REAL_DATA_PROVENANCE.md">Source and cleaning rules</a>.</p>
-<p>All figures describe past orders in a public dataset. They are not forecasts and not client work. <a href="https://github.com/errer441122/digital-campaign-performance-dashboard#readme">How this was built</a>.</p>
+<p data-i18n-html="foot1">Data: Chen, D. (2019), <i>Online Retail II</i>, UCI Machine Learning Repository, CC BY 4.0. Many customers of the company are wholesalers. The company may have run its own marketing in those years: it reached both groups alike.</p>
+<p data-i18n-html="foot2">Riccardo Capanna, Digital Marketing student. Code written with AI assistants; the question, the rules and the checks are mine. <a href="https://github.com/errer441122">GitHub</a> · <a href="https://www.linkedin.com/in/riccardo-capanna-039a43415/">LinkedIn</a></p>
 </div></footer>
+
+<script>
+"use strict";
+const REPO = "errer441122/digital-campaign-performance-dashboard";
+const BASE = location.hostname.endsWith("github.io") ? `https://raw.githubusercontent.com/${REPO}/main/` : "../";
+const FILES = ["erp_export.py", "campaign_check.py", "backtest.py", "web_app.py"];
+const PYODIDE = "https://cdn.jsdelivr.net/pyodide/v0.28.3/full/pyodide.js";
+const PYODIDE_SRI = "sha384-4X7gSPzQ4pHfjTE5aBEPJAQcHu55sciq+NWO3OUOZ3zHSJhn4te9CBjUyRSr+nei";
+const $ = (id) => document.getElementById(id);
+
+// English lives in the HTML; this is the Italian, plus the texts scripts write in both.
+const IT = {
+  title: "Campaign Performance: la campagna ha portato ordini?",
+  nav_check: "Il controllo", nav_proof: "La prova", nav_cv: "Analisi del CV",
+  h1: "Il report dice che ha funzionato. È vero?",
+  lead: "Nel B2B gli ordini arrivano nel gestionale per telefono o tramite agente. Questo controllo tiene fuori dalla campagna alcuni clienti e confronta gli ordini dei due gruppi.",
+  cta: "Controlla una campagna", cta2: "Vedi la prova",
+  hero_cap: "Un anno di campagne, letto due volte", r_report: "Il report di campagna", r_check: "Il gruppo di controllo",
+  hero_back: "riattivazioni", hero_rev: "di ordini nei 60 giorni dopo ogni campagna",
+  contacted: "Contattati", left: "Esclusi",
+  hero_truth: "Quota di clienti che ha ordinato: 860 su 2.400 contattati, 224 su 600 esclusi. Queste campagne non sono mai state inviate.",
+  check_h: "Due estrazioni dal gestionale, una risposta",
+  check_sub: "Niente da installare e niente da collegare. I file restano in questo browser: la pagina esegue sul tuo computer il Python del repository.",
+  tab_demo: "Provalo su ordini reali", tab_plan: "Prima: estrai i gruppi", tab_measure: "Dopo: leggi il risultato",
+  demo_p: "36.969 ordini reali di un grossista inglese. Scegli la data: la pagina pianifica la campagna in quel giorno e legge il risultato 60 giorni dopo.",
+  demo_start: "Inizio della campagna", demo_effect: "Effetto della campagna",
+  eff0: "Nessuno (dati reali)", eff20: "Inventato: 20 in più su 100", demo_run: "Avvia la campagna",
+  empty_demo_b: "Nessuna campagna", empty_demo: "Qui compaiono le due letture. Con i dati reali la risposta giusta è \"nessuna prova\", perché non è stato inviato nulla.",
+  plan_p: "Dall'estrazione di ordini o fatture: cliente, data e, se li hai, importo e agente. Intestazioni in italiano o inglese, file Excel salvati in CSV.",
+  f_orders: "Estrazione ordini (CSV)", f_name: "Nome della campagna", f_list: "Clienti da contattare",
+  f_list_s: "facoltativo: senza lista la pagina propone i clienti in ritardo rispetto al loro ritmo",
+  more: "Altre impostazioni", f_start: "Data di inizio", f_out: "Escludi", o5: "1 cliente su 5", o3: "1 cliente su 3", o2: "1 cliente su 2",
+  f_window: "Giorni in cui un ordine conta", f_key: "Clienti più grandi: sempre contattati, mai contati", plan_run: "Estrai i gruppi",
+  empty_plan_b: "Nessun piano", empty_plan: "Qui trovi la lista da contattare, quella da lasciare stare e quanto deve essere grande l'effetto perché il test lo veda.",
+  meas_p: "A finestra chiusa: il plan.csv del primo passo e una nuova estrazione che comprenda i giorni dopo l'inizio.",
+  f_plan: "plan.csv", f_orders2: "Nuova estrazione ordini (CSV)", meas_run: "Leggi il risultato",
+  empty_meas_b: "Nessun risultato", empty_meas: "Prima che la finestra finisca la pagina non risponde. Guardare in anticipo è il modo più facile per farsi ingannare.",
+  proof_h: "Provato su campagne mai esistite",
+  proof_sub: "I dati pubblici di un vero grossista contengono ordini, non campagne. Ne ho inventate sei, da 60 giorni, ho estratto i gruppi e non ho inviato nulla. La risposta giusta è nota: nessun effetto.",
+  chart_h: "Clienti che hanno ordinato entro 60 giorni", lg_c: "\"contattati\" (non è stato inviato nulla)",
+  fact_fooled: "di 1.800 campagne inventate è stato giudicato \"ha funzionato\" per errore. Il report normale avrebbe rivendicato un successo in tutte.",
+  fact_base_b: "1 su 3", fact_base: "clienti in ritardo torna senza nessuna campagna. Un report di win-back li conta come risultato proprio.",
+  seen_h: "Quanto deve essere grande l'effetto", seen_p: "Su liste da 200 a 700 clienti, quota di campagne efficaci che riconosce:", seen_out: "Esclusi",
+  gap_h: "Cosa fa già il tuo software", gap_sub: "Se uno di questi ti dà già la risposta, usa quello.",
+  gap_c1: "Strumento", gap_c2: "Cosa fa", gap_c3: "Cosa resta scoperto nel B2B",
+  g1: "Piattaforma email", g1a: "Aperture, clic e ordini del negozio online. Klaviyo ha anche i <a href=\"https://help.klaviyo.com/hc/en-us/articles/18138290642971\">gruppi di controllo</a>, per account con almeno 400.000 profili.",
+  g1b: "Vede gli ordini presi per telefono, email o agente solo se qualcuno collega il gestionale, e una lista B2B raramente arriva a quella dimensione.",
+  g2: "CRM", g2a: "Chi è stato contattato e le trattative che i commerciali si ricordano di aggiornare.", g2b: "Le fatture di solito sono nel gestionale, e ogni cliente contattato che ordina sembra un risultato della campagna.",
+  g3: "Gestionale", g3a: "Ogni ordine e ogni fattura.", g3b: "Non sa chi è stato contattato e non ha nessuno con cui confrontarlo.",
+  g4: "Analisi vendite per distributori", g4a: "Avvisi sui clienti che spendono meno di prima, per esempio <a href=\"https://support.sugarai.com/documentation/sales-i/user_guide/alerts\">sales-i</a>. Se ce l'hai, è meglio di questa lista.",
+  g4b: "Ti dice chi chiamare. Per sapere se la chiamata è servita serve comunque un gruppo non chiamato.",
+  g5: "Questo controllo", g5a: "Estrae i gruppi prima della campagna, confronta i loro ordini dopo e dice in anticipo che cosa non potrà vedere.", g5b: "Gli effetti piccoli su liste corte. Vedi i limiti più sotto.",
+  cv_h: "L'analisi clienti del mio CV", cv_sub: "Segmenti RFM, retention per coorti e valore del cliente sugli stessi dati pubblici, prima che ci costruissi sopra il controllo delle campagne.",
+  cv_s1: "clienti, 36.969 ordini", cv_s2: "Champions: quota di clienti / di fatturato", cv_cta: "Apri l'analisi", cv_cta2: "Le tabelle",
+  cv1: "<b>RFM, coorti, valore del cliente</b>Online nella pagina di analisi. Valore significa quanto un cliente ha speso finora, per Paese. Non è una previsione.",
+  cv2: "<b>Attribuzione Markov, piano GA4, lead scoring</b>Restano nella <a href=\"https://github.com/errer441122/digital-campaign-performance-dashboard/tree/october-2026\">versione di ottobre 2026</a>. Giravano su campagne simulate da me, quindi le ho tolte: numeri inventati non dimostrano come va una campagna.",
+  cv3: "<b>Cosa le ha sostituite</b>Il controllo di questa pagina. Non gli servono dati simulati, perché interroga gli ordini dell'azienda.",
+  lim_h: "Cosa non sa fare",
+  l1: "<b>Vedere effetti piccoli su liste corte.</b>Con 500 clienti riconosce un effetto di circa 15 punti. Se te ne aspetti 3, non fare il test: il piano te lo dice prima di partire.",
+  l2: "<b>Funzionare se gli esclusi vengono contattati lo stesso.</b>I commerciali devono accettare la lista. I clienti più grandi possono restare fuori dal test ed essere sempre contattati.",
+  l3: "<b>Giudicare il fatturato.</b>Lo mostra, ma un solo ordine grande sposta il totale: il verdetto conta i clienti che hanno ordinato.",
+  l4: "<b>Dimostrarlo sulla campagna di un'azienda, per ora.</b>È stato provato su dati pubblici e su file scritti a mano. La prima campagna reale deve ancora arrivare.",
+  foot1: "Dati: Chen, D. (2019), <i>Online Retail II</i>, UCI Machine Learning Repository, CC BY 4.0. Molti clienti dell'azienda sono grossisti. L'azienda può aver fatto marketing in quegli anni: ha raggiunto i due gruppi allo stesso modo.",
+  foot2: "Riccardo Capanna, studente di Digital Marketing. Codice scritto con assistenti AI; la domanda, le regole e i controlli sono miei. <a href=\"https://github.com/errer441122\">GitHub</a> · <a href=\"https://www.linkedin.com/in/riccardo-capanna-039a43415/\">LinkedIn</a>",
+};
+const SAY = {
+  en: {
+    loading: "Loading the analysis engine: about 10 seconds the first time.", ready: "Ready. Your files stay on this computer.", working: "Working...",
+    engine_err: "The engine did not load. Check the connection and try again.", choose: "Choose the file first.",
+    accounts_back: "{x} accounts came back", of_orders: "{rev} of orders in {w} days", shares: "Share of accounts that ordered: {x1} of {n1} contacted, {x0} of {n0} left out.",
+    worked: "The campaign worked", hurt: "The contacted accounts ordered less", no_proof: "No proof that it worked",
+    d_worked: "Between {lo} and {hi} more accounts in 100 ordered because of it.", d_hurt: "Between {lo} and {hi} points: look at what was sent.",
+    d_no_proof: "The difference is between {lo} and {hi} points, so it may be zero.",
+    invented: "Invented effect, to show the other answer.", real: "Real orders, nothing was sent: any other answer would be a mistake.",
+    early: "Too early. The export ends on {last}, the window on {ends}.",
+    s_contact: "to contact", s_left: "left out until {ends}", s_key: "biggest, always contacted",
+    base: "Without any campaign, {p} of accounts like these ordered in the {w} days before. That is the number to beat.",
+    no_base: "Not enough history to say how many come back by themselves: the sizes below assume the worst case.",
+    sizes_h: "What this test will be able to show", sz_out: "Left out", sz_n: "Contacted / left out", sz_v: "Smallest effect it shows", in: "1 in {n}", pts: "{x} points",
+    unknown: "{n} accounts of your list are not in the export and were skipped.",
+    dl: "Download the three files", keep: "Keep plan.csv for step two, and do not save it again from Excel. Give contact.csv to whoever runs the campaign; nobody contacts left_out.csv.",
+    preview: "First accounts to contact", listed: "The accounts on the list", h: ["account", "name", "rep", "last order", "usual gap (days)", "silent (days)", "last 12 months"],
+  },
+  it: {
+    loading: "Carico il motore di analisi: circa 10 secondi la prima volta.", ready: "Pronto. I file restano su questo computer.", working: "Ci sto lavorando...",
+    engine_err: "Il motore non si è caricato. Controlla la connessione e riprova.", choose: "Scegli prima il file.",
+    accounts_back: "{x} clienti sono tornati", of_orders: "{rev} di ordini in {w} giorni", shares: "Quota di clienti che ha ordinato: {x1} su {n1} contattati, {x0} su {n0} esclusi.",
+    worked: "La campagna ha funzionato", hurt: "I contattati hanno ordinato meno", no_proof: "Nessuna prova che abbia funzionato",
+    d_worked: "Grazie alla campagna hanno ordinato da {lo} a {hi} clienti in più su 100.", d_hurt: "Da {lo} a {hi} punti: guarda che cosa è stato inviato.",
+    d_no_proof: "La differenza sta tra {lo} e {hi} punti, quindi può essere zero.",
+    invented: "Effetto inventato, per mostrare l'altra risposta.", real: "Ordini reali, nulla è stato inviato: qualsiasi altra risposta sarebbe un errore.",
+    early: "Troppo presto. L'estrazione finisce il {last}, la finestra il {ends}.",
+    s_contact: "da contattare", s_left: "esclusi fino al {ends}", s_key: "più grandi, sempre contattati",
+    base: "Senza nessuna campagna, il {p} di clienti come questi ha ordinato nei {w} giorni precedenti. È il numero da battere.",
+    no_base: "Storico insufficiente per dire quanti tornano da soli: le soglie qui sotto assumono il caso peggiore.",
+    sizes_h: "Che cosa potrà vedere questo test", sz_out: "Esclusi", sz_n: "Contattati / esclusi", sz_v: "Effetto più piccolo visibile", in: "1 su {n}", pts: "{x} punti",
+    unknown: "{n} clienti della tua lista non sono nell'estrazione e sono stati saltati.",
+    dl: "Scarica i tre file", keep: "Conserva plan.csv per il secondo passo e non risalvarlo da Excel. Dai contact.csv a chi gestisce la campagna; nessuno contatta left_out.csv.",
+    preview: "Primi clienti da contattare", listed: "I clienti in lista", h: ["cliente", "nome", "agente", "ultimo ordine", "ritmo (giorni)", "silenzio (giorni)", "ultimi 12 mesi"],
+  },
+};
+
+// The engine answers in English; these are the problems a file can have.
+const PROBLEMS_IT = [
+  [/^column not found \((.*)\)\. The file has: (.*)$/, "colonna non trovata ($1). Il file ha: $2"],
+  [/^this is not the plan\.csv.*$/, "questo non è il plan.csv scritto dal primo passo"],
+  [/^line (\d+): the date (.*) is neither.*$/, "riga $1: la data $2 non è né AAAA-MM-GG né GG/MM/AAAA"],
+  [/^line (\d+): (.*) is not a number$/, "riga $1: $2 non è un numero"],
+  [/^only (\d+) accounts to work with.*$/, "solo $1 clienti su cui lavorare: troppo pochi per escluderne qualcuno"],
+  [/^no account of the plan is in this export.*$/, "nessun cliente del piano è in questa estrazione: il codice cliente è lo stesso?"],
+  [/^no rows with an account and a date$/, "nessuna riga con un cliente e una data"],
+];
+const explain = (text) => LANG === "it" ? PROBLEMS_IT.reduce((t, [re, it]) => t.replace(re, it), text) : text;
+
+let LANG = "en";
+const EN = {};
+const say = (key, vars = {}) => Object.entries(vars).reduce((s, [k, v]) => s.replaceAll(`{${k}}`, v), SAY[LANG][key]);
+const nf = (x, o) => new Intl.NumberFormat(LANG, { useGrouping: "always", ...o }).format(x);
+const pct = (x) => nf(x, { style: "percent", maximumFractionDigits: 0 });
+const pts = (x) => nf(Math.round(x * 100), { signDisplay: "exceptZero" });
+const day = (iso) => new Intl.DateTimeFormat(LANG === "it" ? "it-IT" : "en-GB", { day: "numeric", month: "short", year: "numeric" }).format(new Date(iso + "T12:00:00"));
+const FMT = { int: (x) => nf(x), gbp: (x) => nf(x, { style: "currency", currency: "GBP", maximumFractionDigits: 0 }),
+  pct1: (x) => nf(x, { style: "percent", minimumFractionDigits: 1, maximumFractionDigits: 1 }) };
+let redraw = {};
+
+function setLang(lang) {
+  LANG = lang === "it" ? "it" : "en";
+  document.documentElement.lang = LANG;
+  for (const [attr, prop] of [["data-i18n", "textContent"], ["data-i18n-html", "innerHTML"]])
+    document.querySelectorAll(`[${attr}]`).forEach((n) => {
+      const k = n.getAttribute(attr);
+      if (!(k in EN)) EN[k] = n[prop];
+      n[prop] = LANG === "it" ? IT[k] : EN[k];   // fixed texts of this page, never user data
+    });
+  document.querySelectorAll("[data-fmt]").forEach((n) => { n.textContent = FMT[n.dataset.fmt](+n.dataset.v); });
+  EN.title ??= document.title;
+  document.title = LANG === "it" ? IT.title : EN.title;
+  document.querySelectorAll(".lang button").forEach((b) => b.setAttribute("aria-pressed", String(b.dataset.lang === LANG)));
+  try { localStorage.setItem("portfolio_lang", LANG); } catch {}
+  Object.values(redraw).forEach((f) => f());
+}
+
+function el(tag, props = {}, ...kids) {
+  const n = Object.assign(document.createElement(tag), props);
+  n.append(...kids.map((k) => (k instanceof Node ? k : String(k))));
+  return n;
+}
+function bar(cls, label, share) {
+  const i = el("i"); i.style.setProperty("--v", Math.min(1, share));
+  return el("div", { className: "bar " + cls }, el("span", {}, label), el("div", {}, i, el("b", { className: "num" }, pct(share))));
+}
+function table(head, rows) {
+  return el("div", { className: "scroll" }, el("table", {},
+    el("thead", {}, el("tr", {}, ...head.map((h) => el("th", { scope: "col" }, h)))),
+    el("tbody", {}, ...rows.map((r) => el("tr", {}, ...r.map((c) => el("td", {}, c === "" ? "" : typeof c === "number" ? nf(c) : c)))))));
+}
+function reading(m, currency) {
+  const c = m.groups.contact, o = m.groups.left_out;
+  const rev = nf(c.revenue, currency ? { style: "currency", currency, maximumFractionDigits: 0 } : { maximumFractionDigits: 0 });
+  const plain = m.verdict === "worked" ? (x) => nf(Math.round(x * 100)) : pts;
+  const vars = { lo: plain(m.low), hi: plain(m.high) };
+  return el("figure", { className: "reading" },
+    el("div", { className: "part" }, el("h3", {}, LANG === "it" ? IT.r_report : EN.r_report),
+      el("p", { className: "claim" }, say("accounts_back", { x: nf(c.ordered) })), el("p", {}, say("of_orders", { rev, w: m.window }))),
+    el("div", { className: "part" }, el("h3", {}, LANG === "it" ? IT.r_check : EN.r_check),
+      el("div", { className: "bars" }, bar("", LANG === "it" ? IT.contacted : EN.contacted, c.share), bar("out", LANG === "it" ? IT.left : EN.left, o.share)),
+      el("p", {}, say("shares", { x1: nf(c.ordered), n1: nf(c.accounts), x0: nf(o.ordered), n0: nf(o.accounts) }))),
+    el("div", { className: "part" }, el("p", {}, el("span", { className: "tag " + m.verdict }, say(m.verdict)), " ", say("d_" + m.verdict, vars))));
+}
+const problem = (text) => [el("p", { className: "msg err" }, text)];
+
+function showResult(m, currency) {
+  if (m.status === "too_early") return [el("p", { className: "msg" }, say("early", { last: day(m.last), ends: day(m.ends) }))];
+  return [reading(m, currency)];
+}
+function showDemo(m) {
+  return [...showResult(m, "GBP"), el("p", {}, say(m.effect ? "invented" : "real")),
+    el("h3", {}, say("listed")), table(SAY[LANG].h.filter((_, i) => i !== 1 && i !== 2), m.preview.map((r) => r.filter((_, i) => i !== 1 && i !== 2)))];
+}
+function showPlan(p) {
+  const save = el("button", { className: "btn small", type: "button" }, say("dl"));
+  save.addEventListener("click", () => Object.entries(p.files).forEach(([name, text], i) => setTimeout(() => {
+    const a = el("a", { href: URL.createObjectURL(new Blob(["﻿" + text], { type: "text/csv;charset=utf-8" })), download: name });
+    document.body.append(a); a.click(); a.remove(); setTimeout(() => URL.revokeObjectURL(a.href), 2000);
+  }, 350 * i)));
+  const stat = (v, k, vars) => el("div", {}, el("b", { className: "num" }, nf(v)), el("span", {}, say(k, vars)));
+  const out = [el("div", { className: "stats" }, stat(p.count.contact + p.count.key, "s_contact"), stat(p.count.left_out, "s_left", { ends: day(p.ends) }),
+    ...(p.count.key ? [stat(p.count.key, "s_key")] : []))];
+  if (p.unknown) out.push(el("p", { className: "msg" }, say("unknown", { n: nf(p.unknown) })));
+  out.push(el("p", {}, p.base === null ? say("no_base") : say("base", { p: pct(p.base), w: p.window })),
+    el("h3", {}, say("sizes_h")),
+    table([say("sz_out"), say("sz_n"), say("sz_v")], p.sizes.map((s) => [say("in", { n: s.leave_out }), `${nf(s.contact)} / ${nf(s.left_out)}`, say("pts", { x: Math.ceil(s.smallest_visible * 100) })])),
+    el("div", { className: "actions" }, save), el("p", { className: "foot-note" }, say("keep")),
+    el("h3", {}, say("preview")), table(SAY[LANG].h, p.preview));
+  return out;
+}
+
+// ---------- the engine: the repository's Python, in the browser
+let enginePromise = null;
+function status(key, err) { $("status").textContent = key ? say(key) : ""; $("status").className = "status" + (err ? " err" : ""); redraw.status = () => { $("status").textContent = key ? say(key) : ""; }; }
+function engine() {
+  enginePromise ??= (async () => {
+    status("loading");
+    await new Promise((ok, no) => document.head.append(Object.assign(document.createElement("script"),
+      { src: PYODIDE, integrity: PYODIDE_SRI, crossOrigin: "anonymous", onload: ok, onerror: no })));
+    const py = await loadPyodide();
+    py.FS.mkdirTree("/app");
+    for (const f of FILES) {
+      const r = await fetch(BASE + "src/" + f);
+      if (!r.ok) throw new Error(f);
+      py.FS.writeFile("/app/" + f, await r.text());
+    }
+    py.runPython("import sys; sys.path.insert(0, '/app'); import web_app");
+    status("ready");
+    return py;
+  })().catch((e) => { enginePromise = null; status("engine_err", true); throw e; });
+  return enginePromise;
+}
+const asText = async (file) => {
+  const buf = await file.arrayBuffer();
+  try { return new TextDecoder("utf-8", { fatal: true }).decode(buf); } catch { return new TextDecoder("windows-1252").decode(buf); }
+};
+async function call(btn, out, show, prepare) {
+  btn.disabled = true; out.setAttribute("aria-busy", "true");
+  try {
+    const job = await prepare();
+    if (!job) { redraw[out.id] = () => out.replaceChildren(...problem(say("choose"))); redraw[out.id](); return; }
+    const py = await engine();
+    status("working");
+    await new Promise((r) => setTimeout(r, 30));
+    for (const [path, text] of Object.entries(job.files)) py.FS.writeFile(path, text);
+    const fn = py.globals.get("web_app") || py.pyimport("web_app");
+    const r = JSON.parse(fn[job.fn](...job.args));
+    redraw[out.id] = () => out.replaceChildren(...(r.error ? problem(explain(r.error)) : show(r)));
+    redraw[out.id]();
+    status("ready");
+  } catch (e) {
+    if (enginePromise) { out.replaceChildren(...problem(String(e.message || e).split("\n").filter(Boolean).pop())); status(""); }
+  } finally { btn.disabled = false; out.removeAttribute("aria-busy"); }
+}
+
+let uci = null;
+const uciText = async () => (uci ??= await (await fetch(BASE + "data/online_retail_orders.csv")).text());
+$("d-run").addEventListener("click", () => call($("d-run"), $("d-out"), showDemo, async () =>
+  ({ fn: "demo", files: { "/tmp/uci.csv": await uciText() }, args: ["/tmp/uci.csv", $("d-start").value, Number($("d-effect").value)] })));
+$("p-run").addEventListener("click", () => call($("p-run"), $("p-out"), showPlan, async () => {
+  const f = $("p-orders").files[0], l = $("p-list").files[0];
+  if (!f) return null;
+  const files = { "/tmp/orders.csv": await asText(f) };
+  if (l) files["/tmp/list.csv"] = await asText(l);
+  return { fn: "plan", files, args: ["/tmp/orders.csv", $("p-name").value, $("p-start").value, Number($("p-window").value) || 60, Number($("p-out").value || 5), Number($("p-key").value) || 0, l ? "/tmp/list.csv" : ""] };
+}));
+$("m-run").addEventListener("click", () => call($("m-run"), $("m-out"), showResult, async () => {
+  const p = $("m-plan").files[0], o = $("m-orders").files[0];
+  return p && o ? { fn: "measure", files: { "/tmp/plan.csv": await asText(p), "/tmp/later.csv": await asText(o) }, args: ["/tmp/plan.csv", "/tmp/later.csv"] } : null;
+}));
+
+// ---------- tabs
+const tabs = [...document.querySelectorAll("#seg [role=tab]")];
+function pick(t, focus) {
+  for (const x of tabs) { const on = x === t; x.setAttribute("aria-selected", on); x.tabIndex = on ? 0 : -1; $(x.getAttribute("aria-controls")).hidden = !on; }
+  if (focus) t.focus();
+}
+tabs.forEach((t, i) => {
+  t.addEventListener("click", () => pick(t));
+  t.addEventListener("keydown", (e) => { const d = { ArrowRight: 1, ArrowLeft: -1 }[e.key]; if (d) { e.preventDefault(); pick(tabs[(i + d + tabs.length) % tabs.length], true); } });
+});
+
+// ---------- the proof, from the file the backtest writes
+fetch("campaign_check.json").then((r) => r.json()).then((r) => {
+  redraw.proof = () => {
+    $("d-start").replaceChildren(...r.campaigns.map((c, i) => el("option", { value: c.start, selected: $("d-start").value ? $("d-start").value === c.start : i === 3 }, day(c.start))));
+    $("runs").replaceChildren(...r.campaigns.map((c) => {
+      const line = (cls, g) => { const i = el("i"); i.style.setProperty("--v", g.share / .5); return el("div", { className: cls }, i, el("b", { className: "num" }, pct(g.share))); };
+      return el("div", { className: "run" }, el("span", {}, day(c.start)), el("div", { className: "pair" }, line("", c.contact), line("o", c.left_out)));
+    }));
+    $("seen").replaceChildren(...[5, 3, 2].map((n) => el("tr", {}, el("th", { scope: "row" }, say("in", { n })),
+      ...r.seen.filter((s) => s.leave_out === n).map((s) => el("td", { className: "num" }, pct(s.seen / s.campaigns))))));
+    const f = r.fooled.find((x) => x.leave_out === 5);
+    $("f-fooled").textContent = nf(f.called_worked / f.campaigns, { style: "percent", minimumFractionDigits: 1, maximumFractionDigits: 1 });
+  };
+  redraw.proof();
+}).catch(() => {});
+
+document.querySelectorAll(".lang button").forEach((b) => b.addEventListener("click", () => setLang(b.dataset.lang)));
+let saved = null;
+try { saved = localStorage.getItem("portfolio_lang"); } catch {}
+setLang(saved || (navigator.language || "en").slice(0, 2));
+</script>
 </body>
 </html>

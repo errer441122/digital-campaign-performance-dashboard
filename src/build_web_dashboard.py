@@ -1,14 +1,10 @@
-"""Build the public page (`docs/index.html`, served by GitHub Pages).
+"""Build the analysis page (`docs/analysis.html`, served by GitHub Pages).
 
 One self-contained HTML file: HTML/CSS charts, no JavaScript, no CDN, no web
 fonts, light and dark mode, readable on a phone. Every number is read from
 the JSON that `crm_retention.py` and `crm_lifecycle.py` write, so the page
 cannot drift from `analysis/`. CI regenerates it and fails if the committed
 copy differs.
-
-`store_report.py` builds the same page for any store's own orders; sections
-the data cannot fill (no market big enough, less than a year of history) are
-left out instead of showing empty charts.
 
 Run after crm_retention.py and crm_lifecycle.py. Pure standard library.
 """
@@ -21,9 +17,9 @@ from html import escape
 from pathlib import Path
 
 ROOT = Path(__file__).resolve().parents[1]
-OUT = ROOT / "docs" / "index.html"
+OUT = ROOT / "docs" / "analysis.html"
 REPO = "https://github.com/errer441122/digital-campaign-performance-dashboard"
-PAGE = "https://errer441122.github.io/digital-campaign-performance-dashboard/"
+PAGE = "https://errer441122.github.io/digital-campaign-performance-dashboard/analysis.html"
 MONTHS = "Jan Feb Mar Apr May Jun Jul Aug Sep Oct Nov Dec".split()
 
 # RFM segments grouped by the job the CRM team has to do with them. A segment
@@ -227,7 +223,6 @@ def _load(rel: str) -> dict:
     return json.loads((ROOT / rel).read_text(encoding="utf-8"))
 
 
-# The public page; store_report.py passes its own values for the same keys.
 PUBLIC_PAGE = {
     "title": "CRM retention practice: RFM, lifecycle and repeat purchases",
     "name": "CRM retention practice",
@@ -243,7 +238,7 @@ PUBLIC_PAGE = {
                f'<p>All figures describe past orders in a public dataset. They are not forecasts and not client work. '
                f'<a href="{REPO}#readme">How this was built</a>.</p>'),
     "public": True,
-    "app_link": "app.html",  # the same report on the visitor's own file
+    "app_link": "./",  # the campaign check
 }
 # Country names that read wrong without an article ("in the United Kingdom").
 NEEDS_THE = {"United Kingdom", "United States", "Netherlands", "Czech Republic", "United Arab Emirates",
@@ -428,7 +423,7 @@ def build(crm: dict | None = None, life: dict | None = None, meta: dict | None =
 <meta property="og:description" content="{top["customer_share"]:.0%} of customers bring {top_rev:.0%} of revenue. RFM segments, lifecycle stages and repeat purchases on a public e-commerce dataset.">
 <meta property="og:type" content="website">
 <meta property="og:url" content="{PAGE}">
-<meta property="og:image" content="{PAGE}preview.png">
+<meta property="og:image" content="{PAGE.rsplit("/", 1)[0]}/preview.png">
 <meta name="twitter:card" content="summary_large_image">"""
         source = f'<a class="src" href="{REPO}">Source on GitHub</a>'
     else:
@@ -507,7 +502,7 @@ def build(crm: dict | None = None, life: dict | None = None, meta: dict | None =
 <p class="eyebrow">{escape(m["eyebrow"])}</p>
 <h1>{top["customer_share"]:.0%} of customers bring {top_rev:.0%} of revenue.</h1>
 <p class="lead">RFM segments, lifecycle stages and repeat purchases for {customers:,} {escape(m["who"])}. One CRM action per group.</p>
-<a class="cta" href="#segments">See the segments</a>{f'<a class="cta alt" href="{m["app_link"]}">Run it on your data</a>' if m.get("app_link") else ""}
+<a class="cta" href="#segments">See the segments</a>{f'<a class="cta alt" href="{m["app_link"]}">Campaign check</a>' if m.get("app_link") else ""}
 </div>
 <figure class="split">
 <figcaption>{escape(top["segment"])} compared with everyone else</figcaption>

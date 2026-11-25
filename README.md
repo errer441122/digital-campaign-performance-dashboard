@@ -1,5 +1,10 @@
 # Digital Campaign Performance Dashboard
 
+> **English summary (full README in Italian below):**
+> - **Problem:** At quarter end, marketing counts campaign leads, sales tracks deals and finance counts ERP orders — none of the three systems agree on which orders came from campaigns.
+> - **How it works:** A macro-free, AI-free Excel workbook reconciles three exports (campaign leads, CRM contacts, ERP orders) with 8 fixed rules (VAT/domain matching, cancelled orders, credit notes, existing vs. new accounts, 180-day window) and sends ambiguous cases to a named owner.
+> - **Verification & limits:** Simulated dataset of 60 dirty edge cases verified across 368 automated Excel checks (no live company deployment yet); also includes the public UCI retail RFM analysis referenced in my CV (`analisi-cv/`).
+
 **Problema.** Riunione di fine trimestre: il marketing conta 60 lead, il commerciale le trattative, l'amministrazione gli ordini. Nessuno dei tre programmi sa quali ordini vengono dalle campagne.
 
 **Entra.** Tre export: lead delle campagne, contatti del CRM, ordini del gestionale.
@@ -92,5 +97,3 @@ Tre errori veri che i casi hanno trovato nelle prime versioni:
 ## Come è fatto
 
 Studente di Digital Marketing, non sviluppatore. Foglio, collaudo e codice sono stati costruiti con assistenti AI. Licenza MIT; dati UCI *Online Retail II* CC BY 4.0.
-
-*In English: an Excel sheet that matches campaign leads, CRM contacts and ERP orders with eight fixed rules, gives each lead one outcome, and hands the ambiguous cases to a person. Invented data, 60 dirty cases, 368 checks.*

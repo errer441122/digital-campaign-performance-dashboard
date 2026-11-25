@@ -1,6 +1,6 @@
-# Digital Campaign Performance Dashboard
+# B2B Campaign-to-Order Reconciliation (Marketing, CRM & ERP)
 
-<sub>Il nome è quello del link stampato sul mio CV; l'analisi citata lì è [più sotto](#lanalisi-del-mio-cv). · Repo name kept so the link on my CV still works.</sub>
+<sub>URL `digital-campaign-performance-dashboard` mantenuto per il link stampato sul mio CV; l'analisi citata lì è [più sotto](#lanalisi-del-mio-cv). · Repo URL kept so the link on my CV still works.</sub>
 
 > **English summary (full README in Italian below):**
 > - **Problem:** At quarter end, marketing counts campaign leads, sales tracks deals and finance counts ERP orders — none of the three systems agree on which orders came from campaigns.

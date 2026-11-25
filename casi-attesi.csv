@@ -1,0 +1,61 @@
+﻿ID;Esito;Attribuibili;Si può contattare;Caso
+L01;Nuovo;8000;sì;Azienda nuova, un ordine dopo 40 giorni
+L02;Nuovo;0;sì;Azienda nuova, nessun ordine
+L03;Nuovo;0;sì;Seconda persona della stessa azienda: l'ordine si conta una volta
+L04;Doppione;0;sì;Stessa persona con maiuscole e spazi
+L05;Già cliente;0;sì;Compra da prima: l'ordine dopo non è della campagna
+L06;Tornato;0;sì;Era cliente, fermo da più di 180 giorni
+L07;Già in trattativa;0;sì;Trattativa aperta prima del lead
+L08;Nuovo;0;sì;Contatto CRM creato dopo il lead
+L09;Nuovo;2500;sì;Contatto già nel CRM da una fiera: la fonte originale resta
+L10;Da correggere;0;sì;Data impossibile
+L11;Da correggere;0;sì;Manca la data
+L12;Da correggere;0;sì;Manca la campagna
+L13;Da correggere;0;sì;Email tronca e niente partita IVA
+L14;Già cliente;0;sì;Email tronca, ma la partita IVA basta
+L15;Escluso;0;sì;Collega
+L16;Escluso;0;sì;Prova del modulo
+L17;Da decidere;0;sì;Indirizzo personale, nessuna azienda
+L18;Nuovo;1500;sì;Indirizzo personale, ma con la partita IVA
+L19;Già cliente;0;sì;Excel ha tolto lo zero iniziale alla partita IVA
+L20;Già cliente;0;sì;Partita IVA scritta con IT e spazio
+L21;Già cliente;0;sì;Partita IVA sbagliata: vale il dominio
+L22;Da decidere;0;sì;Partita IVA di un'azienda, dominio di un'altra
+L23;Da decidere;0;sì;Un dominio, due partite IVA
+L24;Già cliente;0;sì;Stesso gruppo, ma con la partita IVA si sa quale azienda è
+L25;Da decidere;0;sì;Stesso nome di un cliente, altro dominio: potrebbe essere un omonimo
+L26;Da decidere;0;sì;Un ordine con la stessa data del lead
+L27;Da decidere;0;sì;Il CRM dice cliente, il gestionale non ha ordini
+L28;Da decidere;0;sì;Due proprietari nel CRM per la stessa azienda
+L29;Da decidere;0;sì;Due campagne e un ordine: prima riga
+L30;Da decidere;0;sì;Due campagne e un ordine: seconda riga
+L31;Nuovo;0;sì;Due campagne, nessun ordine: prima riga
+L32;Nuovo;0;sì;Due campagne, nessun ordine: seconda riga
+L33;Nuovo;0;sì;Ordine dopo 204 giorni: fuori dalla finestra
+L34;Nuovo;0;sì;L'unico ordine è stato annullato
+L35;Nuovo;3000;sì;Nota di credito parziale, arrivata dopo la finestra
+L36;Nuovo;0;sì;Nota di credito per tutto l'ordine
+L37;Nuovo;1200.5;sì;Importo scritto come testo: 1.200,50
+L38;Nuovo;2400;sì;Importo con il simbolo dell'euro
+L39;Nuovo;0;sì;Importo ambiguo 1200.50: l'ordine va corretto, non indovinato
+L40;Nuovo;1000;sì;Ordine esportato due volte: contato una
+L41;Nuovo;1750;sì;Ordine senza partita IVA: lo lega il dominio
+L42;Nuovo;0;sì;Ordine da un gmail senza partita IVA: non si indovina di chi è
+L43;Nuovo;0;no;Consenso negato: conta nei numeri, non va ai commerciali
+L44;Nuovo;0;no;Sì alla campagna, ma revocato nel CRM: vale il no
+L45;Nuovo;0;manca;Consenso scritto 'forse': non vale come sì
+L46;Nuovo;0;sì;Campagna scritta con minuscole e uno spazio in più
+L47;Nuovo;640;sì;Data scritta come testo, all'inglese
+L48;Nuovo;0;sì;Data scritta come testo, all'italiana
+L49;Nuovo;0;sì;Email copiata con il nome davanti
+L50;Nuovo;0;sì;Il solo ordine precedente era annullato: non era cliente
+L51;Nuovo;0;sì;Prima del lead c'è solo una nota di credito
+L52;Nuovo;0;sì;Trattativa persa l'anno prima: non è aperta
+L53;Nuovo;0;sì;Offerta inviata dopo il lead
+L54;Già cliente;0;sì;Ultimo ordine esattamente 180 giorni prima
+L55;Tornato;0;sì;Ultimo ordine 181 giorni prima
+L56;Nuovo;777;sì;Ordine nell'ultimo giorno della finestra (180)
+L57;Nuovo;0;sì;Ordine un giorno dopo la finestra (181)
+L58;Nuovo;0;sì;Spazio invisibile in fondo all'email
+L59;Nuovo;0;no;Sì e no della stessa persona lo stesso giorno: vale il no
+L60;Doppione;0;no;Seconda riga della stessa persona: non si conta due volte

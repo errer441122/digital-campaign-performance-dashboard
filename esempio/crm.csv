@@ -1,0 +1,13 @@
+﻿ID CRM;Azienda;Partita IVA;Email;Fonte originale;Proprietario;Fase;Creato il;Permesso
+C001;Fabi Group;;acquisti@fabigroup.example;Segnalazione;Bianchi;Offerta inviata;03/03/2026;
+C002;Galli Mec;;fede@gallimec.example;LinkedIn;Conti;Contatto;21/05/2026;
+C003;Hofer;;gino@hofer.example;Fiera Milano 2025;Bianchi;Contatto;10/10/2025;
+C004;Urbani Srl;01234110003;info@urbani.example;Sito;Conti;Contatto;01/02/2026;
+C005;Alfa Nord;01234120002;nord@gruppoalfa.example;Sito;Bianchi;Contatto;01/02/2026;
+C006;Alfa Sud;01234130001;sud@gruppoalfa.example;Sito;Conti;Contatto;01/02/2026;
+C007;Boni;;alba@boni.example;Sito;Conti;Cliente;01/01/2026;
+C008;Cera;;bino@cera.example;Sito;Conti;Contatto;01/02/2026;
+C009;Cera Srl;;ufficio@cera.example;Fiera;Bianchi;Contatto;05/02/2026;
+C010;Ulisse;;tito@ulisse.example;Sito;Conti;Contatto;01/08/2025;revocato
+C011;Fini;;ester@fini.example;Sito;Bianchi;Persa;01/09/2025;
+C012;Gatti;;furio@gatti.example;LinkedIn;Conti;Offerta inviata;01/07/2026;

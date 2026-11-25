@@ -1,97 +1,96 @@
 # Digital Campaign Performance Dashboard
 
-**Did the campaign bring orders, or would those customers have ordered anyway?** A control group for B2B campaigns, measured on the orders in the ERP.
+**Problema.** Riunione di fine trimestre: il marketing conta 60 lead, il commerciale le trattative, l'amministrazione gli ordini. Nessuno dei tre programmi sa quali ordini vengono dalle campagne.
 
-**[Open the page](https://errer441122.github.io/digital-campaign-performance-dashboard/)** · [the proof](analysis/campaign_check.md) · [the analysis in my CV](#the-analysis-in-my-cv)
+**Entra.** Tre export: lead delle campagne, contatti del CRM, ordini del gestionale.
 
-[![The page: the same year of campaigns read by a campaign report and by a control group](assets/page.png)](https://errer441122.github.io/digital-campaign-performance-dashboard/)
+**Succede.** Otto regole fisse in un foglio Excel, una colonna per regola. Nessuna macro, nessuna AI: ogni domanda ha una sola risposta giusta, oppure la decide una persona.
 
-## The problem
+**Esce.** Una tabella che quadra, la lista per i commerciali e i casi da decidere con il nome di chi decide.
 
-In B2B the order comes in by phone, by email or through a sales rep and ends up in the ERP. The email tool knows who was contacted, the ERP knows who ordered, and nobody compares the two with customers who were *not* contacted. So every contacted customer who orders looks like a result of the campaign.
+[![Il riepilogo: 53.768 euro di ordini dopo un lead, di cui 22.768 di aziende nuove, 25.000 di chi era già cliente o in trattativa, 6.000 da decidere](assets/riepilogo.png)](campagna-ordini.xlsx?raw=true)
 
-## How it works
+**[Scarica il foglio](campagna-ordini.xlsx?raw=true)** · [Provalo in 90 secondi](#provalo-in-90-secondi) · [Le regole](#le-otto-regole) · [Pagina](https://errer441122.github.io/digital-campaign-performance-dashboard/) · [L'analisi del mio CV](#lanalisi-del-mio-cv)
 
-Two exports from the ERP (customer, date, amount), one before the campaign and one after it.
+> **Dati inventati**, con 60 casi sporchi messi apposta. Nessuna azienda lo ha ancora usato. Qui si misura se i casi vengono gestiti come previsto, non un risultato economico.
 
-| Step | Command | What you get |
+## Cosa esce
+
+| Foglio | A chi va | Righe |
+| --- | --- | ---: |
+| *Riepilogo* | Marketing, commerciale e amministrazione, la stessa tabella | 3 campagne |
+| *Per i commerciali* | Chi contattare, chi lo segue già, perché. Solo chi ha detto sì e mai no | 39 |
+| *Da decidere* | Domanda precisa, ordini in gioco, chi decide | 13 |
+| *Ordini*, colonna V | All'amministrazione: gli ordini che non si leggono | 3 |
+
+## Provalo in 90 secondi
+
+Apri una copia in Excel.
+
+1. Foglio *Lead*, cella **I7**, consenso di Aldo Corsi: scrivi `revocato`. La lista *Per i commerciali* scende da 39 a 38; nel *Riepilogo* Aldo resta tra i nuovi.
+2. Foglio *Ordini*, cella **F6**, ordine 7001: scrivi `Annullato`. Gli attribuibili scendono da 22.768 a 14.768 euro.
+3. Foglio *Regole*, cella **B4**: 210 al posto di 180. Entrano due ordini arrivati tardi e gli attribuibili salgono a 28.745 euro (con l'ordine 7001 rimesso a `Ordine`).
+
+## Le otto regole
+
+| Regola | Cosa succede | Perché |
 | --- | --- | --- |
-| **Before** | `python src/campaign_check.py plan --orders orders.csv --campaign "Spring catalogue"` | `contact.csv` for whoever runs the campaign, `left_out.csv` with one customer in five to leave alone, and how big an effect a list of that size can show |
-| **After 60 days** | `python src/campaign_check.py measure --plan plan/plan.csv --orders new_orders.csv` | What a campaign report would say, what the control group says, and the verdict: worked, no proof, or too early |
+| **R1 Riga leggibile** | Servono data, campagna e almeno un'email o una partita IVA valida. Altrimenti *Da correggere* | Una data impossibile non si indovina |
+| **R2 Interni e prove** | Fuori dal conto | Gonfiano i lead |
+| **R3 Stessa persona** | Nella stessa campagna conta la prima riga | Un modulo compilato due volte non sono due lead |
+| **R4 Stessa azienda** | Partita IVA valida, o dominio collegato a una partita IVA nel CRM o negli ordini. Nome uguale, gmail, o dominio con più partite IVA: *Da decidere* | Un omonimo non è un cliente |
+| **R5 Ordine valido** | Conta una volta, se data e importo si leggono. Annullato vale zero. La nota di credito si toglie dall'ordine a cui si riferisce, anche se arriva dopo | [Nei dati veri](prove/README.md) i due ordini più grandi dell'archivio erano annullati lo stesso giorno |
+| **R6 Cosa c'era prima** | Ordini prima del lead: *Già cliente*. Fermo da più di 180 giorni: *Tornato*. Trattativa aperta prima: *Già in trattativa*. Niente: *Nuovo* | [Nei dati veri](prove/README.md) tra il 22 e il 30% dei clienti fermi torna senza nessuna campagna |
+| **R7 Attribuzione** | Solo ordini di aziende nuove, nei 180 giorni dopo il lead. Stesso giorno, due campagne, CRM e gestionale in conflitto, due proprietari: *Da decidere* | Due campagne non possono prendersi lo stesso ordine |
+| **R8 Contatto** | Va ai commerciali solo chi ha detto sì e non ha detto no in nessun file. Chi ha un proprietario resta a lui | Un sì nel modulo non cancella un no nel CRM |
 
-- **The list is yours** (`--list`), for example the customers invited to a trade show. Without one, the tool proposes the customers who are late against *their own* ordering rhythm: silent for more than twice their usual gap, not for a fixed 90 days.
-- **The draw is fair.** Customers are sorted from the biggest and taken five at a time; a hash of the campaign name and the customer code picks the one left out. Nobody chooses, and it can be repeated.
-- **Key accounts** can be always contacted and never counted (`--key-accounts 10`).
-- **No peeking.** Before the window ends, the tool refuses to answer.
+Numeri e parole (giorni, domini, come si scrive "sì", nomi delle fasi) si cambiano nel foglio *Regole*.
 
-It reads what ERPs write: semicolons, decimal commas, `31/12/2026`, SAP's trailing minus, Italian or English headers, credit notes as negative amounts. The same code runs [in the browser](https://errer441122.github.io/digital-campaign-performance-dashboard/#check), where the files never leave the computer.
+## Cosa non fa mai
 
-## The proof: six campaigns that never happened
+- Non scrive nel CRM o nel gestionale: si incollano tre export, il risultato sta in colonne diverse.
+- Non tocca la fonte originale né il proprietario che sono nel CRM: li riporta.
+- Non attribuisce a una campagna l'ordine di chi comprava già.
+- Non unisce due aziende per il nome e non interpreta un importo ambiguo come `1200.50`.
+- Non manda ai commerciali chi ha detto no, neanche se l'ha detto in un altro file.
 
-The public data of a real wholesaler has 36,969 orders and no campaigns. I invented six, 60 days each, drew the groups and sent nothing. The right answer is known: no effect.
+## Casi sporchi: 60 su 60
 
-| | Contacted | Ordered within 60 days | Share |
-| --- | ---: | ---: | ---: |
-| "Contacted" (nothing was sent) | 2,400 | 860, for £721,498 | 36% |
-| Left out | 600 | 224 | 37% |
+[`casi-attesi.csv`](casi-attesi.csv) elenca ogni caso con l'esito previsto. [`verifica-excel.ps1`](verifica-excel.ps1) apre il foglio in Excel, confronta, cambia dati e regole in memoria, rimette le righe al contrario, svuota un file intero: **368 controlli superati, 0 falliti** (Excel 16 per Windows, 25 novembre 2026). Ad ogni modifica GitHub ricontrolla i 60 esiti salvati nel foglio.
 
-- **A campaign report would have claimed 860 reactivations.** More than one late customer in three comes back alone.
-- **The check is rarely fooled:** of 1,800 made-up campaigns it called 2.1% "worked".
-- **It is honest about small lists:** with one customer in five left out, it sees an effect of 20 points 9 times out of 10, one of 10 points less than half the time.
+Tre errori veri che i casi hanno trovato nelle prime versioni:
 
-Every number is rebuilt by [`src/backtest.py`](src/backtest.py) in CI: [full tables](analysis/campaign_check.md).
+- un cliente di vecchia data presente in due campagne finiva tra i casi da decidere;
+- un "no" scritto nella seconda riga della stessa persona non la fermava;
+- un ordine conteso tra due campagne era sommato due volte nel totale.
 
-## What other software already does
+## Dove si ferma
 
-| Tool | What it does | What stays open in B2B |
-| --- | --- | --- |
-| Email platform | Opens, clicks, online orders. Klaviyo has [control groups](https://help.klaviyo.com/hc/en-us/articles/18138290642971), for accounts with at least 400,000 profiles | Offline orders are there only if someone connects the ERP, and B2B lists rarely reach that size |
-| CRM | Who was contacted, and the deals people remember to update | Invoices are usually in the ERP |
-| ERP | Every order | Not who was contacted, and nobody to compare them with |
-| Sales analytics for distributors | Alerts on customers who spend less, e.g. [sales-i](https://support.sugarai.com/documentation/sales-i/user_guide/alerts). Better than this list if you own it | Whom to call. Whether the call changed anything still needs a group that was not called |
+- 300 lead, 500 contatti CRM, 1.000 ordini. Oltre, o se i file cambiano ogni giorno, serve un'integrazione tra CRM e gestionale.
+- Una persona alla volta: due copie del foglio sono due verità.
+- Dice che un'azienda era nuova e ha ordinato dopo. Non dimostra che abbia ordinato *grazie* alla campagna: per quello servirebbe un gruppo non contattato.
+- Una sola valuta, importi senza IVA. Un lead senza azienda riconoscibile resta da decidere.
+- Se il CRM riceve già gli ordini dal gestionale, il foglio serve solo per i casi che l'integrazione lascia aperti.
 
-## What is real and what is not
+## Le stesse regole altrove
 
-| Real | Not yet |
+| | HubSpot | Salesforce | Power BI o un altro CRM |
+| --- | --- | --- | --- |
+| R4 Azienda | Associazione azienda, dominio, proprietà P.IVA | Account e P.IVA | Chiave P.IVA, poi dominio |
+| R5-R6 Ordini | Dal gestionale: integrazione o file | Idem | Tabella ordini collegata alla stessa chiave |
+| R7 Da decidere | Elenco con una proprietà "esito" e un'attività per chi decide | Campo esito e attività | Filtro sulle righe senza esito |
+| R8 Contatto | Consenso del contatto, proprietario | Consenso e owner del lead | Colonne consenso e proprietario |
+
+## L'analisi del mio CV
+
+| Cosa dice il CV | Dove si trova |
 | --- | --- |
-| The orders: a UK company, many of whose customers are wholesalers (UCI, 2009 to 2011) | The campaigns: invented, so that the right answer is known |
-| The rules, the draw and the verdict, tested on files written by hand | A campaign of a real company. That is the next step |
+| RFM, coorti e CLV su 5.878 clienti veri; i Champions sono il 26% e fanno il 71% del fatturato | [Pagina](https://errer441122.github.io/digital-campaign-performance-dashboard/analysis.html), [tabelle](analisi-cv/analysis/crm_retention.md), [Excel](analisi-cv/dashboard/crm_dashboard.xlsx). Il CLV è quanto un cliente ha speso finora, per Paese, non una previsione. L'analisi contava anche 275 ordini annullati lo stesso giorno: senza, le due quote sono [26,1% e 71,5%](prove/README.md) |
+| Attribuzione con Markov, budget, piano GA4, UTM, lead scoring | [Versione di ottobre 2026](https://github.com/errer441122/digital-campaign-performance-dashboard/tree/october-2026). Girava su campagne simulate da me: l'ho tolta, perché numeri inventati non dimostrano come va una campagna |
+| Python e SQL | [`analisi-cv/src`](analisi-cv/src) e il [notebook](analisi-cv/notebooks/cross_check.ipynb) che ricalcola i numeri con pandas e DuckDB |
 
-Limits: it counts customers who ordered, because one large order moves a revenue total; it fails if the left-out customers are contacted anyway; a small effect on a short list stays invisible, and the plan says so in advance.
+## Come è fatto
 
-## The analysis in my CV
+Studente di Digital Marketing, non sviluppatore. Foglio, collaudo e codice sono stati costruiti con assistenti AI. Licenza MIT; dati UCI *Online Retail II* CC BY 4.0.
 
-| What my CV says | Where it is |
-| --- | --- |
-| RFM, cohort retention and customer value on 5,878 real customers; Champions are 26% of customers and 71% of revenue | [Live analysis](https://errer441122.github.io/digital-campaign-performance-dashboard/analysis.html), [tables](analysis/crm_retention.md), [Excel](dashboard/crm_dashboard.xlsx). Customer value is what each customer has spent so far, by country, not a forecast |
-| Markov attribution, budget reallocation, GA4 event plan, UTM taxonomy, lead scoring | [Version of October 2026](https://github.com/errer441122/digital-campaign-performance-dashboard/tree/october-2026). It ran on campaign data I had simulated. I removed it in November 2026: numbers I invent cannot show how a campaign performs |
-| Python, SQL | [`src/`](src), and the [notebook](notebooks/cross_check.ipynb) that recalculates the main numbers with pandas and DuckDB SQL |
-
-The report builder that stood here in November 2026 is gone too: RFM reports on online orders are already in Klaviyo and Shopify. It is kept under the tag [`rfm-dashboard`](https://github.com/errer441122/digital-campaign-performance-dashboard/tree/rfm-dashboard).
-
-## Run it
-
-```bash
-python src/campaign_check.py plan --orders data/online_retail_orders.csv --campaign demo --as-of 2011-05-30
-python src/campaign_check.py measure --plan plan/plan.csv --orders data/online_retail_orders.csv
-python -m pip install -r requirements.txt && python -m pytest -q
-```
-
-The check needs only Python. The requirements are for the tests and the Excel and chart of the analysis.
-
-| Path | Content |
-| --- | --- |
-| `src/campaign_check.py` | The draw, the count and the verdict |
-| `src/erp_export.py` | Reading ERP and Excel files |
-| `src/backtest.py` | The six campaigns that never happened |
-| `src/crm_retention.py`, `src/crm_lifecycle.py` | The analysis in my CV |
-| `docs/` | The page and the analysis page (GitHub Pages) |
-| `tests/` | 51 checks, run on every change |
-
-## Data
-
-Chen, D. (2019). *Online Retail II*. UCI Machine Learning Repository, CC BY 4.0. Source and cleaning rules: [`data/REAL_DATA_PROVENANCE.md`](data/REAL_DATA_PROVENANCE.md). The company may have run its own marketing in those years; it reached both groups alike.
-
-## How I built this
-
-I am a Digital Marketing student, not a developer. The code was written with AI coding assistants. My part was choosing the question, the rules and the data, checking the results and deciding what to report. MIT licence.
+*In English: an Excel sheet that matches campaign leads, CRM contacts and ERP orders with eight fixed rules, gives each lead one outcome, and hands the ambiguous cases to a person. Invented data, 60 dirty cases, 368 checks.*

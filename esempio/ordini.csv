@@ -1,0 +1,38 @@
+﻿Numero;Data;Cliente;Partita IVA;Email;Tipo;Importo;Rif. ordine
+7001;21/06/2026;Bruni Macchine Srl;01234010005;acquisti@brunimacchine.example;Ordine;8000;
+7002;20/04/2026;Doni Srl;01234020004;carlo@donisrl.example;Ordine;3000;
+7003;10/06/2026;Doni Srl;01234020004;;Ordine;12000;
+7004;02/04/2025;Elmi SpA;01234030003;dina@elmi.example;Ordine;5000;
+7005;30/06/2026;Elmi SpA;01234030003;;Ordine;4000;
+7006;01/07/2026;Fabi Group;01234040002;amministrazione@fabigroup.example;Ordine;9000;
+7007;15/07/2026;Hofer;01234050001;gino@hofer.example;Ordine;2500;
+7008;26/07/2026;Pini Srl;01234060000;;Ordine;1500;
+7009;05/05/2026;Quadri Srl;01234070009;;Ordine;700;
+7010;04/05/2026;Sala Srl;01234080008;;Ordine;900;
+7011;03/05/2026;Testa Srl;01234090007;sara@testa.example;Ordine;650;
+7012;02/05/2026;Alfa Nord;01234120002;;Ordine;2100;
+7013;01/05/2026;ROSSI SRL;01234140000;;Ordine;3300;
+7014;02/06/2026;Arca;01234150009;zoe@arca.example;Ordine;1800;
+7015;20/07/2026;Dalla Srl;01234160008;cleo@dalla.example;Ordine;6000;
+7016;10/11/2026;Fumo;01234170007;enea@fumo.example;Ordine;5200;
+7017;01/07/2026;Gori;01234180006;flora@gori.example;Ordine;16000;
+7017;01/07/2026;Gori;01234180006;flora@gori.example;Annullato;16000;
+7018;15/07/2026;Iori;01234190005;gaia@iori.example;Ordine;5000;
+7019;20/12/2026;Iori;01234190005;;Nota di credito;2000;7018
+7020;18/07/2026;Lodi;01234200002;iris@lodi.example;Ordine;2200;
+7021;25/07/2026;Lodi;01234200002;;TD04;-2200;7020
+7022;19/07/2026;Muti;01234210001;luca@muti.example;Ordine;1.200,50;
+7023;20/07/2026;Neri;01234220000;maya@neri.example;Ordine;€ 2.400,00;
+7024;21/07/2026;Orsi;01234230009;noa@orsi.example;Ordine;1200.50;
+7025;22/07/2026;Poli;01234240008;olga@poli.example;Ordine;1000;
+7025;22/07/2026;Poli;01234240008;olga@poli.example;Ordine;1000;
+7026;23/07/2026;Rosi;;ordini@rosi.example;Ordine;1750;
+7027;24/07/2026;Ditta di Rea;;rea.sassi@gmail.com;Ordine;990;
+7028;17/06/2026;Abba;01234250007;zeno@abba.example;Ordine;640;
+7029;10/03/2026;Dosi;01234260006;cino@dosi.example;Ordine;4100;
+7029;10/03/2026;Dosi;01234260006;cino@dosi.example;Annullato;4100;
+7030;11/03/2026;Enti;01234270005;dafne@enti.example;Nota di credito;300;
+7031;24/12/2025;Ivi;01234280004;gemma@ivi.example;Ordine;800;
+7032;23/12/2025;Loi;01234290003;ivan@loi.example;Ordine;800;
+7033;06/11/2026;Masi;01234300000;lara@masi.example;Ordine;777;
+7034;07/11/2026;Nardi;01234310009;milo@nardi.example;Ordine;777;

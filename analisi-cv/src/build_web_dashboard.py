@@ -17,7 +17,7 @@ from html import escape
 from pathlib import Path
 
 ROOT = Path(__file__).resolve().parents[1]
-OUT = ROOT / "docs" / "analysis.html"
+OUT = ROOT.parent / "docs" / "analysis.html"
 REPO = "https://github.com/errer441122/digital-campaign-performance-dashboard"
 PAGE = "https://errer441122.github.io/digital-campaign-performance-dashboard/analysis.html"
 MONTHS = "Jan Feb Mar Apr May Jun Jul Aug Sep Oct Nov Dec".split()
@@ -234,11 +234,12 @@ PUBLIC_PAGE = {
     "next_title": "What I would do with this in a real shop",
     "next_note": "These are recommendations, not results. The dataset has no email or advertising data, so nothing here has been tested on customers.",
     "footer": (f'<p>Data: Chen, D. (2019), <i>Online Retail II</i>, UCI Machine Learning Repository, CC BY 4.0. '
-               f'<a href="{REPO}/blob/main/data/REAL_DATA_PROVENANCE.md">Source and cleaning rules</a>.</p>\n'
+               f'<a href="{REPO}/blob/main/analisi-cv/data/REAL_DATA_PROVENANCE.md">Source and cleaning rules</a>.</p>\n'
+               f'<p>275 orders cancelled in full on the same day (£472,927) are still counted here; without them Champions are 26.1% of customers and 71.5% of revenue. <a href="{REPO}/tree/main/prove">Details</a>.</p>\n'
                f'<p>All figures describe past orders in a public dataset. They are not forecasts and not client work. '
                f'<a href="{REPO}#readme">How this was built</a>.</p>'),
     "public": True,
-    "app_link": "./",  # the campaign check
+    "app_link": "./",  # il foglio campagna-ordini
 }
 # Country names that read wrong without an article ("in the United Kingdom").
 NEEDS_THE = {"United Kingdom", "United States", "Netherlands", "Czech Republic", "United Arab Emirates",
@@ -502,7 +503,7 @@ def build(crm: dict | None = None, life: dict | None = None, meta: dict | None =
 <p class="eyebrow">{escape(m["eyebrow"])}</p>
 <h1>{top["customer_share"]:.0%} of customers bring {top_rev:.0%} of revenue.</h1>
 <p class="lead">RFM segments, lifecycle stages and repeat purchases for {customers:,} {escape(m["who"])}. One CRM action per group.</p>
-<a class="cta" href="#segments">See the segments</a>{f'<a class="cta alt" href="{m["app_link"]}">Campaign check</a>' if m.get("app_link") else ""}
+<a class="cta" href="#segments">See the segments</a>{f'<a class="cta alt" href="{m["app_link"]}">Campaign orders sheet</a>' if m.get("app_link") else ""}
 </div>
 <figure class="split">
 <figcaption>{escape(top["segment"])} compared with everyone else</figcaption>
@@ -559,7 +560,7 @@ def main() -> None:
     OUT.parent.mkdir(parents=True, exist_ok=True)
     OUT.write_text(build(), encoding="utf-8", newline="\n")
     (OUT.parent / ".nojekyll").write_text("", encoding="utf-8")
-    print(f"Wrote {OUT.relative_to(ROOT)}")
+    print(f"Wrote {OUT.name}")
 
 
 if __name__ == "__main__":

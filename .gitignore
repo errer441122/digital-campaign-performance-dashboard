@@ -3,5 +3,3 @@ __pycache__/
 *.pyc
 .pytest_cache/
 .cache/
-# campaign_check.py output: customer lists
-plan/

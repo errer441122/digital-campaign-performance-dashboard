@@ -1,0 +1,61 @@
+﻿ID;Data;Campagna;Canale;Nome;Email;Azienda;Partita IVA;Consenso
+L01;12/05/2026;Fiera Bologna;fiera;Ada Bruni;ada@brunimacchine.example;Bruni Macchine Srl;;sì
+L02;12/05/2026;Fiera Bologna;fiera;Aldo Corsi;aldo@corsitech.example;Corsi Tech;;sì
+L03;13/05/2026;Fiera Bologna;fiera;Bea Bruni;bea@brunimacchine.example;Bruni Macchine;;sì
+L04;14/05/2026;Fiera Bologna;fiera;A. Bruni;  ADA@BRUNIMACCHINE.EXAMPLE;Bruni;;sì
+L05;18/05/2026;LinkedIn Q2;linkedin;Carlo Doni;carlo@donisrl.example;Doni Srl;;sì
+L06;18/05/2026;LinkedIn Q2;linkedin;Dina Elmi;dina@elmi.example;Elmi SpA;;sì
+L07;19/05/2026;LinkedIn Q2;linkedin;Elio Fabi;elio@fabigroup.example;Fabi Group;;sì
+L08;20/05/2026;LinkedIn Q2;linkedin;Fede Galli;fede@gallimec.example;Galli Mec;;sì
+L09;21/05/2026;LinkedIn Q2;linkedin;Gino Hofer;gino@hofer.example;Hofer;;sì
+L10;31/02/2026;Fiera Bologna;fiera;Ida Lari;ida@lari.example;Lari Srl;;sì
+L11;;Fiera Bologna;fiera;Ivo Meli;ivo@meli.example;Meli Srl;;sì
+L12;22/05/2026;;fiera;Lia Nava;lia@nava.example;Nava Srl;;sì
+L13;22/05/2026;Newsletter listino;email;Mario Rossi;mario.rossi@;Rossi;;sì
+L14;22/05/2026;Newsletter listino;email;Carla Doni;carla@;Doni;01234020004;sì
+L15;25/05/2026;Newsletter listino;email;Un collega;ufficio@nostra-azienda.example;Nostra Azienda;;sì
+L16;25/05/2026;Newsletter listino;email;Test;test@agenzia.example;Prova modulo;;sì
+L17;26/05/2026;Newsletter listino;email;Nina Olmi;nina.olmi@gmail.com;;;sì
+L18;26/05/2026;Newsletter listino;email;Oto Pini;oto.pini@gmail.com;Pini Srl;01234060000;sì
+L19;27/05/2026;Newsletter listino;email;Pia Quadri;pia@quadri.example;Quadri;1234070009;sì
+L20;27/05/2026;Newsletter listino;email;Rino Sala;rino@sala.example;Sala;IT 01234080008;sì
+L21;28/05/2026;Newsletter listino;email;Sara Testa;sara@testa.example;Testa Srl;12345678901;sì
+L22;28/05/2026;Newsletter listino;email;Tea Urbani;tea@urbani.example;Urbani;01234100004;sì
+L23;29/05/2026;LinkedIn Q2;linkedin;Ugo Alfa;ugo@gruppoalfa.example;Gruppo Alfa;;sì
+L24;29/05/2026;LinkedIn Q2;linkedin;Vera Nord;vera@gruppoalfa.example;Alfa Nord;01234120002;sì
+L25;01/06/2026;LinkedIn Q2;linkedin;Walter Rossi;walter@rossi-impianti.example;Rossi S.r.l.;;sì
+L26;02/06/2026;LinkedIn Q2;linkedin;Zoe Arca;zoe@arca.example;Arca;;sì
+L27;03/06/2026;LinkedIn Q2;linkedin;Alba Boni;alba@boni.example;Boni;;sì
+L28;03/06/2026;LinkedIn Q2;linkedin;Bino Cera;bino@cera.example;Cera;;sì
+L29;04/06/2026;Fiera Bologna;fiera;Cleo Dalla;cleo@dalla.example;Dalla;;sì
+L30;08/06/2026;LinkedIn Q2;linkedin;Cleo Dalla;cleo@dalla.example;Dalla;;sì
+L31;04/06/2026;Fiera Bologna;fiera;Dora Este;dora@este.example;Este;;sì
+L32;09/06/2026;Newsletter listino;email;Dora Este;dora@este.example;Este;;sì
+L33;20/04/2026;Newsletter listino;email;Enea Fumo;enea@fumo.example;Fumo;;sì
+L34;05/06/2026;Newsletter listino;email;Flora Gori;flora@gori.example;Gori;;sì
+L35;05/06/2026;Newsletter listino;email;Gaia Iori;gaia@iori.example;Iori;;sì
+L36;08/06/2026;Newsletter listino;email;Iris Lodi;iris@lodi.example;Lodi;;sì
+L37;08/06/2026;Newsletter listino;email;Luca Muti;luca@muti.example;Muti;;sì
+L38;09/06/2026;Fiera Bologna;fiera;Maya Neri;maya@neri.example;Neri;;sì
+L39;09/06/2026;Fiera Bologna;fiera;Noa Orsi;noa@orsi.example;Orsi;;sì
+L40;10/06/2026;Fiera Bologna;fiera;Olga Poli;olga@poli.example;Poli;;sì
+L41;10/06/2026;Fiera Bologna;fiera;Paco Rosi;paco@rosi.example;Rosi;;sì
+L42;11/06/2026;Fiera Bologna;fiera;Rea Sassi;rea@sassi.example;Sassi;;sì
+L43;11/06/2026;Fiera Bologna;fiera;Sole Tani;sole@tani.example;Tani;;no
+L44;12/06/2026;Fiera Bologna;fiera;Tito Ulisse;tito@ulisse.example;Ulisse;;sì
+L45;12/06/2026;Fiera Bologna;fiera;Uma Viti;uma@viti.example;Viti;;forse
+L46;15/06/2026;linkedin q2 ;linkedin;Vito Zani;vito@zani.example;Zani;;SI
+L47;2026-06-16;LinkedIn Q2;linkedin;Zeno Abba;zeno@abba.example;Abba;;sì
+L48;17/06/2026;LinkedIn Q2;linkedin;Asia Bassi;asia@bassi.example;Bassi;;sì
+L49;17/06/2026;LinkedIn Q2;linkedin;Biagio Conca;Biagio Conca <biagio@conca.example>;Conca;;sì
+L50;18/06/2026;LinkedIn Q2;linkedin;Cino Dosi;cino@dosi.example;Dosi;;sì
+L51;18/06/2026;LinkedIn Q2;linkedin;Dafne Enti;dafne@enti.example;Enti;;sì
+L52;19/06/2026;LinkedIn Q2;linkedin;Ester Fini;ester@fini.example;Fini;;sì
+L53;19/06/2026;LinkedIn Q2;linkedin;Furio Gatti;furio@gatti.example;Gatti;;sì
+L54;22/06/2026;Newsletter listino;email;Gemma Ivi;gemma@ivi.example;Ivi;;sì
+L55;22/06/2026;Newsletter listino;email;Ivan Loi;ivan@loi.example;Loi;;sì
+L56;10/05/2026;Newsletter listino;email;Lara Masi;lara@masi.example;Masi;;sì
+L57;10/05/2026;Newsletter listino;email;Milo Nardi;milo@nardi.example;Nardi;;sì
+L58;23/06/2026;Newsletter listino;email;Nives Oddi;nives@oddi.example ;Oddi;;sì
+L59;23/06/2026;Newsletter listino;email;Orso Pozzi;orso@pozzi.example;Pozzi;;sì
+L60;23/06/2026;Newsletter listino;email;Orso Pozzi;orso@pozzi.example;Pozzi;;no

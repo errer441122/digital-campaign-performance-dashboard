@@ -1,5 +1,7 @@
 # Digital Campaign Performance Dashboard
 
+<sub>Il nome è quello del link stampato sul mio CV; l'analisi citata lì è [più sotto](#lanalisi-del-mio-cv). · Repo name kept so the link on my CV still works.</sub>
+
 > **English summary (full README in Italian below):**
 > - **Problem:** At quarter end, marketing counts campaign leads, sales tracks deals and finance counts ERP orders — none of the three systems agree on which orders came from campaigns.
 > - **How it works:** A macro-free, AI-free Excel workbook reconciles three exports (campaign leads, CRM contacts, ERP orders) with 8 fixed rules (VAT/domain matching, cancelled orders, credit notes, existing vs. new accounts, 180-day window) and sends ambiguous cases to a named owner.

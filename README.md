@@ -2,7 +2,7 @@
 
 <sub>URL `digital-campaign-performance-dashboard` mantenuto per il link stampato sul mio CV; l'analisi citata lì è [più sotto](#lanalisi-del-mio-cv). · Repo URL kept so the link on my CV still works.</sub>
 
-> **English summary (full README in Italian below):**
+> **English summary (full README in Italian below)** · [Open the live page in English](https://errer441122.github.io/digital-campaign-performance-dashboard/?lang=en)
 > - **Problem:** At quarter end, marketing counts campaign leads, sales tracks deals and finance counts ERP orders — none of the three systems agree on which orders came from campaigns.
 > - **How it works:** A macro-free, AI-free Excel workbook reconciles three exports (campaign leads, CRM contacts, ERP orders) with 8 fixed rules (VAT/domain matching, cancelled orders, credit notes, existing vs. new accounts, 180-day window) and sends ambiguous cases to a named owner.
 > - **Verification & limits:** Simulated dataset of 60 dirty edge cases verified across 368 automated Excel checks (no live company deployment yet); also includes the public UCI retail RFM analysis referenced in my CV (`analisi-cv/`).
